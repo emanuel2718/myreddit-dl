@@ -9,14 +9,22 @@ import argparse
 import configparser
 import sys
 from cli import run_cli
-from gui.gui_launcher import run_gui
+from gui import run_gui
 
 
 def get_cli_args():
+    # TODO: fix the usage once all the cli args are done
     parser = argparse.ArgumentParser(
         description='Reddit upvoted & saved media downloader',
         usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
         formatter_class=argparse.RawTextHelpFormatter)
+
+
+    parser.add_argument(
+        '-v',
+        '--version',
+        help='displays the current version of myreddit-dl',
+        action='store_true')
 
     parser.add_argument(
         '-debug',
@@ -38,17 +46,34 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
+        '-U',
+        '--upvote',
+        action='store_true',
+        help="Download upvoted media",
+        required=False)
+
+    parser.add_argument(
+        '-S',
+        '--saved',
+        action='store_true',
+        help="Download saved media",
+        required=False)
+
+    # TODO: maybe add the option for more subreddits (i.e -sub sub_1 sub_2)
+    parser.add_argument(
+        '-sub',
+        '--subreddit',
+        type=str,
+        nargs='*',
+        help="Only download media that belongs to the given subreddit(s)",
+        required=None)
+
+
+    parser.add_argument(
         '-l',
         '--limit',
         type=int,
-        help="Limit of post to download (default: None)",
-        required=None)
-
-    parser.add_argument(
-        '-s',
-        '--subreddit',
-        type=str,
-        help="Only save post that belong to the given subreddit",
+        help="Limit the amount of media to download (default: None)",
         required=None)
 
     parser.add_argument(

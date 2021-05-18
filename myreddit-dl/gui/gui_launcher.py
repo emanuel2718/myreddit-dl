@@ -1,8 +1,8 @@
 import util
 
 
-def run_cli(args):
-    print('Running from CLI from myreddit-dl.py')
+def run_gui():
+    print("Printing from gui_launcher.py!!!!")
 
 
 if __name__ == '__main__':

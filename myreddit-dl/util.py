@@ -1,6 +1,7 @@
 DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
                       'See myreddit-dl -h for more information')
 
+USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
 
 def print_debug(msg):
     print(f'[DEBUG] {msg}')

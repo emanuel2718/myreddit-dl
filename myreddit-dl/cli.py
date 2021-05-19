@@ -1,59 +1,48 @@
-import util
-import configparser
-import praw
+from reddit_client import RedditClient
+from downloader import Downloader
+
+DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
+                      'See myreddit-dl -h for more information')
+
+USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
 
 
-class RedditClient:
+def print_debug(msg):
+    print(f'[DEBUG] {msg}')
 
-    def __init__(self, args):
-        self.args = args
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+def print_done(msg):
+    print(f'[DONE] {msg}')
 
-        # NOTE: self.reddit_instance.user.me() is None if config file is empty
-        self.reddit_instance = self.build_reddit_instance()
-        self.user = self.reddit_instance.user.me()
+def print_error(msg):
+    print(f'[ERROR] {msg}')
 
-        self.check_if_valid_user()
+def print_failed(msg):
+    print(f'[FAILED] {msg}')
 
-        self.upvoted = self.get_user_upvotes()
-        self.saved = self.get_user_saves()
-        print(self.upvoted)
-        print(self.saved)
+def print_file_added(filename):
+    print(f'[ADDED] {filename}')
 
-    def build_reddit_instance(self):
-        return praw.Reddit(
-            user_agent='MyReddit-dl',
-            client_id=self.config['REDDIT']['client_id'],
-            client_secret=self.config['REDDIT']['client_secret'],
-            username=self.config['REDDIT']['username'],
-            password=self.config['REDDIT']['password'])
+def print_already_exists(filename):
+    print(f'[ALREADY EXISTS] {filename}')
 
-    def check_if_valid_user(self):
-        if self.user:
-            return
-        util.print_error(util.USER_NOT_FOUND)
-        exit(1)
+def print_removing_file(filename):
+    print(f'[REMOVING] {filename}')
 
-    def get_user_upvotes(self):
-        ''' Returns a ListingGenerator of the user upvoted posts if the
-            user asked for the saved files with the (-U --upvote) flag.
-            Otherwise, return None
-        '''
-        return self.user.upvoted(limit=None) if self.args['upvote'] else None
+def print_info(msg):
+    print(f'[INFO] {msg}')
 
-    def get_user_saves(self):
-        ''' Returns a ListingGenerator of the user saved posts if the
-            user asked for the saved files with the (-S --saved) flag.
-            Otherwise, return None
-        '''
-        return self.user.saved(limit=None) if self.args['saved'] else None
+def print_ok(msg):
+    print(f'[OK] {msg}')
+
+
+def print_warning(msg):
+    print(f'[WARNING] {msg}')
 
 
 def run_cli(args):
-    cli_client = RedditClient(args)
-    print('Running from CLI from myreddit-dl.py')
+    client = RedditClient(args)
+    dl = Downloader(client)
 
 
 if __name__ == '__main__':
-    util.print_warning(util.DONT_RUN_THIS_FILE)
+    print_warning(DONT_RUN_THIS_FILE)

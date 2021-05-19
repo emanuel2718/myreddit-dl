@@ -7,39 +7,39 @@ DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
 USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
 
 
-def print_debug(msg):
+def print_debug(msg: str) -> None:
     print(f'[DEBUG] {msg}')
 
-def print_done(msg):
+def print_done(msg: str) -> None:
     print(f'[DONE] {msg}')
 
-def print_error(msg):
+def print_error(msg: str) -> None:
     print(f'[ERROR] {msg}')
 
-def print_failed(msg):
+def print_failed(msg: str) -> None:
     print(f'[FAILED] {msg}')
 
-def print_file_added(filename):
+def print_file_added(filename: str) -> None:
     print(f'[ADDED] {filename}')
 
-def print_already_exists(filename):
+def print_already_exists(filename: str) -> None:
     print(f'[ALREADY EXISTS] {filename}')
 
-def print_removing_file(filename):
+def print_removing_file(filename: str) -> None:
     print(f'[REMOVING] {filename}')
 
-def print_info(msg):
+def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
-def print_ok(msg):
+def print_ok(msg: str) -> None:
     print(f'[OK] {msg}')
 
 
-def print_warning(msg):
+def print_warning(msg: str) -> None:
     print(f'[WARNING] {msg}')
 
 
-def run_cli(args):
+def run_cli(args: dict) -> None:
     client = RedditClient(args)
     dl = Downloader(client)
 

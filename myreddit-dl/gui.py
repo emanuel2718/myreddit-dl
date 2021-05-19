@@ -1,4 +1,4 @@
-import util
+import cli
 from PyQt5.QtWidgets import *
 
 
@@ -7,4 +7,4 @@ def run_gui():
 
 
 if __name__ == '__main__':
-    util.print_warning(util.DONT_RUN_THIS_FILE)
+    cli.print_warning(cli.DONT_RUN_THIS_FILE)

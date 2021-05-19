@@ -76,14 +76,14 @@ def get_cli_args():
         help="Limit the amount of media to download (default: None)",
         required=None)
 
-    parser.add_argument(
-        '-p',
-        '--path',
-        help="Save on the given path",
-        nargs='?',
-        dest='path',
-        const=None,
-        metavar='PATH')
+    #parser.add_argument(
+    #    '-p',
+    #    '--path',
+    #    help="Save on the given path",
+    #    nargs='?',
+    #    dest='path',
+    #    const=None,
+    #    metavar='PATH')
 
     return vars(parser.parse_args())
 

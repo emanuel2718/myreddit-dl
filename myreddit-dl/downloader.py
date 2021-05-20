@@ -4,38 +4,35 @@ import pprint
 import praw
 import re
 import requests
+import utils
 from file_handler import FileHandler
 
 
 class Downloader:
     def __init__(self, client) -> None:
         self.client = client
-        self.args = client.get_args()
-        self.username = client.get_user()
-        self.upvoted = client.get_user_upvotes()
-        self.saved = client.get_user_saves()
-        self.subreddit_list = self.args['subreddit']
-        self.by_user = self.args['user']
-        self.limit = self.args['limit']
-        self.valid_domains = self._get_valid_sfw_domains()
-        self.valid_nsfw_domains = self._get_valid_nsfw_domains()
+        self.valid_domains = utils.SFW_DOMAINS
         self.download_counter = 0
-        self._item = None
+
+        self._item = None # current upvoted or saved post we are looking at.
         self.start()
 
+    @property
+    def sfw_domains(self) -> set:
+        return utils.SFW_DOMAINS
+
+    @property
+    def nsfw_domains(self) -> set:
+        return utils.NSFW_DOMAINS
+
     def _is_gallery_item(self) -> bool:
-        if self._item.url.startswith('https://www.reddit.com/gallery/'):
+        if self._item.url.startswith(utils.REDDIT_GALLERY_DOMAIN):
             return True
         return False
 
     def _is_valid_domain(self) -> bool:
         return True if self._item.domain in self.valid_domains else False
 
-    def _get_valid_sfw_domains(self) -> set:
-        return {'v.redd.it', 'i.redd.it', 'i.imgur.com', 'gfycat.com', 'streamable.com'}
-
-    def _get_valid_nsfw_domains(self) -> set:
-        return {'redgifs.com', 'erome.com'}
 
     def _get_vreddit_url(self):
         ''' For the https://v.redd.it posts'''
@@ -118,13 +115,13 @@ class Downloader:
                 
 
     def start(self):
-        if self.args['nsfw']:
-            self.valid_domains = self.valid_domains.union(self.valid_nsfw_domains)
-        if self.args['upvote'] and not self.args['saved']:
-            self._iterate_items(self.upvoted)
-        elif self.args['saved'] and not self.args['upvote']:
-            self._iterate_items(self.saved)
-        elif self.args['saved'] and self.args['upvote']:
+        if self.client.args['nsfw']:
+            self.valid_domains = self.sfw_domains.union(self.nsfw_domains)
+        if self.client.args['upvote'] and not self.client.args['saved']:
+            self._iterate_items(self.client.upvotes)
+        elif self.client.args['saved'] and not self.client.args['upvote']:
+            self._iterate_items(self.client.saves)
+        elif self.client.args['saved'] and self.client.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
             cli.print_error('Specify upvotes (-U, --upvote) or saves (-S, --saved). '

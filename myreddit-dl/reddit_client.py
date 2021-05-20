@@ -36,7 +36,6 @@ class RedditClient:
     def args(self) -> dict:
         return self.arg_dict
 
-
     @property
     def upvotes(self) -> praw.models.listing.generator.ListingGenerator:
         ''' Returns a ListingGenerator of the user upvoted posts if the

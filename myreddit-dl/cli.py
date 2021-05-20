@@ -31,6 +31,9 @@ def print_removing_file(filename: str) -> None:
 def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
+def print_editing(msg: str) -> None:
+    print(f'[EDITING] {msg}')
+
 def print_ok(msg: str) -> None:
     print(f'[OK] {msg}')
 

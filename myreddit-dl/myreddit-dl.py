@@ -59,6 +59,20 @@ def get_cli_args():
         help="Download saved media",
         required=False)
 
+    parser.add_argument(
+        '-t',
+        '--title',
+        action='store_true',
+        help="Saved media with post link as filename",
+        required=False)
+
+    parser.add_argument(
+        '-nsfw',
+        action='store_true',
+        help="Download NSFW content",
+        required=False)
+
+
     # TODO: maybe add the option for more subreddits (i.e -sub sub_1 sub_2)
     parser.add_argument(
         '-sub',

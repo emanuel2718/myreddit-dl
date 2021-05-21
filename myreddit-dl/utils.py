@@ -4,6 +4,9 @@ NSFW_DOMAINS = {'redgifs.com', 'erome.com'}
 SFW_DOMAINS = {'v.redd.it', 'i.redd.it', 'i.imgur.com',
                'gfycat.com', 'streamable.com', 'reddit.com', 'imgur.com'}
 
+SUPPORTED_MEDIA_FORMATS = ('.jpg', '.png', '.jpeg', '.gif', '.gifv', '.mp4')
+EXTENSION_STRING = '.jpg.png.jpeg.gif.gifv.mp4'
+
 # Usefuls messages
 DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
                       'See myreddit-dl -h for more information')

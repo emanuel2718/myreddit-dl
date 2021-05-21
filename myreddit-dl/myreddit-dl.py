@@ -8,8 +8,9 @@ Description: Reddit upvoted & saved media downloader
 import argparse
 import configparser
 import sys
-from cli import run_cli
 from gui import run_gui
+from reddit_client import RedditClient
+from downloader import Downloader
 
 
 def get_cli_args():
@@ -18,7 +19,6 @@ def get_cli_args():
         description='Reddit upvoted & saved media downloader',
         usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
         formatter_class=argparse.RawTextHelpFormatter)
-
 
     parser.add_argument(
         '-v',
@@ -72,7 +72,6 @@ def get_cli_args():
         help="Download NSFW content",
         required=False)
 
-
     # TODO: maybe add the option for more subreddits (i.e -sub sub_1 sub_2)
     parser.add_argument(
         '-sub',
@@ -82,7 +81,6 @@ def get_cli_args():
         help="Only download media that belongs to the given subreddit(s)",
         required=None)
 
-
     parser.add_argument(
         '-l',
         '--limit',
@@ -90,7 +88,7 @@ def get_cli_args():
         help="Limit the amount of media to download (default: None)",
         required=None)
 
-    #parser.add_argument(
+    # parser.add_argument(
     #    '-p',
     #    '--path',
     #    help="Save on the given path",
@@ -107,7 +105,8 @@ def main():
     # cli version of the app
     if len(sys.argv) > 1:
         cli_args = get_cli_args()
-        run_cli(cli_args)
+        reddit_client = RedditClient(cli_args)
+        downloader = Downloader(reddit_client)
 
     # GUI version of the app
     else:

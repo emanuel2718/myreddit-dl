@@ -1,5 +1,7 @@
+import utils
 import configparser
 import praw
+
 
 class RedditClient:
 
@@ -12,7 +14,6 @@ class RedditClient:
         self.reddit_instance = self.build_reddit_instance()
         self.username = self.reddit_instance.user.me()
         self.check_if_valid_user()
-
 
     def build_reddit_instance(self) -> praw.Reddit:
         return praw.Reddit(
@@ -52,5 +53,6 @@ class RedditClient:
         '''
         return self.username.saved(limit=None) if self.args['saved'] else None
 
+
 if __name__ == '__main__':
-    cli.print_warning(cli.DONT_RUN_THIS_FILE)
+    utils.print_warning(utils.DONT_RUN_THIS_FILE)

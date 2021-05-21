@@ -1,4 +1,3 @@
-import cli
 import json
 import pprint
 import praw
@@ -154,9 +153,9 @@ class Downloader:
         elif self.client.args['saved'] and self.client.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
-            cli.print_error('Specify upvotes (-U, --upvote) or saves (-S, --saved). '
+            utils.print_error('Specify upvotes (-U, --upvote) or saves (-S, --saved). '
                             'See myreddit-dl --help for more information.')
 
 
 if __name__ == '__main__':
-    cli.print_warning(cli.DONT_RUN_THIS_FILE)
+    utils.print_warning(cli.DONT_RUN_THIS_FILE)

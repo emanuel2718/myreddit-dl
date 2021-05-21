@@ -1,8 +1,8 @@
-import cli
 import os
 import re
 
 SUPPORTED_MEDIA_FORMATS = ('.jpg', '.png', '.jpeg', 'gif', 'gifv')
+
 
 class FileHandler:
     def __init__(self, args, username, item) -> None:
@@ -17,7 +17,6 @@ class FileHandler:
         if self.file_exists() and not is_media():
             return False
         return True
-
 
     def file_exists(self) -> bool:
         ''' File could've been downloaded without using the -user flag (which
@@ -41,7 +40,7 @@ class FileHandler:
 
         if self.args['user']:
             if os.path.isfile(file_without_user):
-                cli.print_editing('')
+                utils.print_editing('')
                 os.rename(file_without_user, file_with_user)
 
     def get_path(self) -> str:
@@ -78,4 +77,4 @@ class FileHandler:
 
 
 if __name__ == '__main__':
-    cli.print_warning(cli.DONT_RUN_THIS_FILE)
+    utils.print_warning(utils.DONT_RUN_THIS_FILE)

@@ -1,0 +1,5 @@
+# TODO: maybe make this a JSON file? Or another format for easy lookup when using the GUI
+        in the future!
+
+# Example:
+xy567892.png=https://reddit.com/r/classicwow/comments/n55gih/kind_gesture_from_a_seasoned_vet/

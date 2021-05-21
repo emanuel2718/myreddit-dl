@@ -3,6 +3,7 @@ import re
 import utils
 from urllib.parse import urlparse
 
+BASE_PATH = os.getcwd() + os.sep + 'media' + os.sep
 
 class FileHandler():
     def __init__(self, cls):
@@ -14,21 +15,26 @@ class FileHandler():
         return ext
 
     def get_filename(self) -> list[str, ...] or str:
+        path = self.get_path()
         media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
-        site = 'https://reddit.com'
         if isinstance(media_url, list):
-            if self.cls.client.args['title']:
-                return [str(site + self.cls.item.permalink + self.get_extension(url)) for url in media_url]
-            else:
-                return [str(url + self.get_extension(url)) for url in media_url]
+            # TODO: Why is this adding double quotes to the path?
+            return [path + self.get_extension(url) for url in media_url]
         elif media_url.endswith('fallback'):
-            if self.cls.client.args['title']:
-                return site + self.cls.item.permalink + '.mp4'
-            else:
-                return media_url + '.mp4'
-        elif self.cls.client.args['title']:
-            return site + self.cls.item.permalink + self.get_extension(media_url)
-        return media_url
+            return path + self.get_extension(media_url)
+        return path + self.get_extension(media_url)
+
+    def get_path(self):
+        # TODO: Eventually we want path resolution from path given with --path flag
+        return BASE_PATH + str(self.cls.item.author) + '_' + str(self.cls.item.id)
+
+
+
+
+
+
+
+
 
 
 

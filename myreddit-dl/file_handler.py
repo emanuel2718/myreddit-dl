@@ -15,10 +15,19 @@ class FileHandler():
 
     def get_filename(self) -> list[str, ...] or str:
         media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
+        site = 'https://reddit.com'
         if isinstance(media_url, list):
-            return [str(url + self.get_extension(url)) for url in media_url]
+            if self.cls.client.args['title']:
+                return [str(site + self.cls.item.permalink + self.get_extension(url)) for url in media_url]
+            else:
+                return [str(url + self.get_extension(url)) for url in media_url]
         elif media_url.endswith('fallback'):
-            return media_url + '.mp4'
+            if self.cls.client.args['title']:
+                return site + self.cls.item.permalink + '.mp4'
+            else:
+                return media_url + '.mp4'
+        elif self.cls.client.args['title']:
+            return site + self.cls.item.permalink + self.get_extension(media_url)
         return media_url
 
 

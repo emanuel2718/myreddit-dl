@@ -14,7 +14,16 @@ class Downloader:
         self.download_counter = 0
 
         self._item = None  # current upvoted or saved post we are looking at.
+        self.media_url = None
         self.start()
+
+    @property
+    def item(self):
+        return self._item
+
+    @property
+    def curr_media_url(self):
+        return self.media_url
 
     @property
     def __print_item(self):
@@ -28,13 +37,6 @@ class Downloader:
     def nsfw_domains(self) -> set:
         return utils.NSFW_DOMAINS
 
-    def _is_gallery_item(self) -> bool:
-        if self._item.url.startswith(utils.REDDIT_GALLERY_DOMAIN):
-            return True
-        return False
-
-    def _is_valid_domain(self) -> bool:
-        return True if self._item.domain in self.valid_domains else False
 
     @property
     def _vreddit_url(self) -> str:
@@ -76,20 +78,17 @@ class Downloader:
             return None
 
     @property
-    def _reddit_gallery_url(self) -> list[(str, str), ...]:
-        ''' Returns a list of dual strings tuples. The tuples contains the url and the
-            extension of the image as image/jpg or image/png.
-        '''
+    def _reddit_gallery_url(self) -> list[str, ...]:
         try:
             metadata = self._item.media_metadata.values()
-            return [(i['s']['u'], i['m']) for i in metadata if i['e'] == 'Image']
+            return [i['s']['u'] for i in metadata if i['e'] == 'Image']
         except BaseException:
             return None  # deleted post
 
     @property
-    def _imgur_gallery_url(self) -> str:
+    def _imgur_gallery_url(self) -> list[str]:
         try:
-            return self._item.preview['images'][0]['source']['url']
+            return [self._item.preview['images'][0]['source']['url']]
         except BaseException:
             return None
 
@@ -97,6 +96,15 @@ class Downloader:
     def _mp4_url_from_gif_url(self) -> str:
         ''' Replace .gifv and .gif extensions with .mp4 extension.'''
         return self._item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
+
+
+    def _is_gallery_item(self) -> bool:
+        if self._item.url.startswith(utils.REDDIT_GALLERY_DOMAIN):
+            return True
+        return False
+
+    def _is_valid_domain(self) -> bool:
+        return True if self._item.domain in self.valid_domains else False
 
     def get_media_url(self) -> list[str, ...]:
         # TODO: maybe make this into some kind of for loop through
@@ -137,19 +145,22 @@ class Downloader:
             Also returns True if the user didn't specify any subreddit, as
             then it is implied that the user wants all the posts.
         '''
-        if self.client.args is None:
+        if self.client.args['subreddit'] is None:
             return True
         return self._item.subreddit in self.client.args['subreddit']
 
     def _iterate_items(self, items):
         for item in items:
-            media_url = []
+            #media_url = None
             self._item = item
-            if self.is_item_from_valid_subreddit():
+            if self._item and self.is_item_from_valid_subreddit():
                 # Avoid saved comments posts
                 if not isinstance(item, praw.models.reddit.comment.Comment):
                     if self._is_valid_domain():
-                        media_url = self.get_media_url()
+                        self.media_url = self.get_media_url()
+                        handler = FileHandler(self)
+                        filename = handler.get_filename()
+                        print(filename)
                     else:
                         pass
 

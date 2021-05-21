@@ -37,25 +37,24 @@ class Downloader:
         return True if self._item.domain in self.valid_domains else False
 
     @property
-    def _vreddit_url(self) -> list[str]:
+    def _vreddit_url(self) -> str:
         ''' For the https://v.redd.it posts'''
         if self._item.media is None:
-            return [self._item.crosspost_parent_list[0]
-                    ['media']['reddit_video']['fallback_url']]
+            return self._item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
         else:
-            return [self._item.media['reddit_video']['fallback_url']]
+            return self._item.media['reddit_video']['fallback_url']
 
     @property
-    def _gyfcat_url(self) -> list[str]:
+    def _gyfcat_url(self) -> str:
         try:
-            return [self._item.preview['reddit_video_preview']['fallback_url']]
+            return self._item.preview['reddit_video_preview']['fallback_url']
         except BaseException:
-            return []
+            return None
 
     @property
-    def _redgifs_url(self) -> list[str]:
+    def _redgifs_url(self) -> str:
         try:
-            return [item.preview['reddit_video_preview']['fallback_url']]
+            return item.preview['reddit_video_preview']['fallback_url']
         except BaseException:
             pass
 
@@ -64,17 +63,17 @@ class Downloader:
         urls = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(response))
         for url in urls:
             if url.endswith('.mp4'):
-                return [url]
-        return []
+                return url
+        return None
 
     @property
-    def _streamable_url(self) -> list[str]:
+    def _streamable_url(self) -> str:
         try:
             html = self._item.media['oembed']['html']
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
-            return [url + '.mp4']
+            return url + '.mp4'
         except BaseException:
-            return []
+            return None
 
     @property
     def _reddit_gallery_url(self) -> list[(str, str), ...]:
@@ -85,19 +84,19 @@ class Downloader:
             metadata = self._item.media_metadata.values()
             return [(i['s']['u'], i['m']) for i in metadata if i['e'] == 'Image']
         except BaseException:
-            return []  # deleted post
+            return None  # deleted post
 
     @property
-    def _imgur_gallery_url(self) -> list[str, ...]:
+    def _imgur_gallery_url(self) -> str:
         try:
             return self._item.preview['images'][0]['source']['url']
         except BaseException:
-            return []
+            return None
 
     @property
-    def _mp4_url_from_gif_url(self) -> list[str]:
+    def _mp4_url_from_gif_url(self) -> str:
         ''' Replace .gifv and .gif extensions with .mp4 extension.'''
-        return [self._item.url.replace('gifv', 'mp4').replace('gif', 'mp4')]
+        return self._item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
 
     def get_media_url(self) -> list[str, ...]:
         # TODO: maybe make this into some kind of for loop through
@@ -117,8 +116,9 @@ class Downloader:
         elif self._item.url.endswith(('gif', 'gifv')):
             media_url = self._mp4_url_from_gif_url
         else:
-            media_url = [self._item.url]  # all the png and jpg ready for download
-        print(media_url)
+            media_url = self._item.url  # all the png and jpg ready for download
+
+        return media_url
         # TODO: Handle Imgur gallery case: https://imgur.com/a/oOnxxk3/
         #       There are cases where the imgur.com/ ends with .gifv and or png
         #       those cases should be easy to handle. The problem lies in the galleries.
@@ -130,18 +130,28 @@ class Downloader:
         # TODO: Handle: https://clips.twitch.tv/SeductiveMagnificentNikudonRaccAttack-dvnHYTkEyOvqaExq
         #       Adding .mp4 makes the clip go missing
 
+    def is_item_from_valid_subreddit(self) -> bool:
+        ''' Returns True if any of the asked subreddits with the -sub flag
+            matches the current item subreddit.
+
+            Also returns True if the user didn't specify any subreddit, as
+            then it is implied that the user wants all the posts.
+        '''
+        if self.client.args is None:
+            return True
+        return self._item.subreddit in self.client.args['subreddit']
+
     def _iterate_items(self, items):
         for item in items:
             media_url = []
-            # Avoid saved comments posts
-            if not isinstance(item, praw.models.reddit.comment.Comment):
-                self._item = item
-                if self._is_valid_domain():
-                    media_url = self.get_media_url()
-                else:
-                    pass
-                    #print(f'Domain: {self._item.domain} || Url: {self._item.url}')
-                    # print(self._item.url)
+            self._item = item
+            if self.is_item_from_valid_subreddit():
+                # Avoid saved comments posts
+                if not isinstance(item, praw.models.reddit.comment.Comment):
+                    if self._is_valid_domain():
+                        media_url = self.get_media_url()
+                    else:
+                        pass
 
     def start(self):
         if self.client.args['nsfw']:
@@ -154,7 +164,7 @@ class Downloader:
             print('THREADS: iterating both saved and upvotes')
         else:
             utils.print_error('Specify upvotes (-U, --upvote) or saves (-S, --saved). '
-                            'See myreddit-dl --help for more information.')
+                              'See myreddit-dl --help for more information.')
 
 
 if __name__ == '__main__':

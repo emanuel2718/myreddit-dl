@@ -1,4 +1,5 @@
 import json
+import os
 import pprint
 import praw
 import re
@@ -20,6 +21,18 @@ class Downloader:
     @property
     def item(self):
         return self._item
+
+    @property
+    def user(self):
+        return self.client.user
+
+    @property
+    def args(self):
+        return self.client.args
+
+    @property
+    def subreddit(self):
+        return self._item.subreddit
 
     @property
     def curr_media_url(self):
@@ -147,7 +160,49 @@ class Downloader:
         '''
         if self.client.args['subreddit'] is None:
             return True
-        return self._item.subreddit in self.client.args['subreddit']
+        return self.subreddit in self.client.args['subreddit']
+
+    def download_limit_reached(self):
+        if self.args['limit']:
+            if self.download_counter >= self.args['limit']:
+                exit(1)
+                return True
+        return False
+
+    def __write__(self, path):
+        # This are gallery posts (multiple media per post)
+        if isinstance(path, list):
+            for p in path:
+                r = requests.get(p[0])
+                try:
+                    with open(p[1], 'wb') as f:
+                        f.write(r.content)
+                        utils.print_file_added(p[1])
+                except BaseException:
+                    utils.print_failed(f'Adding file: {p[1]}')
+        else:
+            r = requests.get(self.item.url)
+            try:
+                with open(path, 'wb') as f:
+                    f.write(r.content)
+                    utils.print_file_added(path)
+            except BaseException:
+                utils.print_failed(f'Adding file : {path}')
+
+
+    def download(self, base_path, abs_path):
+        if self.download_limit_reached():
+            return
+
+
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+
+        #r = requests.get(self.item.url)
+
+        self.__write__(abs_path)
+        self.download_counter += 1
+
 
     def _iterate_items(self, items):
         for item in items:
@@ -155,14 +210,16 @@ class Downloader:
             self._item = item
             if self._item and self.is_item_from_valid_subreddit():
                 # Avoid saved comments posts
+                # TODO: Check if this check can be done with @self._is_valid_domain
                 if not isinstance(item, praw.models.reddit.comment.Comment):
+                    # can be from a valid subreddit but not a media item
                     if self._is_valid_domain():
                         self.media_url = self.get_media_url()
                         handler = FileHandler(self)
-                        filename = handler.get_filename()
-                        print(filename)
-                    else:
-                        pass
+                        base_path = handler.base_path
+                        absolute_path = handler.absolute_path
+                        #path = handler.get_path()
+                        self.download(base_path, absolute_path)
 
     def start(self):
         if self.client.args['nsfw']:

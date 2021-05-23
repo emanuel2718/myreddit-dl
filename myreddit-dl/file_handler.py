@@ -14,10 +14,11 @@ class FileHandler():
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
 
     @property
-    def abs_path_list(self) -> list[str, str]:
+    def abs_path_list(self) -> list:
         count = 0
         filenames = []
         for url in self.media_url:
+            self.cls.set_media_url(url)
             filenames.append([url, self.base_path + self.get_filename(url, str(count))])
             count += 1
         return filenames
@@ -40,19 +41,45 @@ class FileHandler():
             return BASE_PATH + self.cls.user + SEP + self.cls.user + '_all' + SEP
 
     @property
-    def absolute_path(self) -> list[str, ...] or str:
+    def absolute_path(self) -> list:
         if isinstance(self.media_url, list):
             return self.abs_path_list
         return self.base_path + self.get_filename(self.media_url)
 
-    def get_filename(self, url: str, index=''):
+    def file_exist(self, abs_path: str or list) -> bool:
+        if isinstance(abs_path, list):
+            # If the first path exists then all the other media
+            # in the gallery is also prenent.
+            # list of the type: [path, ..]
+            try:
+                if os.path.isfile(abs_path[0]):
+                    return True
+            except BaseException:
+                pass
+
+            # list of the type: [[url, path], ...]
+            try:
+                if os.path.isfile(abs_path[0][1]):
+                    return True
+            except BaseException:
+                utils.print_error('File not found: {abs_path}')
+                return False
+
+        elif os.path.isfile(abs_path):
+            return True
+        return False
+
+    def get_filename(self, url: str, index='') -> str:
         return (str(self.cls.item.author) + '_' + self.cls.item.id + index +
                 self.get_file_extension(url))
 
-    def get_file_extension(self, url: str):
-        parsed = urlparse(url)
-        _, ext = os.path.splitext(parsed.path)
-        return ext
+    def get_file_extension(self, url: str) -> str:
+        try:
+            parsed = urlparse(url)
+            _, ext = os.path.splitext(parsed.path)
+            return ext
+        except BaseException:
+            utils.print_error(url)
 
 
 if __name__ == '__main__':

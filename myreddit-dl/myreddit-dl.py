@@ -78,7 +78,7 @@ def get_cli_args():
     return vars(parser.parse_args())
 
 
-def main():
+def run():
 
     # cli version of the app
     if len(sys.argv) > 1:
@@ -92,4 +92,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run()

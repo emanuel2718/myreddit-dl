@@ -19,33 +19,35 @@ class Downloader:
         self.start()
 
     @property
-    def __print_item(self):
+    def __print_item(self) -> None:
         pprint.pprint(vars(self._item))
 
     @property
-    def item(self):
+    def item(self) -> 'RedditPostItem':
         return self._item
 
     @property
-    def user(self):
-        return self.client.user
+    def user(self) -> str:
+        return str(self.client.user)
 
     @property
-    def args(self):
+    def args(self) -> dict:
         return self.client.args
 
     @property
-    def subreddit(self):
+    def subreddit(self) -> str:
         return self._item.subreddit
 
     @property
-    def curr_media_url(self):
+    def curr_media_url(self) -> str or list:
         return self.media_url
+
+    def set_media_url(self, url: str) -> None:
+        self.media_url = url
 
     @property
     def sfw_domains(self) -> set:
         return utils.SFW_DOMAINS
-
     @property
     def nsfw_domains(self) -> set:
         return utils.NSFW_DOMAINS
@@ -90,7 +92,7 @@ class Downloader:
             return None
 
     @property
-    def _reddit_gallery_url(self) -> list[str, ...]:
+    def _reddit_gallery_url(self) -> list:
         try:
             metadata = self._item.media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
@@ -98,7 +100,7 @@ class Downloader:
             return None  # deleted post
 
     @property
-    def _imgur_gallery_url(self) -> list[str]:
+    def _imgur_gallery_url(self) -> list:
         try:
             return [self._item.preview['images'][0]['source']['url']]
         except BaseException:
@@ -135,6 +137,8 @@ class Downloader:
         # TODO: think about a more clean way to handle this.
         if self._item is None:
             return False
+        if self._item.author is None:
+            return False
         if self._is_comment:
             return False
         if not self._is_valid_subreddit:
@@ -143,7 +147,7 @@ class Downloader:
             return False
         return True
 
-    def get_media_url(self) -> list[str, ...]:
+    def get_media_url(self) -> list:
         # TODO: maybe make this into some kind of for loop through
         #       the valid domains?
         if self._item.domain == 'v.redd.it':
@@ -162,13 +166,7 @@ class Downloader:
             media_url = self._mp4_url_from_gif_url
         else:
             media_url = self._item.url  # all the png and jpg ready for download
-
         return media_url
-        # TODO: Handle: https://www.twitch.tv/mande/clip/ImpossibleHilariousOrcaCurseLit-QsfyEix6y5zaCMMN?filter=clips&range=7d&sort=time
-        #       Adding .mp4 to the end might solve it. Havent' tried with GET
-
-        # TODO: Handle: https://clips.twitch.tv/SeductiveMagnificentNikudonRaccAttack-dvnHYTkEyOvqaExq
-        #       Adding .mp4 makes the clip go missing
 
     def download_limit_reached(self) -> bool:
         if self.args['limit'] and self.download_counter >= self.args['limit']:
@@ -189,7 +187,8 @@ class Downloader:
                         f.write(r.content)
                         utils.print_file_added(p[1])
                 except BaseException:
-                    utils.print_failed(f'Adding file: {p[1]}')
+                    if self.client.args['verbose']:
+                        utils.print_failed(f'Adding file: {p[1]}')
         else:
             r = requests.get(self.media_url)
             try:
@@ -197,24 +196,28 @@ class Downloader:
                     f.write(r.content)
                     utils.print_file_added(path)
             except BaseException:
-                utils.print_failed(f'Adding file : {path}')
+                if self.client.args['verbose']:
+                    utils.print_failed(f'Adding file : {path}')
 
     def download(self, base_path: str, abs_path: str) -> None:
-        if self.download_limit_reached():
-            return
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         self.__write__(abs_path)
         self.download_counter += 1
 
-    def _iterate_items(self, items) -> None:
+    def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
             self._item = item
-            if self._is_valid_post():
+            if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
                 handler = FileHandler(self)
                 base_path = handler.base_path
                 absolute_path = handler.absolute_path
+                filename = handler.get_filename(self.media_url)
+                if handler.file_exist(absolute_path):
+                    if self.client.args['verbose']:
+                        utils.print_info(f'File exist: {filename}')
+                    continue
                 self.download(base_path, absolute_path)
 
         if self.client.args['debug']:
@@ -230,7 +233,7 @@ class Downloader:
         elif self.client.args['saved'] and self.client.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
-            utils.print_error('Specify upvotes (-U, --upvote) or saves (-S, --saved). '
+            utils.print_error('Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
                               'See myreddit-dl --help for more information.')
 
 

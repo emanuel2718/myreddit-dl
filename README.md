@@ -4,6 +4,8 @@ myreddit-dl
 
 
 # TODOLIST
+- [ ] --max-depth argument for max number of posts to search
+- [ ] Handle twitch clips
 - [ ] Think about more useful arguments
 - [ ] Use item.thumbnail picture for the GUI displays (maybe)
 - [ ] self.args['path'] = 'Custom' to change arguments

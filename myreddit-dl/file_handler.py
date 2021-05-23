@@ -70,8 +70,12 @@ class FileHandler():
         return False
 
     def get_filename(self, url: str, index='') -> str:
-        return (str(self.cls.item.author) + '_' + self.cls.item.id + index +
-                self.get_file_extension(url))
+        extension = self.get_file_extension(url)
+        if extension in ['.gif', '.gifv']:
+            return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
+                    '.mp4')
+        return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
+                str(self.get_file_extension(url)))
 
     def get_file_extension(self, url: str) -> str:
         try:

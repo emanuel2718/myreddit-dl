@@ -176,6 +176,9 @@ class Downloader:
             return True
         return False
 
+    def get_filename_from_path(self, path):
+        return path.rpartition(os.sep)[-1]
+
     def __write__(self, path) -> None:
         if self.media_url is None:
             return
@@ -185,21 +188,23 @@ class Downloader:
             for p in path:
                 r = requests.get(p[0])
                 try:
+                    filename = self.get_filename_from_path(p[1])
                     with open(p[1], 'wb') as f:
                         f.write(r.content)
-                        utils.print_file_added(p[1])
+                        utils.print_file_added(filename)
                 except BaseException:
                     if self.client.args['verbose']:
-                        utils.print_failed(f'Adding file: {p[1]}')
+                        utils.print_failed(f'Adding file: {filename}')
         else:
             r = requests.get(self.media_url)
             try:
                 with open(path, 'wb') as f:
+                    filename = self.get_filename_from_path(path)
                     f.write(r.content)
-                    utils.print_file_added(path)
+                    utils.print_file_added(filename)
             except BaseException:
                 if self.client.args['verbose']:
-                    utils.print_failed(f'Adding file : {path}')
+                    utils.print_failed(f'Adding file : {filename}')
 
     def download(self, base_path: str, abs_path: str) -> None:
         if not os.path.exists(base_path):
@@ -210,8 +215,6 @@ class Downloader:
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         items.params['limit'] = self.client.max_depth
         items.limit = self.client.max_depth
-        pprint.pprint(vars(items))
-        #for i in tqdm(range(len(items)))
         for item in items:
             self._item = item
             self.items_iterated += 1

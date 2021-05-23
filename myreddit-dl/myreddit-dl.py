@@ -34,15 +34,9 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
-        '-all',
+        '--verbose',
         action='store_true',
-        help="Download every user upvoted posts",
-        required=False)
-
-    parser.add_argument(
-        '-user',
-        action='store_true',
-        help="Save with post author name in front of file name",
+        help="Print debugging information",
         required=False)
 
     parser.add_argument(
@@ -57,13 +51,6 @@ def get_cli_args():
         '--saved',
         action='store_true',
         help="Download saved media",
-        required=False)
-
-    parser.add_argument(
-        '-t',
-        '--title',
-        action='store_true',
-        help="Saved media with post link as filename",
         required=False)
 
     parser.add_argument(
@@ -87,15 +74,6 @@ def get_cli_args():
         type=int,
         help="Limit the amount of media to download (default: None)",
         required=None)
-
-    # parser.add_argument(
-    #    '-p',
-    #    '--path',
-    #    help="Save on the given path",
-    #    nargs='?',
-    #    dest='path',
-    #    const=None,
-    #    metavar='PATH')
 
     return vars(parser.parse_args())
 

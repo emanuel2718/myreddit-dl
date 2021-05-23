@@ -24,18 +24,25 @@ class FileHandler():
 
     @property
     def base_path(self) -> str:
+        # TODO: This is messy. Clean this!
         # TODO: Eventually we want path resolution from path given with --path flag
         if self.cls.args['debug']:
-            return (CURRENT_DIR + 'test_dir' + SEP + self.cls.user + SEP
-                    + str(self.cls.subreddit) + SEP)
-        return BASE_PATH + self.cls.user + SEP + str(self.cls.subreddit) + SEP
+            if self.cls.args['subreddit']:
+                return (CURRENT_DIR + 'test_dir' + SEP + self.cls.user + SEP
+                        + 'subreddits' + SEP + str(self.cls.subreddit) + SEP)
+            else:
+                return (CURRENT_DIR + 'test_dir' + SEP + self.cls.user + SEP
+                        + self.cls.user + '_all' + SEP)
+        if self.cls.args['subreddit']:
+            return (BASE_PATH + self.cls.user + SEP + 'subreddits'
+                    + SEP + str(self.cls.subreddit) + SEP)
+        else:
+            return BASE_PATH + self.cls.user + SEP + self.cls.user + '_all' + SEP
 
     @property
     def absolute_path(self) -> list[str, ...] or str:
         if isinstance(self.media_url, list):
-            # TODO: Why is this adding double quotes to the path?
             return self.abs_path_list
-            # return self.base_path + self.filenames_from_list
         return self.base_path + self.get_filename(self.media_url)
 
     def get_filename(self, url: str, index=''):

@@ -177,6 +177,9 @@ class Downloader:
         return False
 
     def __write__(self, path) -> None:
+        if self.media_url is None:
+            return
+
         # This are gallery posts (multiple media per post)
         if isinstance(path, list):
             for p in path:
@@ -188,7 +191,7 @@ class Downloader:
                 except BaseException:
                     utils.print_failed(f'Adding file: {p[1]}')
         else:
-            r = requests.get(self.item.url)
+            r = requests.get(self.media_url)
             try:
                 with open(path, 'wb') as f:
                     f.write(r.content)
@@ -213,6 +216,9 @@ class Downloader:
                 base_path = handler.base_path
                 absolute_path = handler.absolute_path
                 self.download(base_path, absolute_path)
+
+        if self.client.args['debug']:
+            utils.print_info(f'{self.download_counter} items downloaded.')
 
     def start(self) -> None:
         if self.client.args['nsfw']:

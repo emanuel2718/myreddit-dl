@@ -40,6 +40,12 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
+        '--max-depth',
+        type=int,
+        help="Maximum amount of posts to iterate through",
+        required=False)
+
+    parser.add_argument(
         '-U',
         '--upvote',
         action='store_true',

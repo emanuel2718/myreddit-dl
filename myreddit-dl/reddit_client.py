@@ -1,6 +1,7 @@
 import utils
 import configparser
 import praw
+import pprint
 
 
 class RedditClient:
@@ -30,6 +31,10 @@ class RedditClient:
         exit(1)
 
     @property
+    def max_depth(self):
+        return self.arg_dict['max_depth']
+
+    @property
     def user(self) -> str:
         return str(self.username)
 
@@ -38,7 +43,7 @@ class RedditClient:
         return self.arg_dict
 
     @property
-    def upvotes(self) -> praw.models.listing.generator.ListingGenerator:
+    def upvotes(self) -> 'User upvoted posts':
         ''' Returns a ListingGenerator of the user upvoted posts if the
             user asked for the saved files with the (-U --upvote) flag.
             Otherwise, return None
@@ -46,7 +51,7 @@ class RedditClient:
         return self.username.upvoted(limit=None) if self.args['upvote'] else None
 
     @property
-    def saves(self) -> praw.models.listing.generator.ListingGenerator:
+    def saves(self) -> 'User saved posts':
         ''' Returns a ListingGenerator of the user saved posts if the
             user asked for the saved files with the (-S --saved) flag.
             Otherwise, return None

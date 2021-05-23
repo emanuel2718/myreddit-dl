@@ -6,6 +6,7 @@ import re
 import requests
 import utils
 from file_handler import FileHandler
+from tqdm import tqdm
 
 
 class Downloader:
@@ -13,6 +14,7 @@ class Downloader:
         self.client = client
         self.valid_domains = utils.SFW_DOMAINS
         self.download_counter = 0
+        self.items_iterated = 0
 
         self._item = None  # current upvoted or saved post we are looking at.
         self.media_url = None
@@ -206,8 +208,13 @@ class Downloader:
         self.download_counter += 1
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
+        items.params['limit'] = self.client.max_depth
+        items.limit = self.client.max_depth
+        pprint.pprint(vars(items))
+        #for i in tqdm(range(len(items)))
         for item in items:
             self._item = item
+            self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
                 handler = FileHandler(self)
@@ -222,6 +229,7 @@ class Downloader:
 
         if self.client.args['debug']:
             utils.print_info(f'{self.download_counter} items downloaded.')
+            utils.print_info(f'{self.items_iterated} items iterated.')
 
     def start(self) -> None:
         if self.client.args['nsfw']:

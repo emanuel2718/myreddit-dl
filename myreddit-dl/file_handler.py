@@ -46,26 +46,27 @@ class FileHandler():
             return self.abs_path_list
         return self.base_path + self.get_filename(self.media_url)
 
-    def file_exist(self, abs_path: str or list) -> bool:
-        if isinstance(abs_path, list):
+    @property
+    def file_exist(self) -> bool:
+        if isinstance(self.absolute_path, list):
             # If the first path exists then all the other media
             # in the gallery is also prenent.
             # list of the type: [path, ..]
             try:
-                if os.path.isfile(abs_path[0]):
+                if os.path.isfile(self.absolute_path[0]):
                     return True
             except BaseException:
                 pass
 
             # list of the type: [[url, path], ...]
             try:
-                if os.path.isfile(abs_path[0][1]):
+                if os.path.isfile(self.absolute_path[0][1]):
                     return True
             except BaseException:
-                utils.print_error('File not found: {abs_path}')
+                utils.print_error('File not found: {self.absolute_path}')
                 return False
 
-        elif os.path.isfile(abs_path):
+        elif os.path.isfile(self.absolute_path):
             return True
         return False
 

@@ -25,6 +25,12 @@ class Downloader:
         pprint.pprint(vars(self._item))
 
     @property
+    def __print_counters(self) -> None:
+        if self.client.args['debug'] or self.client.args['verbose']:
+            utils.print_info(f'{self.download_counter} items downloaded.')
+            utils.print_info(f'{self.items_iterated} items iterated.')
+
+    @property
     def item(self) -> 'RedditPostItem':
         return self._item
 
@@ -174,6 +180,7 @@ class Downloader:
 
     def download_limit_reached(self) -> bool:
         if self.args['limit'] and self.download_counter >= self.args['limit']:
+            self.__print_counters
             exit(1)
             return True
         return False
@@ -208,10 +215,15 @@ class Downloader:
                 if self.client.args['verbose']:
                     utils.print_failed(f'Adding file : {filename}')
 
-    def download(self, base_path: str, abs_path: str) -> None:
-        if not os.path.exists(base_path):
-            os.makedirs(base_path)
-        self.__write__(abs_path)
+    def download(self, handler: 'FileHandler'):
+        if handler.file_exist:
+            if self.client.args['verbose']:
+                utils.print_info(f'File exists: {handler.get_filename(self.media_url)}')
+            return
+
+        if not os.path.exists(handler.base_path):
+            os.makedirs(handler.base_path)
+        self.__write__(handler.absolute_path)
         self.download_counter += 1
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
@@ -220,20 +232,9 @@ class Downloader:
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
-                # TODO: handle this in a better way. Looks crowded
                 handler = FileHandler(self)
-                base_path = handler.base_path
-                absolute_path = handler.absolute_path
-                filename = handler.get_filename(self.media_url)
-                if handler.file_exist(absolute_path):
-                    if self.client.args['verbose']:
-                        utils.print_info(f'File exist: {filename}')
-                    continue
-                self.download(base_path, absolute_path)
-
-        if self.client.args['debug'] or self.client.args['verbose']:
-            utils.print_info(f'{self.download_counter} items downloaded.')
-            utils.print_info(f'{self.items_iterated} items iterated.')
+                self.download(handler)
+        self.__print_counters
 
     def start(self) -> None:
         if self.client.args['nsfw']:

@@ -100,7 +100,6 @@ class FileHandler():
         except BaseException:
             utils.print_error(f'Getting the file extension of {url}\n')
 
-
     def get_filename_from_path(self, path: str):
         return path.rpartition(os.sep)[-1]
 
@@ -112,6 +111,8 @@ class FileHandler():
                 data = json.load(f)
                 if filename not in data:
                     data.update({filename: link})
+                    if self.cls.args['verbose']:
+                        utils.print_editing(f'Database addition {filename}')
                 else:
                     utils.print_info(f'Repeated file: {filename}. Not added')
 

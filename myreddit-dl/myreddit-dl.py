@@ -93,8 +93,6 @@ def get_cli_args():
         help="Maximum amount of posts to iterate through",
         required=False)
 
-
-
     return vars(parser.parse_args())
 
 

@@ -50,8 +50,7 @@ def print_link(msg: str) -> None:
     print(f'[LINK] {msg}')
 
 def print_editing(msg: str) -> None:
-    print(f'[EDITING] {msg}')
-
+    print(f'[EDIT] {msg}')
 
 def print_ok(msg: str) -> None:
     print(f'[OK] {msg}')

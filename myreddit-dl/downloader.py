@@ -56,6 +56,7 @@ class Downloader:
     @property
     def sfw_domains(self) -> set:
         return utils.SFW_DOMAINS
+
     @property
     def nsfw_domains(self) -> set:
         return utils.NSFW_DOMAINS
@@ -185,8 +186,8 @@ class Downloader:
             return True
         return False
 
-
     def __write__(self, handler: 'FileHandler', path: str or list) -> None:
+        # TODO: This is getting a little too crowed. Handle this!
         if self.media_url is None:
             return
 
@@ -200,7 +201,8 @@ class Downloader:
                         f.write(r.content)
                         utils.print_file_added(filename)
                         self.download_counter += 1
-                        handler.update_links(p[1], str(filename))
+                        if not self.client.args['no_save_links']:
+                            handler.update_links(p[1], str(filename))
                 except BaseException:
                     if self.client.args['verbose']:
                         utils.print_failed(f'While adding file: {filename}')
@@ -212,7 +214,8 @@ class Downloader:
                     f.write(r.content)
                     utils.print_file_added(filename)
                     self.download_counter += 1
-                    handler.update_links(path, str(filename))
+                    if not self.client.args['no_save_links']:
+                        handler.update_links(path, str(filename))
             except BaseException:
                 if self.client.args['verbose']:
                     utils.print_failed(f'While adding file : {filename}')
@@ -230,7 +233,6 @@ class Downloader:
         self.__write__(handler, handler.absolute_path)
         if self.client.args['debug']:
             handler.remove_file
-
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
@@ -256,8 +258,9 @@ class Downloader:
         elif self.client.args['saved'] and self.client.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
-            utils.print_error('Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
-                              'See myreddit-dl --help for more information.')
+            utils.print_error(
+                'Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
+                'See myreddit-dl --help for more information.')
 
 
 if __name__ == '__main__':

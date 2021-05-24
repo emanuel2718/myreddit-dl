@@ -76,9 +76,15 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
-        '--save-links',
+        '--no-save-links',
         action='store_true',
-        help="Save a file with the post link mapped to the filename in the media folder",
+        help="Don't save links. Link file will not be created.",
+        required=False)
+
+    parser.add_argument(
+        '--get-link',
+        type=str,
+        help="Get the link to the post of the given media",
         required=False)
 
     parser.add_argument(

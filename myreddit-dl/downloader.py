@@ -185,10 +185,8 @@ class Downloader:
             return True
         return False
 
-    def get_filename_from_path(self, path):
-        return path.rpartition(os.sep)[-1]
 
-    def __write__(self, path) -> None:
+    def __write__(self, handler: 'FileHandler', path: str or list) -> None:
         if self.media_url is None:
             return
 
@@ -197,25 +195,27 @@ class Downloader:
             for p in path:
                 r = requests.get(p[0])
                 try:
-                    filename = self.get_filename_from_path(p[1])
+                    filename = handler.get_filename_from_path(p[1])
                     with open(p[1], 'wb') as f:
                         f.write(r.content)
                         utils.print_file_added(filename)
                         self.download_counter += 1
+                        handler.update_links(p[1], str(filename))
                 except BaseException:
                     if self.client.args['verbose']:
-                        utils.print_failed(f'Adding file: {filename}')
+                        utils.print_failed(f'While adding file: {filename}')
         else:
             r = requests.get(self.media_url)
             try:
                 with open(path, 'wb') as f:
-                    filename = self.get_filename_from_path(path)
+                    filename = handler.get_filename_from_path(path)
                     f.write(r.content)
                     utils.print_file_added(filename)
                     self.download_counter += 1
+                    handler.update_links(path, str(filename))
             except BaseException:
                 if self.client.args['verbose']:
-                    utils.print_failed(f'While Adding file : {filename}')
+                    utils.print_failed(f'While adding file : {filename}')
         return False
 
     def download(self, handler: 'FileHandler'):
@@ -227,7 +227,7 @@ class Downloader:
         if not os.path.exists(handler.base_path):
             os.makedirs(handler.base_path)
 
-        self.__write__(handler.absolute_path)
+        self.__write__(handler, handler.absolute_path)
         if self.client.args['debug']:
             handler.remove_file
 
@@ -243,6 +243,10 @@ class Downloader:
         self.__print_counters
 
     def start(self) -> None:
+        if self.client.args['get_link']:
+            handler = FileHandler(self)
+            handler.get_link(self.client.args['get_link'])
+            return
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)
         if self.client.args['upvote'] and not self.client.args['saved']:

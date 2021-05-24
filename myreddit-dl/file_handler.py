@@ -1,6 +1,7 @@
 import os
 import re
 import utils
+import json
 from urllib.parse import urlparse
 
 DEBUG_PATH = os.getcwd() + os.sep + 'test_dir' + os.sep
@@ -83,8 +84,6 @@ class FileHandler():
                 os.remove(self.absolute_path)
                 utils.print_file_removed(self.absolute_path)
 
-
-
     def get_filename(self, url: str, index='') -> str:
         extension = self.get_file_extension(url)
         if extension in ['.gif', '.gifv']:
@@ -100,6 +99,42 @@ class FileHandler():
             return ext
         except BaseException:
             utils.print_error(f'Getting the file extension of {url}\n')
+
+
+    def get_filename_from_path(self, path: str):
+        return path.rpartition(os.sep)[-1]
+
+    def update_links(self, path: str, filename: str):
+        json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
+        link = 'https://reddit.com' + str(self.cls._item.permalink)
+        try:
+            with open(json_file, 'r') as f:
+                data = json.load(f)
+                if filename not in data:
+                    data.update({filename: link})
+                else:
+                    utils.print_info(f'Repeated file: {filename}. Not added')
+
+        except IOError:
+            utils.print_info(f'Database created. {filename}')
+            data = {f'{filename}': f'{link}'}
+
+        with open(json_file, 'w') as f:
+            json.dump(data, f, indent=4)
+
+    def get_link(self, filename):
+        json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
+        try:
+            with open(json_file, 'r') as f:
+                data = json.load(f)
+                if filename in data:
+                    utils.print_link(f'{data[filename]}')
+                else:
+                    utils.print_error(f'No data found for {filename}')
+
+        except IOError:
+            utils.print_error(
+                'Database file not found. Must download content first to build database.')
 
 
 if __name__ == '__main__':

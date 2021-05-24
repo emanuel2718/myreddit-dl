@@ -3,3 +3,4 @@ myreddit-dl/config.ini
 myreddit-dl/config.backup
 media/
 test_dir/
+*.json

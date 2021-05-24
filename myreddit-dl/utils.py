@@ -46,6 +46,8 @@ def print_file_removed(filename: str) -> None:
 def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
+def print_link(msg: str) -> None:
+    print(f'[LINK] {msg}')
 
 def print_editing(msg: str) -> None:
     print(f'[EDITING] {msg}')

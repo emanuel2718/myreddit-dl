@@ -70,6 +70,20 @@ class FileHandler():
             return True
         return False
 
+    @property
+    def remove_file(self) -> None:
+        if isinstance(self.absolute_path, list):
+            for path in self.absolute_path:
+                if os.path.exists(path):
+                    os.remove(path)
+                    utils.print_file_removed(path)
+        else:
+            if os.path.exists(self.absolute_path):
+                os.remove(self.absolute_path)
+                utils.print_file_removed(self.absolute_path)
+
+
+
     def get_filename(self, url: str, index='') -> str:
         extension = self.get_file_extension(url)
         if extension in ['.gif', '.gifv']:

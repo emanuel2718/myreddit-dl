@@ -228,6 +228,9 @@ class Downloader:
             os.makedirs(handler.base_path)
         if self.__write__(handler.absolute_path):
             self.download_counter += 1
+            if self.client.args['debug']:
+                handler.remove_file
+
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:

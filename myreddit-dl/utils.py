@@ -39,8 +39,8 @@ def print_already_exists(filename: str) -> None:
     print(f'[ALREADY EXISTS] {filename}')
 
 
-def print_removing_file(filename: str) -> None:
-    print(f'[REMOVING] {filename}')
+def print_file_removed(filename: str) -> None:
+    print(f'[DELETE] {filename}')
 
 
 def print_info(msg: str) -> None:

@@ -3,8 +3,8 @@ import re
 import utils
 from urllib.parse import urlparse
 
-BASE_PATH = os.getcwd() + os.sep + 'media' + os.sep
-CURRENT_DIR = os.getcwd() + os.sep
+DEBUG_PATH = os.getcwd() + os.sep + 'test_dir' + os.sep
+DEFAULT_PATH = os.getcwd() + os.sep + 'media' + os.sep
 SEP = os.sep
 
 
@@ -12,6 +12,7 @@ class FileHandler():
     def __init__(self, cls: 'Downloader') -> None:
         self.cls = cls
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
+        self.path = DEBUG_PATH if self.cls.args['debug'] else DEFAULT_PATH
 
     @property
     def abs_path_list(self) -> list:
@@ -29,16 +30,16 @@ class FileHandler():
         # TODO: Eventually we want path resolution from path given with --path flag
         if self.cls.args['debug']:
             if self.cls.args['subreddit']:
-                return (CURRENT_DIR + 'test_dir' + SEP + self.cls.user + SEP
+                return (self.path + self.cls.user + SEP
                         + 'subreddits' + SEP + str(self.cls.subreddit) + SEP)
             else:
-                return (CURRENT_DIR + 'test_dir' + SEP + self.cls.user + SEP
-                        + self.cls.user + '_all' + SEP)
+                return (self.path + self.cls.user + SEP + self.cls.user + '_all' + SEP)
+
         if self.cls.args['subreddit']:
-            return (BASE_PATH + self.cls.user + SEP + 'subreddits'
+            return (self.path + self.cls.user + SEP + 'subreddits'
                     + SEP + str(self.cls.subreddit) + SEP)
         else:
-            return BASE_PATH + self.cls.user + SEP + self.cls.user + '_all' + SEP
+            return self.path + self.cls.user + SEP + self.cls.user + '_all' + SEP
 
     @property
     def absolute_path(self) -> list:
@@ -74,9 +75,9 @@ class FileHandler():
     def remove_file(self) -> None:
         if isinstance(self.absolute_path, list):
             for path in self.absolute_path:
-                if os.path.exists(path):
-                    os.remove(path)
-                    utils.print_file_removed(path)
+                if os.path.exists(path[1]):
+                    os.remove(path[1])
+                    utils.print_file_removed(path[1])
         else:
             if os.path.exists(self.absolute_path):
                 os.remove(self.absolute_path)
@@ -98,7 +99,7 @@ class FileHandler():
             _, ext = os.path.splitext(parsed.path)
             return ext
         except BaseException:
-            utils.print_error(url)
+            utils.print_error(f'Getting the file extension of {url}\n')
 
 
 if __name__ == '__main__':

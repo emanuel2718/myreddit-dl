@@ -188,7 +188,7 @@ class Downloader:
     def get_filename_from_path(self, path):
         return path.rpartition(os.sep)[-1]
 
-    def __write__(self, path) -> bool:
+    def __write__(self, path) -> None:
         if self.media_url is None:
             return
 
@@ -201,7 +201,7 @@ class Downloader:
                     with open(p[1], 'wb') as f:
                         f.write(r.content)
                         utils.print_file_added(filename)
-                        return True
+                        self.download_counter += 1
                 except BaseException:
                     if self.client.args['verbose']:
                         utils.print_failed(f'Adding file: {filename}')
@@ -212,7 +212,7 @@ class Downloader:
                     filename = self.get_filename_from_path(path)
                     f.write(r.content)
                     utils.print_file_added(filename)
-                    return True
+                    self.download_counter += 1
             except BaseException:
                 if self.client.args['verbose']:
                     utils.print_failed(f'While Adding file : {filename}')
@@ -226,10 +226,10 @@ class Downloader:
 
         if not os.path.exists(handler.base_path):
             os.makedirs(handler.base_path)
-        if self.__write__(handler.absolute_path):
-            self.download_counter += 1
-            if self.client.args['debug']:
-                handler.remove_file
+
+        self.__write__(handler.absolute_path)
+        if self.client.args['debug']:
+            handler.remove_file
 
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:

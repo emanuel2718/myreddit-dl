@@ -4,7 +4,8 @@ myreddit-dl
 
 
 # TODOLIST
-- [ ] --max-depth argument for max number of posts to search
+- [x] --max-depth argument for max number of posts to search
+- [ ] Make a link file (.user_links.txt)
 - [ ] Handle twitch clips
 - [ ] Think about more useful arguments
 - [ ] Use item.thumbnail picture for the GUI displays (maybe)

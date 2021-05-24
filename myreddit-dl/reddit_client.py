@@ -48,7 +48,8 @@ class RedditClient:
             user asked for the saved files with the (-U --upvote) flag.
             Otherwise, return None
         '''
-        return self.username.upvoted(limit=None) if self.args['upvote'] else None
+        return self.username.upvoted(
+            limit=self.args['max_depth']) if self.args['upvote'] else None
 
     @property
     def saves(self) -> 'User saved posts':
@@ -56,7 +57,8 @@ class RedditClient:
             user asked for the saved files with the (-S --saved) flag.
             Otherwise, return None
         '''
-        return self.username.saved(limit=None) if self.args['saved'] else None
+        return self.username.saved(
+            limit=self.args['max_depth']) if self.args['saved'] else None
 
 
 if __name__ == '__main__':

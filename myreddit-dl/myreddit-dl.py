@@ -16,34 +16,9 @@ from downloader import Downloader
 def get_cli_args():
     # TODO: fix the usage once all the cli args are done
     parser = argparse.ArgumentParser(
-        description='Reddit upvoted & saved media downloader',
+        description='Reddit user upvoted & saved media downloader',
         usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
         formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument(
-        '-v',
-        '--version',
-        help='displays the current version of myreddit-dl',
-        action='store_true')
-
-    parser.add_argument(
-        '-debug',
-        '--debug',
-        action='store_true',
-        help="Debug flag",
-        required=False)
-
-    parser.add_argument(
-        '--verbose',
-        action='store_true',
-        help="Print debugging information",
-        required=False)
-
-    parser.add_argument(
-        '--max-depth',
-        type=int,
-        help="Maximum amount of posts to iterate through",
-        required=False)
 
     parser.add_argument(
         '-U',
@@ -80,6 +55,39 @@ def get_cli_args():
         type=int,
         help="Limit the amount of media to download (default: None)",
         required=None)
+
+    parser.add_argument(
+        '-v',
+        '--version',
+        help='displays the current version of myreddit-dl',
+        action='store_true')
+
+    parser.add_argument(
+        '-debug',
+        '--debug',
+        action='store_true',
+        help="Debug flag",
+        required=False)
+
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help="Print debugging information",
+        required=False)
+
+    parser.add_argument(
+        '--save-links',
+        action='store_true',
+        help="Save a file with the post link mapped to the filename in the media folder",
+        required=False)
+
+    parser.add_argument(
+        '--max-depth',
+        type=int,
+        help="Maximum amount of posts to iterate through",
+        required=False)
+
+
 
     return vars(parser.parse_args())
 

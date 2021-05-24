@@ -141,6 +141,8 @@ class Downloader:
             return False
         if self._item.author is None:
             return False
+        if self._item.id is None:
+            return False
         if self._is_comment:
             return False
         if not self._is_valid_subreddit:
@@ -213,13 +215,12 @@ class Downloader:
         self.download_counter += 1
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
-        items.params['limit'] = self.client.max_depth
-        items.limit = self.client.max_depth
         for item in items:
             self._item = item
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
+                # TODO: handle this in a better way. Looks crowded
                 handler = FileHandler(self)
                 base_path = handler.base_path
                 absolute_path = handler.absolute_path
@@ -230,7 +231,7 @@ class Downloader:
                     continue
                 self.download(base_path, absolute_path)
 
-        if self.client.args['debug']:
+        if self.client.args['debug'] or self.client.args['verbose']:
             utils.print_info(f'{self.download_counter} items downloaded.')
             utils.print_info(f'{self.items_iterated} items iterated.')
 

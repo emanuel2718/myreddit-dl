@@ -103,7 +103,7 @@ class FileHandler():
 
     def get_filename(self, url: str, index='') -> str:
         extension = self.get_file_extension(url)
-        if extension in ['.gif', '.gifv']:
+        if extension == '.gifv':
             return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
                     '.mp4')
         return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
@@ -123,12 +123,11 @@ class FileHandler():
     def update_links(self, path: str, filename: str):
         # TODO: refactor json file to self
         json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
-        link = 'https://reddit.com' + str(self.cls._item.permalink)
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)
                 if filename not in data:
-                    data.update({filename: link})
+                    data.update({filename: self.cls.item_link})
                     if self.cls.args['verbose']:
                         utils.print_editing(f'Database addition {filename}')
                 else:
@@ -136,7 +135,7 @@ class FileHandler():
 
         except IOError:
             utils.print_info(f'Database created. {filename}')
-            data = {f'{filename}': f'{link}'}
+            data = {f'{filename}': f'{self.cls.item_link}'}
 
         with open(json_file, 'w') as f:
             json.dump(data, f, indent=4)

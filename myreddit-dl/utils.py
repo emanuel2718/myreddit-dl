@@ -15,8 +15,11 @@ USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
 
 
 # Helper printing functions
-def print_debug(msg: str) -> None:
-    print(f'[DEBUG] {msg}')
+def print_debug(*args) -> None:
+    print('\n' + '='*70)
+    for arg in args:
+        print(arg)
+    print('='*70 + '\n')
 
 
 def print_done(msg: str) -> None:

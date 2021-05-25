@@ -35,10 +35,9 @@ class Downloader:
     def item(self) -> 'RedditPostItem':
         return self._item
 
-    # TODO: add me!
-    # @property
-    # def item_link(self) -> str:
-    #   return 'https://reddit.com' + self._item.permalink
+    @property
+    def item_link(self) -> str:
+        return 'https://reddit.com' + self._item.permalink
 
     @property
     def user(self) -> str:
@@ -179,7 +178,7 @@ class Downloader:
             media_url = self._imgur_gallery_url
         elif self._item.url.startswith(utils.REDDIT_GALLERY_URL):
             media_url = self._reddit_gallery_url
-        elif self._item.url.endswith(('gif', 'gifv')):
+        elif self._item.url.endswith('gifv'):
             media_url = self._mp4_url_from_gif_url
         else:
             media_url = self._item.url  # all the png and jpg ready for download
@@ -216,7 +215,7 @@ class Downloader:
                            self.file_handler.get_filename_from_path(abs_path))
 
         if self.client.args['debug']:
-            self.file_handler.remove_file
+            #self.file_handler.remove_file
             self.file_handler.remove_database
 
     def can_download_item(self):

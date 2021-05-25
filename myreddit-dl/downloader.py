@@ -18,7 +18,7 @@ class Downloader:
 
         self._item = None  # current upvoted or saved post we are looking at.
         self.media_url = None
-        self.file_handler = None # will eventually hold current instance of FileHandler
+        self.file_handler = None  # will eventually hold current instance of FileHandler
         self.start()
 
     @property
@@ -36,8 +36,8 @@ class Downloader:
         return self._item
 
     # TODO: add me!
-    #@property
-    #def item_link(self) -> str:
+    # @property
+    # def item_link(self) -> str:
     #   return 'https://reddit.com' + self._item.permalink
 
     @property
@@ -222,6 +222,12 @@ class Downloader:
     def can_download_item(self):
         if self.media_url is None:
             return False
+
+        if self.client.args['no_video'] and self.file_handler.is_video:
+            if self.client.args['verbose']:
+                utils.print_skipped(self.file_handler.get_filename(self.media_url))
+            return False
+
         if self.file_handler.file_exist:
             if self.client.args['verbose']:
                 utils.print_info(

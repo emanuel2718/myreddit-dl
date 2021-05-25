@@ -42,6 +42,8 @@ def print_already_exists(filename: str) -> None:
 def print_file_removed(filename: str) -> None:
     print(f'[DELETE] {filename}')
 
+def print_skipped(msg: str) -> None:
+    print(f'[SKIPPED] {msg}')
 
 def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')

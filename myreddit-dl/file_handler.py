@@ -86,15 +86,20 @@ class FileHandler():
                 utils.print_file_removed(self.absolute_path)
 
     @property
-    def remove_database(self):
-        #TODO: refactor json file to self.
+    def remove_database(self) -> None:
+        # TODO: refactor json file to self.
         try:
-            if os.path.isfile(self.path+'.'+self.cls.user+'_links.json'):
-                os.remove(self.path+'.'+self.cls.user+'_links.json')
+            if os.path.isfile(self.path + '.' + self.cls.user + '_links.json'):
+                os.remove(self.path + '.' + self.cls.user + '_links.json')
                 utils.print_file_removed('Database removed')
         except IOError:
             utils.print_error('Deleting databse.')
 
+    @property
+    def is_video(self) -> bool:
+        if isinstance(self.media_url, list):
+            return True if self.get_filename(self.media_url[0]).endswith('mp4') else False
+        return True if self.get_filename(self.media_url).endswith('mp4') else False
 
     def get_filename(self, url: str, index='') -> str:
         extension = self.get_file_extension(url)

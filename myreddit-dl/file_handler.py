@@ -17,6 +17,7 @@ class FileHandler():
 
     @property
     def abs_path_list(self) -> list:
+        # TODO: Eventually change this to a dict {'url': url, 'path': path}
         count = 0
         filenames = []
         for url in self.media_url:
@@ -84,6 +85,17 @@ class FileHandler():
                 os.remove(self.absolute_path)
                 utils.print_file_removed(self.absolute_path)
 
+    @property
+    def remove_database(self):
+        #TODO: refactor json file to self.
+        try:
+            if os.path.isfile(self.path+'.'+self.cls.user+'_links.json'):
+                os.remove(self.path+'.'+self.cls.user+'_links.json')
+                utils.print_file_removed('Database removed')
+        except IOError:
+            utils.print_error('Deleting databse.')
+
+
     def get_filename(self, url: str, index='') -> str:
         extension = self.get_file_extension(url)
         if extension in ['.gif', '.gifv']:
@@ -104,6 +116,7 @@ class FileHandler():
         return path.rpartition(os.sep)[-1]
 
     def update_links(self, path: str, filename: str):
+        # TODO: refactor json file to self
         json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
         link = 'https://reddit.com' + str(self.cls._item.permalink)
         try:

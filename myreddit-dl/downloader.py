@@ -18,6 +18,7 @@ class Downloader:
 
         self._item = None  # current upvoted or saved post we are looking at.
         self.media_url = None
+        self.file_handler = None # will eventually hold current instance of FileHandler
         self.start()
 
     @property
@@ -33,6 +34,11 @@ class Downloader:
     @property
     def item(self) -> 'RedditPostItem':
         return self._item
+
+    # TODO: add me!
+    #@property
+    #def item_link(self) -> str:
+    #   return 'https://reddit.com' + self._item.permalink
 
     @property
     def user(self) -> str:
@@ -186,53 +192,44 @@ class Downloader:
             return True
         return False
 
-    def __write__(self, handler: 'FileHandler', path: str or list) -> None:
-        # TODO: This is getting a little too crowed. Handle this!
-        if self.media_url is None:
-            return
-
-        # This are gallery posts (multiple media per post)
-        if isinstance(path, list):
-            for p in path:
-                r = requests.get(p[0])
-                try:
-                    filename = handler.get_filename_from_path(p[1])
-                    with open(p[1], 'wb') as f:
-                        f.write(r.content)
-                        utils.print_file_added(filename)
-                        self.download_counter += 1
-                        if not self.client.args['no_save_links']:
-                            handler.update_links(p[1], str(filename))
-                except BaseException:
-                    if self.client.args['verbose']:
-                        utils.print_failed(f'While adding file: {filename}')
-        else:
-            r = requests.get(self.media_url)
-            try:
-                with open(path, 'wb') as f:
-                    filename = handler.get_filename_from_path(path)
-                    f.write(r.content)
-                    utils.print_file_added(filename)
-                    self.download_counter += 1
-                    if not self.client.args['no_save_links']:
-                        handler.update_links(path, str(filename))
-            except BaseException:
-                if self.client.args['verbose']:
-                    utils.print_failed(f'While adding file : {filename}')
-        return False
-
-    def download(self, handler: 'FileHandler'):
-        if handler.file_exist:
+    def __write__(self, url: str, path: str, filename: str):
+        try:
+            r = requests.get(url)
+            with open(path, 'wb') as f:
+                f.write(r.content)
+                utils.print_file_added(filename)
+                if not self.client.args['no_save_links']:
+                    self.file_handler.update_links(path, str(filename))
+                self.download_counter += 1
+        except BaseException:
             if self.client.args['verbose']:
-                utils.print_info(f'File exists: {handler.get_filename(self.media_url)}')
-            return
+                utils.print_failed(f'While adding file: {filename}')
 
-        if not os.path.exists(handler.base_path):
-            os.makedirs(handler.base_path)
+    def download(self):
+        abs_path = self.file_handler.absolute_path
+        if isinstance(abs_path, list):
+            for path in abs_path:
+                self.__write__(path[0], path[1],
+                               self.file_handler.get_filename_from_path(path[1]))
+        else:
+            self.__write__(self.media_url, abs_path,
+                           self.file_handler.get_filename_from_path(abs_path))
 
-        self.__write__(handler, handler.absolute_path)
         if self.client.args['debug']:
-            handler.remove_file
+            self.file_handler.remove_file
+            self.file_handler.remove_database
+
+    def can_download_item(self):
+        if self.media_url is None:
+            return False
+        if self.file_handler.file_exist:
+            if self.client.args['verbose']:
+                utils.print_info(
+                    f'File exists: {self.file_handler.get_filename(self.media_url)}')
+            return False
+        if not os.path.exists(self.file_handler.base_path):
+            os.makedirs(self.file_handler.base_path)
+        return True
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
@@ -240,8 +237,9 @@ class Downloader:
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
-                handler = FileHandler(self)
-                self.download(handler)
+                self.file_handler = FileHandler(self)
+                if self.can_download_item():
+                    self.download()
         self.__print_counters
 
     def start(self) -> None:

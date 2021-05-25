@@ -47,7 +47,7 @@ def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
 def print_link(msg: str) -> None:
-    print(f'[LINK] {msg}')
+    print(f'\n[LINK] {msg}\n')
 
 def print_editing(msg: str) -> None:
     print(f'[EDIT] {msg}')

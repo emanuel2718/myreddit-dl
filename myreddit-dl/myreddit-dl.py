@@ -76,9 +76,9 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
-        '--no-save-links',
+        '--save-links',
         action='store_true',
-        help="Don't save links. Link file will not be created.",
+        help="Save post links in a file. Link database will be created if it doesn't exist.",
         required=False)
 
     parser.add_argument(

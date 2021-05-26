@@ -197,7 +197,7 @@ class Downloader:
             with open(path, 'wb') as f:
                 f.write(r.content)
                 utils.print_file_added(filename)
-                if not self.client.args['no_save_links']:
+                if self.client.args['save_links']:
                     self.file_handler.update_links(path, str(filename))
                 self.download_counter += 1
         except BaseException:
@@ -215,7 +215,7 @@ class Downloader:
                            self.file_handler.get_filename_from_path(abs_path))
 
         if self.client.args['debug']:
-            #self.file_handler.remove_file
+            self.file_handler.remove_file
             self.file_handler.remove_database
 
     def can_download_item(self):

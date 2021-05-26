@@ -17,7 +17,7 @@ class FileHandler():
 
     @property
     def abs_path_list(self) -> list:
-        # TODO: Eventually change this to a dict {'url': url, 'path': path}
+        # TODO: Eventually change this to a dict {{'url': url, 'path': path}, ...}
         count = 0
         filenames = []
         for url in self.media_url:

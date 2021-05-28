@@ -16,15 +16,14 @@ class FileHandler():
         self.path = DEBUG_PATH if self.cls.args['debug'] else DEFAULT_PATH
 
     @property
-    def abs_path_list(self) -> list:
-        # TODO: Eventually change this to a dict {{'url': url, 'path': path}, ...}
-        count = 0
-        filenames = []
-        for url in self.media_url:
+    def gallery_data(self) -> list:
+        data = []
+        for index, url in enumerate(self.media_url):
             self.cls.set_media_url(url)
-            filenames.append([url, self.base_path + self.get_filename(url, str(count))])
-            count += 1
-        return filenames
+            data.append({'url': url,
+                         'path': self.base_path + self.get_filename(url, str(index))})
+        return data
+
 
     @property
     def base_path(self) -> str:
@@ -44,29 +43,19 @@ class FileHandler():
             return self.path + self.cls.user + SEP + self.cls.user + '_all' + SEP
 
     @property
-    def absolute_path(self) -> list:
+    def absolute_path(self) -> list or str:
         if isinstance(self.media_url, list):
-            return self.abs_path_list
+            return self.gallery_data
         return self.base_path + self.get_filename(self.media_url)
 
     @property
     def file_exist(self) -> bool:
         if isinstance(self.absolute_path, list):
-            # If the first path exists then all the other media
-            # in the gallery is also prenent.
-            # list of the type: [path, ..]
             try:
-                if os.path.isfile(self.absolute_path[0]):
+                if os.path.isfile(self.absolute_path[0]['path']):
                     return True
             except BaseException:
-                pass
-
-            # list of the type: [[url, path], ...]
-            try:
-                if os.path.isfile(self.absolute_path[0][1]):
-                    return True
-            except BaseException:
-                utils.print_error('File not found: {self.absolute_path}')
+                utils.print_error(f'File not found: {self.absolute_path[0]["path"]}')
                 return False
 
         elif os.path.isfile(self.absolute_path):
@@ -76,10 +65,10 @@ class FileHandler():
     @property
     def remove_file(self) -> None:
         if isinstance(self.absolute_path, list):
-            for path in self.absolute_path:
-                if os.path.exists(path[1]):
-                    os.remove(path[1])
-                    utils.print_file_removed(path[1])
+            for data in self.gallery_data:
+                if os.path.exists(data['path']):
+                    os.remove(data['path'])
+                    utils.print_file_removed(data['path'])
         else:
             if os.path.exists(self.absolute_path):
                 os.remove(self.absolute_path)
@@ -98,7 +87,7 @@ class FileHandler():
     @property
     def is_video(self) -> bool:
         if isinstance(self.media_url, list):
-            return True if self.get_filename(self.media_url[0]).endswith('mp4') else False
+            return True if self.get_filename(self.media_url[0]['url']).endswith('mp4') else False
         return True if self.get_filename(self.media_url).endswith('mp4') else False
 
     def get_filename(self, url: str, index='') -> str:
@@ -107,7 +96,7 @@ class FileHandler():
             return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
                     '.mp4')
         return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
-                str(self.get_file_extension(url)))
+                str(extension))
 
     def get_file_extension(self, url: str) -> str:
         try:
@@ -134,7 +123,7 @@ class FileHandler():
                     utils.print_info(f'Repeated file: {filename}. Not added')
 
         except IOError:
-            utils.print_info(f'Database created. {filename}')
+            utils.print_info(f'Database created for {self.cls.user}')
             data = {f'{filename}': f'{self.cls.item_link}'}
 
         with open(json_file, 'w') as f:

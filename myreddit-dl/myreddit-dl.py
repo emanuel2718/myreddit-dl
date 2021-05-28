@@ -37,10 +37,9 @@ def get_cli_args():
     parser.add_argument(
         '-nsfw',
         action='store_true',
-        help="Download NSFW content",
+        help="Enable NSFW content download",
         required=False)
 
-    # TODO: maybe add the option for more subreddits (i.e -sub sub_1 sub_2)
     parser.add_argument(
         '-sub',
         '--subreddit',

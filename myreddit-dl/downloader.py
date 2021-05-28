@@ -84,7 +84,7 @@ class Downloader:
     @property
     def _redgifs_url(self) -> str:
         try:
-            return item.preview['reddit_video_preview']['fallback_url']
+            return self._item.preview['reddit_video_preview']['fallback_url']
         except BaseException:
             pass
 
@@ -205,14 +205,14 @@ class Downloader:
                 utils.print_failed(f'While adding file: {filename}')
 
     def download(self):
-        abs_path = self.file_handler.absolute_path
-        if isinstance(abs_path, list):
-            for path in abs_path:
-                self.__write__(path[0], path[1],
-                               self.file_handler.get_filename_from_path(path[1]))
+        data = self.file_handler.absolute_path
+        if isinstance(data, list):
+            for d in data:
+                self.__write__(d['url'], d['path'],
+                               self.file_handler.get_filename_from_path(d['path']))
         else:
-            self.__write__(self.media_url, abs_path,
-                           self.file_handler.get_filename_from_path(abs_path))
+            self.__write__(self.media_url, data,
+                           self.file_handler.get_filename(self.media_url))
 
         if self.client.args['debug']:
             self.file_handler.remove_file
@@ -245,6 +245,8 @@ class Downloader:
                 self.file_handler = FileHandler(self)
                 if self.can_download_item():
                     self.download()
+            else:
+                print(item.domain)
         self.__print_counters
 
     def start(self) -> None:

@@ -87,10 +87,11 @@ class FileHandler():
     @property
     def is_video(self) -> bool:
         if isinstance(self.media_url, list):
-            return True if self.get_filename(self.media_url[0]['url']).endswith('mp4') else False
+            return True if self.get_filename(self.media_url[0]).endswith('mp4') else False
         return True if self.get_filename(self.media_url).endswith('mp4') else False
 
     def get_filename(self, url: str, index='') -> str:
+        url = url[0] if isinstance(url, list) else url
         extension = self.get_file_extension(url)
         if extension == '.gifv':
             return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +

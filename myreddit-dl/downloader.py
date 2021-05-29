@@ -222,9 +222,16 @@ class Downloader:
         if self.media_url is None:
             return False
 
+        if self.client.args['only_video'] and not self.file_handler.is_video:
+            if self.client.args['verbose']:
+                utils.print_skipped_image(
+                    self.file_handler.get_filename(self.media_url))
+            return False
+
         if self.client.args['no_video'] and self.file_handler.is_video:
             if self.client.args['verbose']:
-                utils.print_skipped(self.file_handler.get_filename(self.media_url))
+                utils.print_skipped_video(
+                    self.file_handler.get_filename(self.media_url))
             return False
 
         if self.file_handler.file_exist:
@@ -232,6 +239,7 @@ class Downloader:
                 utils.print_info(
                     f'File exists: {self.file_handler.get_filename(self.media_url)}')
             return False
+
         if not os.path.exists(self.file_handler.base_path):
             os.makedirs(self.file_handler.base_path)
         return True

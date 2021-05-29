@@ -87,6 +87,12 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
+        '--only-video',
+        action='store_true',
+        help="Only download video files (.mp4, .gif, .gifv, etc.)",
+        required=False)
+
+    parser.add_argument(
         '--get-link',
         type=str,
         help="Get the link to the post of the given media",

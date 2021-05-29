@@ -216,7 +216,7 @@ class Downloader:
 
         if self.client.args['debug']:
             self.file_handler.remove_file
-            self.file_handler.remove_database
+            self.file_handler.delete_database
 
     def can_download_item(self):
         if self.media_url is None:

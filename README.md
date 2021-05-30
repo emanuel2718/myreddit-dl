@@ -30,50 +30,25 @@ NOTE: This is a work in progress not all features are yet implemented. When this
 
 # Installation
 
-- [PyPi](#pypi)
-- [Manual Installation With Setuptools](#manual-installion-with-setuptools)
-- [Manual Installation Without Setuptools](#manual-installion-without-setuptools)
+&nbsp; 
 
-### PyPi
-
-1. Install using pip (not working)
-
-    ```console
-    pip install myreddit-dl
-    ```
-
-### Manual Installation With Setuptools (not working)
-
-
-1. Clone this repository into desired location
-
-    ```console
-    git clone https://github.com/emanuel2718/myreddit-dl
-    ```
-
-2. Install `setuptools` from pip if needed
-
-    ```console
-    pip install setuptools
-    ```
-
-3. Cd into `myreddit-dl` and install
-    ```console
-    cd myreddit-dl
-    sudo python setup.py install
-    ```
-    
-### Manual Installation Without Setuptools
-```console
-git clone https://github.com/emanuel2718/myreddit-dl
-cd myreddit-dl/myreddit-dl
-python3 myreddit-dl [REQUIRED] [OPTIONS]
+### 1. Clone this repository
+```sh
+$ git clone https://github.com/emanuel2718/myreddit-dl
+$ cd myreddit-dl
 ```
 
-# How to use
+### 2. Install requirements
+```sh
+$ pip install -r requirements.txt
+```
 
-```console
-myreddit-dl [REQUIRED] [OPTIONS]
+### 3. Fill reddit developer app information in `myreddit-dl/config.ini`
+
+
+# How to use
+```sh
+$ python3 myreddit-dl [REQUIRED] [OPTIONS]
 ```
 
 ##### REQUIRED
@@ -107,6 +82,8 @@ myreddit-dl [REQUIRED] [OPTIONS]
 
 # Advanced Configuration
 
+coming soon
+
 # TODOLIST
 - [x] --max-depth argument for max number of posts to search
 - [x] Make a link file (.user_links.txt)
@@ -122,6 +99,7 @@ myreddit-dl [REQUIRED] [OPTIONS]
 - [ ] use os.path.expanduser('~') for home dir
 - [ ] Add logging of adding to path on which we are saving media
 - [ ] improve logging messages
+- [ ] upload to PyPy and add instruction here
 - [ ] Make custom exceptions `exceptions.py`
 - [ ] allow the user to enter custom paths `-p, --path` to download media to.
 - [ ] fix argparser description

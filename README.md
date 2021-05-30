@@ -34,7 +34,7 @@
 
 ### PyPi
 
-0. Install using pip
+1. Install using pip
 
 *not working yet*
 

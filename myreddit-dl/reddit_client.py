@@ -27,7 +27,7 @@ class RedditClient:
     def check_if_valid_user(self) -> None:
         if self.username:
             return
-        util.print_error(util.USER_NOT_FOUND)
+        utils.print_error(utils.USER_NOT_FOUND)
         exit(1)
 
     @property

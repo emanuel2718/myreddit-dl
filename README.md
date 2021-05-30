@@ -22,19 +22,8 @@
 
 # Pre-Installation
 
-##### 1. [Create a developer application on reddit](https://www.reddit.com/prefs/apps)
+[Create a developer application on reddit if needed](https://github.com/emanuel2718/myreddit-dl/blob/master/PRE_INSTALL.md)
 
-##### 2. Create a reddit app (shown below)
-
-![PrefsPanel01](https://user-images.githubusercontent.com/55965894/108690386-27288d80-74af-11eb-81a9-a0854ca7304d.png)
-
-##### 3. Fill information
-
-![AppName02](https://user-images.githubusercontent.com/55965894/108690978-d2394700-74af-11eb-9992-e81f8ba71bd4.png)
-
-##### 4. Reddit developer acccount example data shown below
-
-![info03](https://user-images.githubusercontent.com/55965894/108691188-10cf0180-74b0-11eb-84c7-c600ee2440ea.png)
 
 
 # Installation
@@ -44,6 +33,7 @@
 
 ### PyPi
 
+0. Install using pip
 ```console
 pip install myreddit-dl
 ```
@@ -76,33 +66,32 @@ myreddit-dl [REQUIRED] [OPTIONS]
 
 ##### REQUIRED
 
-```console
-  -U, --upvote            Download upvoted media
-  -S, --saved             Download saved media
-```
+    -U, --upvote            Download upvoted media
+    -S, --saved             Download saved media
+
 
 ##### OPTIONS
 
-```console
-Optional arguments
-  -h, --help                show this message and exit
-  -v, --version             display the current version of myreddit-dl
-  -verbose, --verbose       print extra information while downloading
+&nbsp; 
 
-  --sub [SUBREDDIT ...]     only download media that belongs to the given subreddit(s)
-  --limit [LIMIT]           limit the amount of media to download (default: None)
-  --max-depth [MAX_DEPTH]   maximum amount of posts to iterate through
+###### Optional arguments:
+    -h, --help                show this message and exit
+    -v, --version             display the current version of myreddit-dl
+    -verbose, --verbose       print extra information while downloading
 
-  --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
-  --only-video              only download video files
-  -nsfw, --nsfw             enable NSFW content download (default: False)
+    --sub [SUBREDDIT ...]     only download media that belongs to the given subreddit(s)
+    --limit [LIMIT]           limit the amount of media to download (default: None)
+    --max-depth [MAX_DEPTH]   maximum amount of posts to iterate through
 
-Metadata:
-  --save-metadata           enable this to save downloaded media metadata in a file
-  --get-metadata FILE       print reddit metadata of given FILE
-  --get-link FILE           print reddit link of given FILE
-  --get-title FILE          print post title of given FILE
-```
+    --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
+    --only-video              only download video files
+    --nsfw, --nsfw             enable NSFW content download (default: False)
+
+###### Metadata:
+    --save-metadata           enable this to save downloaded media metadata in a file
+    --get-metadata FILE       print reddit metadata of given FILE
+    --get-link FILE           print reddit link of given FILE
+    --get-title FILE          print post title of given FILE
 
 # Advanced Configuration
 

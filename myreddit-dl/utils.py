@@ -1,3 +1,4 @@
+
 # Domains and usefuls urls
 REDDIT_GALLERY_URL = 'https://www.reddit.com/gallery/'
 NSFW_DOMAINS = {'redgifs.com', 'erome.com'}
@@ -54,8 +55,16 @@ def print_skipped_video(msg: str) -> None:
 def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
-def print_link(msg: str) -> None:
-    print(f'\n[LINK] {msg}\n')
+def print_data(msg: str) -> None:
+    print(f'\n{msg}\n')
+
+def print_metadata(data: dict) -> None:
+    data = data.replace("{", '').replace("}", '').replace("'", '').split(',')
+    print('\n\t[METADATA FOUND]\n')
+    for i in data:
+        print(i.lstrip(' '))
+    print('\n')
+
 
 def print_editing(msg: str) -> None:
     print(f'[EDIT] {msg}')

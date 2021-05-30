@@ -110,14 +110,23 @@ class FileHandler():
     def get_filename_from_path(self, path: str):
         return path.rpartition(os.sep)[-1]
 
-    def update_links(self, path: str, filename: str):
+    def _get_item_metadata(self) -> dict:
+        return {'Author': self.cls.item_author,
+                'Subreddit': self.cls.item_subreddit,
+                'Title': self.cls.item_title,
+                'Upvotes': self.cls.item_upvotes,
+                'NSFW': self.cls.item_nsfw,
+                'Link': self.cls.item_link
+                }
+
+    def save_metadata(self, path: str, filename: str):
         # TODO: refactor json file to self
         json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)
                 if filename not in data:
-                    data.update({filename: self.cls.item_link})
+                    data[filename] = self._get_item_metadata()
                     if self.cls.args['verbose']:
                         utils.print_editing(f'Database addition {filename}')
                 else:
@@ -125,18 +134,22 @@ class FileHandler():
 
         except IOError:
             utils.print_info(f'Database created for {self.cls.user}')
-            data = {f'{filename}': f'{self.cls.item_link}'}
+            data = {f'{filename}': self._get_item_metadata()}
 
         with open(json_file, 'w') as f:
             json.dump(data, f, indent=4)
 
-    def get_link(self, filename):
+    def get_metadata(self, filename, meta_type=None):
         json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)
-                if filename in data:
-                    utils.print_link(f'{data[filename]}')
+                if filename in data.keys():
+                    if meta_type:
+                        utils.print_data(
+                            f'[{meta_type.upper()}] {data[filename][meta_type]}')
+                    else:
+                        utils.print_metadata(f'{data[filename]}')
                 else:
                     utils.print_error(f'No data found for {filename}')
 

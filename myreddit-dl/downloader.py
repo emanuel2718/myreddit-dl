@@ -19,6 +19,7 @@ class Downloader:
         self._item = None  # current upvoted or saved post we are looking at.
         self.media_url = None
         self.file_handler = None  # will eventually hold current instance of FileHandler
+        self.check_metadata_request()
         self.start()
 
     @property
@@ -38,6 +39,26 @@ class Downloader:
     @property
     def item_link(self) -> str:
         return 'https://reddit.com' + self._item.permalink
+
+    @property
+    def item_title(self) -> str:
+        return str(self._item.title)
+
+    @property
+    def item_subreddit(self) -> str:
+        return str(self._item.subreddit_name_prefixed)
+
+    @property
+    def item_upvotes(self) -> int:
+        return self._item.ups
+
+    @property
+    def item_author(self) -> str:
+        return str(self._item.author)
+
+    @property
+    def item_nsfw(self) -> bool:
+        return self._item.over_18
 
     @property
     def user(self) -> str:
@@ -197,8 +218,8 @@ class Downloader:
             with open(path, 'wb') as f:
                 f.write(r.content)
                 utils.print_file_added(filename)
-                if self.client.args['save_links']:
-                    self.file_handler.update_links(path, str(filename))
+                if self.client.args['save_metadata']:
+                    self.file_handler.save_metadata(path, str(filename))
                 self.download_counter += 1
         except BaseException:
             if self.client.args['verbose']:
@@ -257,11 +278,16 @@ class Downloader:
                 print(item.domain)
         self.__print_counters
 
+    def check_metadata_request(self):
+        options = {'get_metadata': None, 'get_link': 'Link', 'get_title': 'Title'}
+        for opt, val in options.items():
+            if self.client.args[opt]:
+                handler = FileHandler(self)
+                handler.get_metadata(self.client.args[opt], val)
+                exit(0)
+                return
+
     def start(self) -> None:
-        if self.client.args['get_link']:
-            handler = FileHandler(self)
-            handler.get_link(self.client.args['get_link'])
-            return
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)
         if self.client.args['upvote'] and not self.client.args['saved']:

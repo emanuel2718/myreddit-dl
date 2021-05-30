@@ -20,6 +20,8 @@ def get_cli_args():
         usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
         formatter_class=argparse.RawTextHelpFormatter)
 
+    metadata_group = parser.add_argument_group('Metadata')
+
     parser.add_argument(
         '-U',
         '--upvote',
@@ -74,11 +76,6 @@ def get_cli_args():
         help="Print debugging information",
         required=False)
 
-    parser.add_argument(
-        '--save-links',
-        action='store_true',
-        help="Save post links in a file. Link database will be created if it doesn't exist.",
-        required=False)
 
     parser.add_argument(
         '--no-video',
@@ -92,10 +89,29 @@ def get_cli_args():
         help="Only download video files (.mp4, .gif, .gifv, etc.)",
         required=False)
 
+    metadata_group.add_argument(
+        '--save-metadata',
+        action='store_true',
+        help="Save post metadata in a file. Link, title, and number of upvotes of the post",
+        required=False)
+
+    metadata_group.add_argument(
+        '--get-metadata',
+        type=str,
+        default=None,
+        help="Print reddit metadata of a file if metadata for that file has been saved with --save-metadata",
+        required=False)
+
     parser.add_argument(
         '--get-link',
         type=str,
-        help="Get the link to the post of the given media",
+        help="Get the reddit post link of the given media",
+        required=False)
+
+    parser.add_argument(
+        '--get-title',
+        type=str,
+        help="Get the post title of the given media",
         required=False)
 
     parser.add_argument(

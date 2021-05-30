@@ -34,9 +34,10 @@
 ### PyPi
 
 0. Install using pip
-```console
-pip install myreddit-dl
-```
+
+    ```console
+    pip install myreddit-dl
+    ```
 
 ### Manual Installation
 

@@ -3,7 +3,9 @@
 <h4>Download upvoted and saved media from Reddit</h4>
 </div>
 
+&nbsp; 
 
+NOTE: This is a work in progress not all features are yet implemented. When this is ready for production this message will not be here and `myreddit-dl` will be found on PyPi
 
 # Index
 

@@ -89,8 +89,8 @@ Optional arguments
   -v, --version             display the current version of myreddit-dl
   -verbose, --verbose       print extra information while downloading
 
+  --sub [SUBREDDIT ...]     only download media that belongs to the given subreddit(s)
   --limit [LIMIT]           limit the amount of media to download (default: None)
-  --sub [SUBREDDIT]         only download media that belongs to the given subreddit
   --max-depth [MAX_DEPTH]   maximum amount of posts to iterate through
 
   --no-video                don't download video files (.mp4, .gif, .gifv, etc.)

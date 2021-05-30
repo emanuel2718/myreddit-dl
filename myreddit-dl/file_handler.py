@@ -20,23 +20,29 @@ class FileHandler():
         data = []
         for index, url in enumerate(self.media_url):
             self.cls.set_media_url(url)
-            data.append({'url': url,
-                         'path': self.base_path + self.get_filename(url, str(index))})
+            data.append({'url': url, 'path': self.base_path +
+                         self.get_filename(url, str(index))})
         return data
-
 
     @property
     def base_path(self) -> str:
         # TODO: This is messy. Clean this!
-        # TODO: Eventually we want path resolution from path given with --path flag
+        # TODO: Eventually we want path resolution from path given with --path
+        # flag
         if self.cls.args['debug']:
-            if self.cls.args['subreddit']:
+            if self.cls.args['sub']:
                 return (self.path + self.cls.user + SEP
                         + 'subreddits' + SEP + str(self.cls.subreddit) + SEP)
             else:
-                return (self.path + self.cls.user + SEP + self.cls.user + '_all' + SEP)
+                return (
+                    self.path +
+                    self.cls.user +
+                    SEP +
+                    self.cls.user +
+                    '_all' +
+                    SEP)
 
-        if self.cls.args['subreddit']:
+        if self.cls.args['sub']:
             return (self.path + self.cls.user + SEP + 'subreddits'
                     + SEP + str(self.cls.subreddit) + SEP)
         else:
@@ -55,7 +61,8 @@ class FileHandler():
                 if os.path.isfile(self.absolute_path[0]['path']):
                     return True
             except BaseException:
-                utils.print_error(f'File not found: {self.absolute_path[0]["path"]}')
+                utils.print_error(
+                    f'File not found: {self.absolute_path[0]["path"]}')
                 return False
 
         elif os.path.isfile(self.absolute_path):
@@ -87,17 +94,19 @@ class FileHandler():
     @property
     def is_video(self) -> bool:
         if isinstance(self.media_url, list):
-            return True if self.get_filename(self.media_url[0]).endswith('mp4') else False
-        return True if self.get_filename(self.media_url).endswith('mp4') else False
+            return True if self.get_filename(
+                self.media_url[0]).endswith('mp4') else False
+        return True if self.get_filename(
+            self.media_url).endswith('mp4') else False
 
     def get_filename(self, url: str, index='') -> str:
         url = url[0] if isinstance(url, list) else url
         extension = self.get_file_extension(url)
         if extension == '.gifv':
-            return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
-                    '.mp4')
-        return (str(self.cls.item.author) + '_' + str(self.cls.item.id) + index +
-                str(extension))
+            return (str(self.cls.item.author) + '_' +
+                    str(self.cls.item.id) + index + '.mp4')
+        return (str(self.cls.item.author) + '_' +
+                str(self.cls.item.id) + index + str(extension))
 
     def get_file_extension(self, url: str) -> str:
         try:

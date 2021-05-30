@@ -164,9 +164,9 @@ class Downloader:
             Also returns True if the user didn't specify any subreddit, as
             then it is implied that the user wants all the posts.
         '''
-        if self.client.args['subreddit'] is None:
+        if self.client.args['sub'] is None:
             return True
-        return self.subreddit in self.client.args['subreddit']
+        return self.subreddit in self.client.args['sub']
 
     def _is_valid_post(self) -> bool:
         # TODO: think about a more clean way to handle this.
@@ -229,8 +229,11 @@ class Downloader:
         data = self.file_handler.absolute_path
         if isinstance(data, list):
             for d in data:
-                self.__write__(d['url'], d['path'],
-                               self.file_handler.get_filename_from_path(d['path']))
+                self.__write__(
+                    d['url'],
+                    d['path'],
+                    self.file_handler.get_filename_from_path(
+                        d['path']))
         else:
             self.__write__(self.media_url, data,
                            self.file_handler.get_filename(self.media_url))
@@ -274,12 +277,13 @@ class Downloader:
                 self.file_handler = FileHandler(self)
                 if self.can_download_item():
                     self.download()
-            else:
-                print(item.domain)
         self.__print_counters
 
     def check_metadata_request(self):
-        options = {'get_metadata': None, 'get_link': 'Link', 'get_title': 'Title'}
+        options = {
+            'get_metadata': None,
+            'get_link': 'Link',
+            'get_title': 'Title'}
         for opt, val in options.items():
             if self.client.args[opt]:
                 handler = FileHandler(self)

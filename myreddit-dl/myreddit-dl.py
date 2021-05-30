@@ -20,48 +20,22 @@ def get_cli_args():
         usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
         formatter_class=argparse.RawTextHelpFormatter)
 
+    required_group = parser.add_argument_group('Required Arguments')
     metadata_group = parser.add_argument_group('Metadata')
 
-    parser.add_argument(
+    required_group.add_argument(
         '-U',
         '--upvote',
         action='store_true',
         help="Download upvoted media",
         required=False)
 
-    parser.add_argument(
+    required_group.add_argument(
         '-S',
         '--saved',
         action='store_true',
         help="Download saved media",
         required=False)
-
-    parser.add_argument(
-        '-nsfw',
-        action='store_true',
-        help="Enable NSFW content download",
-        required=False)
-
-    parser.add_argument(
-        '-sub',
-        '--subreddit',
-        type=str,
-        nargs='*',
-        help="Only download media that belongs to the given subreddit(s)",
-        required=None)
-
-    parser.add_argument(
-        '-l',
-        '--limit',
-        type=int,
-        help="Limit the amount of media to download (default: None)",
-        required=None)
-
-    parser.add_argument(
-        '-v',
-        '--version',
-        help='displays the current version of myreddit-dl',
-        action='store_true')
 
     parser.add_argument(
         '-debug',
@@ -71,11 +45,36 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
+        '-v',
+        '--version',
+        help='displays the current version of myreddit-dl',
+        action='store_true')
+
+    parser.add_argument(
+        '-verbose',
         '--verbose',
         action='store_true',
-        help="Print debugging information",
+        help="print debugging information",
         required=False)
 
+    parser.add_argument(
+        '--sub',
+        type=str,
+        nargs='*',
+        help="only download media that belongs to the given subreddit(s)",
+        required=None)
+
+    parser.add_argument(
+        '--limit',
+        type=int,
+        help="limit the amount of media to download (default: None)",
+        required=None)
+
+    parser.add_argument(
+        '--max-depth',
+        type=int,
+        help="Maximum amount of posts to iterate through",
+        required=False)
 
     parser.add_argument(
         '--no-video',
@@ -87,6 +86,13 @@ def get_cli_args():
         '--only-video',
         action='store_true',
         help="Only download video files (.mp4, .gif, .gifv, etc.)",
+        required=False)
+
+    parser.add_argument(
+        '-nsfw',
+        '--nsfw',
+        action='store_true',
+        help="Enable NSFW content download",
         required=False)
 
     metadata_group.add_argument(
@@ -102,22 +108,16 @@ def get_cli_args():
         help="Print reddit metadata of a file if metadata for that file has been saved with --save-metadata",
         required=False)
 
-    parser.add_argument(
+    metadata_group.add_argument(
         '--get-link',
         type=str,
         help="Get the reddit post link of the given media",
         required=False)
 
-    parser.add_argument(
+    metadata_group.add_argument(
         '--get-title',
         type=str,
         help="Get the post title of the given media",
-        required=False)
-
-    parser.add_argument(
-        '--max-depth',
-        type=int,
-        help="Maximum amount of posts to iterate through",
         required=False)
 
     return vars(parser.parse_args())

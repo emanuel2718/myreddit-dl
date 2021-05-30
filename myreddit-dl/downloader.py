@@ -6,7 +6,6 @@ import re
 import requests
 import utils
 from file_handler import FileHandler
-from tqdm import tqdm
 
 
 class Downloader:

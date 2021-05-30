@@ -34,17 +34,14 @@
 
 ### PyPi
 
-1. Install using pip
-
-*not working yet*
+1. Install using pip (not working)
 
     ```console
     pip install myreddit-dl
     ```
 
-### Manual Installation With Setuptools
+### Manual Installation With Setuptools (not working)
 
-*not working yet*
 
 1. Clone this repository into desired location
 
@@ -65,12 +62,11 @@
     ```
     
 ### Manual Installation Without Setuptools
-
-    ```console
-    git clone https://github.com/emanuel2718/myreddit-dl
-    cd myreddit-dl/myreddit-dl
-    python3 myreddit-dl [REQUIRED] [OPTIONS]
-    ```
+```console
+git clone https://github.com/emanuel2718/myreddit-dl
+cd myreddit-dl/myreddit-dl
+python3 myreddit-dl [REQUIRED] [OPTIONS]
+```
 
 # How to use
 

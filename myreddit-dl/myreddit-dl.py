@@ -62,6 +62,7 @@ def get_cli_args():
         type=str,
         nargs='*',
         help="only download media that belongs to the given subreddit(s)",
+        metavar='SUBREDDIT SUBREDDIT',
         required=None)
 
     parser.add_argument(
@@ -73,51 +74,54 @@ def get_cli_args():
     parser.add_argument(
         '--max-depth',
         type=int,
-        help="Maximum amount of posts to iterate through",
+        help="maximum amount of posts to iterate through",
         required=False)
 
     parser.add_argument(
         '--no-video',
         action='store_true',
-        help="Don't download video files (.mp4, .gif, .gifv, etc.)",
+        help="don't download video files (.mp4, .gif, .gifv, etc.)",
         required=False)
 
     parser.add_argument(
         '--only-video',
         action='store_true',
-        help="Only download video files (.mp4, .gif, .gifv, etc.)",
+        help="only download video files (.mp4, .gif, .gifv, etc.)",
         required=False)
 
     parser.add_argument(
         '-nsfw',
         '--nsfw',
         action='store_true',
-        help="Enable NSFW content download",
+        help="enable NSFW content download",
         required=False)
 
     metadata_group.add_argument(
         '--save-metadata',
         action='store_true',
-        help="Save post metadata in a file. Link, title, and number of upvotes of the post",
+        help="enable this to save the metadata of downloaded media in a file",
         required=False)
 
     metadata_group.add_argument(
         '--get-metadata',
         type=str,
         default=None,
-        help="Print reddit metadata of a file if metadata for that file has been saved with --save-metadata",
+        help="print reddit metadata of given FILE",
+        metavar='FILE',
         required=False)
 
     metadata_group.add_argument(
         '--get-link',
         type=str,
-        help="Get the reddit post link of the given media",
+        help="print reddit link of given FILE",
+        metavar='FILE',
         required=False)
 
     metadata_group.add_argument(
         '--get-title',
         type=str,
-        help="Get the post title of the given media",
+        help="print post title of given FILE",
+        metavar='FILE',
         required=False)
 
     return vars(parser.parse_args())

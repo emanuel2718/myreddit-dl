@@ -85,7 +85,7 @@ myreddit-dl [REQUIRED] [OPTIONS]
 
 ```console
 Optional arguments
-  -h, --help                show help message and exit
+  -h, --help                show this message and exit
   -v, --version             display the current version of myreddit-dl
   -verbose, --verbose       print extra information while downloading
 
@@ -99,9 +99,9 @@ Optional arguments
 
 Metadata:
   --save-metadata           enable this to save downloaded media metadata in a file
-  --get-metadata [FILE]     print reddit metadata of given FILE
-  --get-link [FILE]         print reddit link of given FILE
-  --get-title [FILE]        print post title of given FILE
+  --get-metadata FILE       print reddit metadata of given FILE
+  --get-link FILE           print reddit link of given FILE
+  --get-title FILE          print post title of given FILE
 ```
 
 # Advanced Configuration

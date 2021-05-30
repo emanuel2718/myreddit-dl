@@ -14,10 +14,9 @@ from downloader import Downloader
 
 
 def get_cli_args():
-    # TODO: fix the usage once all the cli args are done
     parser = argparse.ArgumentParser(
-        description='Reddit user upvoted & saved media downloader',
-        usage='myreddit-dl [-h] [-all] [-user] [-L LIMIT] [-s SUBREDDIT] [-p PATH]',
+        description='Reddit upvoted & saved media downloader',
+        usage='myreddit-dl [-h] [REQUIRED] [OPTIONS]',
         formatter_class=argparse.RawTextHelpFormatter)
 
     required_group = parser.add_argument_group('Required Arguments')

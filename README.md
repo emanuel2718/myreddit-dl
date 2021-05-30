@@ -10,11 +10,12 @@ myreddit-dl
 - [x] use permalink to save with post title (append reddit.com)
 - [x] refactor absolute_path + url from gallery_data posts...
 - [x] `--only-videos` flag?
+- [x] refactor entirely link saving to metadata saving for --get-metadata
+- [x] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
+- [x] `--get-title` flag in which the title of the given image is returned.
+- [ ] Clean titles (remove unicodes like \u00f1)
 - [ ] use os.path.expanduser('~') for home dir
 - [ ] Add logging of adding to path on which we are saving media
-- [ ] refactor entirely link saving to metadata saving for --get-metadata
-- [ ] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
-- [ ] `--get-title` flag in which the title of the given image is returned.
 - [ ] improve logging messages
 - [ ] Make custom exceptions `exceptions.py`
 - [ ] allow the user to enter custom paths `-p, --path` to download media to.

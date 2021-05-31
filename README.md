@@ -94,6 +94,10 @@ coming soon
 - [x] refactor entirely link saving to metadata saving for --get-metadata
 - [x] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
 - [x] `--get-title` flag in which the title of the given image is returned.
+- [x] Make flag to store in either: sub_user_id.ext or user_id.ext (eliminate sub folders?)
+- [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))
+- [ ] Make test suite
+- [ ] Handle better the --debug flag. Better logging
 - [ ] If config.ini is empty run script to ask user for the information
 - [ ] Clean titles (remove unicodes like \u00f1)
 - [ ] use os.path.expanduser('~') for home dir

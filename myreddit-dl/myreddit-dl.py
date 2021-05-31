@@ -36,6 +36,18 @@ def get_cli_args():
         help="Download saved media",
         required=False)
 
+    required_group.add_argument(
+        '--by-user',
+        action='store_true',
+        help="store media with author name in front of filename",
+        required=False)
+
+    required_group.add_argument(
+        '--by-subreddit',
+        action='store_true',
+        help="store media with subreddit name in front of filename",
+        required=False)
+
     parser.add_argument(
         '-debug',
         '--debug',
@@ -79,13 +91,13 @@ def get_cli_args():
     parser.add_argument(
         '--no-video',
         action='store_true',
-        help="don't download video files (.mp4, .gif, .gifv, etc.)",
+        help="don't download video files",
         required=False)
 
     parser.add_argument(
         '--only-video',
         action='store_true',
-        help="only download video files (.mp4, .gif, .gifv, etc.)",
+        help="only download video files",
         required=False)
 
     parser.add_argument(

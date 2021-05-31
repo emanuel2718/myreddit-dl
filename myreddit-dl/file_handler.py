@@ -4,7 +4,8 @@ import utils
 import json
 from urllib.parse import urlparse
 
-DEBUG_PATH = os.getcwd() + os.sep + 'test_dir' + os.sep
+# TODO: refactor this
+DEBUG_PATH = os.getcwd() + os.sep + 'test_media' + os.sep
 DEFAULT_PATH = os.getcwd() + os.sep + 'media' + os.sep
 SEP = os.sep
 
@@ -26,27 +27,7 @@ class FileHandler():
 
     @property
     def base_path(self) -> str:
-        # TODO: This is messy. Clean this!
-        # TODO: Eventually we want path resolution from path given with --path
-        # flag
-        if self.cls.args['debug']:
-            if self.cls.args['sub']:
-                return (self.path + self.cls.user + SEP
-                        + 'subreddits' + SEP + str(self.cls.subreddit) + SEP)
-            else:
-                return (
-                    self.path +
-                    self.cls.user +
-                    SEP +
-                    self.cls.user +
-                    '_all' +
-                    SEP)
-
-        if self.cls.args['sub']:
-            return (self.path + self.cls.user + SEP + 'subreddits'
-                    + SEP + str(self.cls.subreddit) + SEP)
-        else:
-            return self.path + self.cls.user + SEP + self.cls.user + '_all' + SEP
+        return self.path + self.cls.user + SEP
 
     @property
     def absolute_path(self) -> list or str:
@@ -83,7 +64,6 @@ class FileHandler():
 
     @property
     def delete_database(self) -> None:
-        # TODO: refactor json file to self.
         try:
             if os.path.isfile(self.path + '.' + self.cls.user + '_links.json'):
                 os.remove(self.path + '.' + self.cls.user + '_links.json')
@@ -101,18 +81,27 @@ class FileHandler():
 
     def get_filename(self, url: str, index='') -> str:
         url = url[0] if isinstance(url, list) else url
-        extension = self.get_file_extension(url)
-        if extension == '.gifv':
-            return (str(self.cls.item.author) + '_' +
-                    str(self.cls.item.id) + index + '.mp4')
-        return (str(self.cls.item.author) + '_' +
-                str(self.cls.item.id) + index + str(extension))
+        extension = str(self.get_file_extension(url))
+
+        if self.cls.args['by_user']:
+            return str(self.cls.item_author + '_' + self.cls.item_id
+                       + index + extension)
+
+        sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
+        return str(sub + '_' + self.cls.item_author + '_' + self.cls.item_id
+                   + index + extension)
+
+    def get_subreddit_without_prefix(self, sub: str) -> str:
+        ''' Receive a r/subreddit string and return subreddit without
+            the r/ prefix
+        '''
+        return sub.split('/')[1]
 
     def get_file_extension(self, url: str) -> str:
         try:
             parsed = urlparse(url)
             _, ext = os.path.splitext(parsed.path)
-            return ext
+            return ext if not ext.endswith('.gifv') else '.mp4'
         except BaseException:
             utils.print_error(f'Getting the file extension of {url}\n')
 
@@ -129,7 +118,6 @@ class FileHandler():
                 }
 
     def save_metadata(self, path: str, filename: str):
-        # TODO: refactor json file to self
         json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
         try:
             with open(json_file, 'r') as f:

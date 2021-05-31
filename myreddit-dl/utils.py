@@ -14,13 +14,32 @@ DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
 
 USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
 
+MISSING_STORING_METHOD = (
+    'Required argument missing.\n\n'
+    'Please, Specify storing method.\n\n'
+    'Options (--by-user or --by-subreddit): \n\n'
+    '--by-subreddit  store media with post subreddit '
+    'name in front of filename\n'
+    '--by-user\tstore media with post author name in front '
+    'of filename\n')
+
+MISSING_DOWNLOAD_SOURCE = ('Required argument missing.\n\n'
+                           'Please, specify source of media to download\n\n'
+                           'Options (-U and/or -S): \n\n'
+                           '-U   download upvoted media\n'
+                           '-S   download saved media\n')
+
+
+# MISSING_SEARCH_SOURCE = ('Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
+# 'See myreddit-dl --help for more information.')
+
 
 # Helper printing functions
 def print_debug(*args) -> None:
-    print('\n' + '='*70)
+    print('\n' + '=' * 70)
     for arg in args:
         print(arg)
-    print('='*70 + '\n')
+    print('=' * 70 + '\n')
 
 
 def print_done(msg: str) -> None:
@@ -46,17 +65,22 @@ def print_already_exists(filename: str) -> None:
 def print_file_removed(filename: str) -> None:
     print(f'[DELETE] {filename}')
 
+
 def print_skipped_image(msg: str) -> None:
     print(f'[SKIPPED IMAGE] {msg}')
+
 
 def print_skipped_video(msg: str) -> None:
     print(f'[SKIPPED VIDEO] {msg}')
 
+
 def print_info(msg: str) -> None:
     print(f'[INFO] {msg}')
 
+
 def print_data(msg: str) -> None:
     print(f'\n{msg}\n')
+
 
 def print_metadata(data: dict) -> None:
     data = data.replace("{", '').replace("}", '').replace("'", '').split(',')
@@ -68,6 +92,7 @@ def print_metadata(data: dict) -> None:
 
 def print_editing(msg: str) -> None:
     print(f'[EDIT] {msg}')
+
 
 def print_ok(msg: str) -> None:
     print(f'[OK] {msg}')

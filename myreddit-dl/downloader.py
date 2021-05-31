@@ -36,8 +36,12 @@ class Downloader:
         return self._item
 
     @property
+    def item_id(self) -> str:
+        return self._item.id
+
+    @property
     def item_link(self) -> str:
-        return 'https://reddit.com' + self._item.permalink
+        return str('https://reddit.com' + self._item.permalink)
 
     @property
     def item_title(self) -> str:
@@ -69,7 +73,7 @@ class Downloader:
 
     @property
     def subreddit(self) -> str:
-        return self._item.subreddit
+        return str(self._item.subreddit)
 
     @property
     def curr_media_url(self) -> str or list:
@@ -237,9 +241,9 @@ class Downloader:
             self.__write__(self.media_url, data,
                            self.file_handler.get_filename(self.media_url))
 
-        if self.client.args['debug']:
-            self.file_handler.remove_file
-            self.file_handler.delete_database
+        # if self.client.args['debug']:
+        #    self.file_handler.remove_file
+        #    self.file_handler.delete_database
 
     def can_download_item(self):
         if self.media_url is None:
@@ -291,6 +295,10 @@ class Downloader:
                 return
 
     def start(self) -> None:
+        if not self.client.args['by_user'] and not self.client.args['by_subreddit']:
+            utils.print_error(utils.MISSING_STORING_METHOD)
+            exit(1)
+
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)
         if self.client.args['upvote'] and not self.client.args['saved']:
@@ -300,9 +308,7 @@ class Downloader:
         elif self.client.args['saved'] and self.client.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
-            utils.print_error(
-                'Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
-                'See myreddit-dl --help for more information.')
+            utils.print_error(utils.MISSING_DOWNLOAD_SOURCE)
 
 
 if __name__ == '__main__':

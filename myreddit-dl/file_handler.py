@@ -65,6 +65,8 @@ class FileHandler():
     @property
     def delete_database(self) -> None:
         try:
+            # TODO: REFACTOR ME!
+            # TODO: change user_links.json ----> user_metadata.json
             if os.path.isfile(self.path + '.' + self.cls.user + '_links.json'):
                 os.remove(self.path + '.' + self.cls.user + '_links.json')
                 utils.print_file_removed('Database deleted')

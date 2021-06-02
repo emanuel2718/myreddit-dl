@@ -1,7 +1,6 @@
-import utils
 import configparser
 import praw
-import pprint
+import utils
 
 
 class RedditClient:
@@ -11,24 +10,25 @@ class RedditClient:
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
 
-        # NOTE: self.user is None if config file is empty
+        self.username = None
         self.reddit_instance = self.build_reddit_instance()
-        self.username = self.reddit_instance.user.me()
-        self.check_if_valid_user()
 
     def build_reddit_instance(self) -> praw.Reddit:
-        return praw.Reddit(
+        instance = praw.Reddit(
             user_agent='MyReddit-dl',
             client_id=self.config['REDDIT']['client_id'],
             client_secret=self.config['REDDIT']['client_secret'],
             username=self.config['REDDIT']['username'],
             password=self.config['REDDIT']['password'])
+        try:
+            self.username = instance.user.me()
+            utils.print_info('Reddit Instance build status: OK!\n')
+            return instance
 
-    def check_if_valid_user(self) -> None:
-        if self.username:
-            return
-        utils.print_error(utils.USER_NOT_FOUND)
-        exit(1)
+        except BaseException:
+            utils.print_info('Reddit Instance build status: Failed.')
+            utils.print_error(utils.USER_NOT_FOUND)
+            exit(1)
 
     @property
     def max_depth(self):

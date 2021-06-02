@@ -54,9 +54,11 @@ def print_failed(msg: str) -> None:
     print(f'[FAILED] {msg}')
 
 
+def print_file_added_verbose(filename: str, path: str) -> None:
+    print(f'[ADDED] {filename} at {path}')
+
 def print_file_added(filename: str) -> None:
     print(f'[ADDED] {filename}')
-
 
 def print_already_exists(filename: str) -> None:
     print(f'[ALREADY EXISTS] {filename}')

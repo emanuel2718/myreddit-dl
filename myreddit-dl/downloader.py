@@ -220,9 +220,13 @@ class Downloader:
             r = requests.get(url)
             with open(path, 'wb') as f:
                 f.write(r.content)
-                utils.print_file_added(filename)
                 if self.client.args['save_metadata']:
                     self.file_handler.save_metadata(path, str(filename))
+
+                if self.client.args['verbose']:
+                    utils.print_file_added_verbose(filename, path)
+                else:
+                    utils.print_file_added(filename)
                 self.download_counter += 1
         except BaseException:
             if self.client.args['verbose']:
@@ -232,18 +236,15 @@ class Downloader:
         data = self.file_handler.absolute_path
         if isinstance(data, list):
             for d in data:
-                self.__write__(
-                    d['url'],
-                    d['path'],
-                    self.file_handler.get_filename_from_path(
-                        d['path']))
+                filename = self.file_handler.get_filename_from_path(d['path'])
+                self.__write__(d['url'], d['path'], filename)
         else:
-            self.__write__(self.media_url, data,
-                           self.file_handler.get_filename(self.media_url))
+            filename = self.file_handler.get_filename(self.media_url)
+            self.__write__(self.media_url, data, filename)
 
-        # if self.client.args['debug']:
-        #    self.file_handler.remove_file
-        #    self.file_handler.delete_database
+        if self.client.args['debug']:
+            self.file_handler.remove_file
+            self.file_handler.delete_database
 
     def can_download_item(self):
         if self.media_url is None:

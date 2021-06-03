@@ -2,6 +2,7 @@ import os
 import re
 import utils
 import json
+from defaults import Defaults
 from urllib.parse import urlparse
 
 # TODO: refactor this
@@ -13,6 +14,7 @@ SEP = os.sep
 class FileHandler():
     def __init__(self, cls: 'Downloader') -> None:
         self.cls = cls
+        self.defaults = Defaults(self.cls.args)
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
         self.path = DEBUG_PATH if self.cls.args['debug'] else DEFAULT_PATH
 
@@ -85,13 +87,13 @@ class FileHandler():
         url = url[0] if isinstance(url, list) else url
         extension = str(self.get_file_extension(url))
 
-        if self.cls.args['by_user']:
-            return str(self.cls.item_author + '_' + self.cls.item_id
-                       + index + extension)
+        #if self.cls.args['by_user']:
+        return str(self.cls.item_author + '_' + self.cls.item_id
+                    + index + extension)
 
-        sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
-        return str(sub + '_' + self.cls.item_author + '_' + self.cls.item_id
-                   + index + extension)
+        #sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
+        #return str(sub + '_' + self.cls.item_author + '_' + self.cls.item_id
+        #           + index + extension)
 
     def get_subreddit_without_prefix(self, sub: str) -> str:
         ''' Receive a r/subreddit string and return subreddit without

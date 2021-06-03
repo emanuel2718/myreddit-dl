@@ -1,3 +1,11 @@
+# config file
+CFG_FILE = 'config.ini'
+CFG_SAVE_DEFAULT = 'subreddit'
+
+INVALID_CFG_OPTION = ('Invalid save option.\n\n'
+                      'Valid Options:\n'
+                      '1. --config-save username\n'
+                      '2. --config-save subreddit\n')
 
 # Domains and usefuls urls
 REDDIT_GALLERY_URL = 'https://www.reddit.com/gallery/'

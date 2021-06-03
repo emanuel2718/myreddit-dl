@@ -73,6 +73,9 @@ $ python3 myreddit-dl [REQUIRED] [OPTIONS]
     --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
     --only-video              only download video files
     --nsfw, --nsfw             enable NSFW content download (default: False)
+    
+###### Confgiguration:
+    --config-save OPT         change how the filenames are saved (by username or subreddit)
 
 ###### Metadata:
     --save-metadata           enable this to save downloaded media metadata in a file
@@ -95,6 +98,9 @@ coming soon
 - [x] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
 - [x] `--get-title` flag in which the title of the given image is returned.
 - [x] Make flag to store in either: sub_user_id.ext or user_id.ext (eliminate sub folders?)
+- [ ] Give the user the option to insert the credentials if no credentials are found.
+- [ ] Sanitize metadata titles (remove unicode characters)
+- [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
 - [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))
 - [ ] Make test suite
 - [ ] Handle better the --debug flag. Better logging

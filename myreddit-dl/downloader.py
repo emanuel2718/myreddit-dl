@@ -6,6 +6,7 @@ import re
 import requests
 import utils
 from datetime import datetime
+from defaults import Defaults
 from file_handler import FileHandler
 
 
@@ -302,9 +303,10 @@ class Downloader:
                 return
 
     def start(self) -> None:
-        if not self.client.args['by_user'] and not self.client.args['by_subreddit']:
-            utils.print_error(utils.MISSING_STORING_METHOD)
-            exit(1)
+        if self.args['config_save']:
+            defaults = Defaults()
+            defaults.set_config_save(str(self.args['config_save']))
+            exit(0)
 
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)

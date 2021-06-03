@@ -6,6 +6,7 @@ Program: myreddit-dl
 Description: Reddit upvoted & saved media downloader
 """
 import argparse
+import textwrap
 import configparser
 import sys
 from gui import run_gui
@@ -19,7 +20,9 @@ def get_cli_args():
         usage='myreddit-dl [-h] [REQUIRED] [OPTIONS]',
         formatter_class=argparse.RawTextHelpFormatter)
 
-    required_group = parser.add_argument_group('Required Arguments')
+    required_group = parser.add_argument_group(
+        'Required Arguments (only required to download)')
+    config_group = parser.add_argument_group('Configuration')
     metadata_group = parser.add_argument_group('Metadata')
 
     required_group.add_argument(
@@ -36,16 +39,15 @@ def get_cli_args():
         help="Download saved media",
         required=False)
 
-    required_group.add_argument(
-        '--by-user',
-        action='store_true',
-        help="store media with author name in front of filename",
-        required=False)
-
-    required_group.add_argument(
-        '--by-subreddit',
-        action='store_true',
-        help="store media with subreddit name in front of filename",
+    config_group.add_argument(
+        '--config-save',
+        type=str,
+        default=None,
+        help=textwrap.dedent('''\
+        change how the filenames are saved as (username_id.ext or subreddit_id.ext).
+        Defaults: subreddit
+        '''),
+        metavar='OPT',
         required=False)
 
     parser.add_argument(
@@ -69,14 +71,6 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
-        '--sub',
-        type=str,
-        nargs='*',
-        help="only download media that belongs to the given subreddit(s)",
-        metavar='SUBREDDIT SUBREDDIT',
-        required=None)
-
-    parser.add_argument(
         '--limit',
         type=int,
         help="limit the amount of media to download (default: None)",
@@ -86,6 +80,7 @@ def get_cli_args():
         '--max-depth',
         type=int,
         help="maximum amount of posts to iterate through",
+        metavar='DEPTH',
         required=False)
 
     parser.add_argument(
@@ -101,11 +96,18 @@ def get_cli_args():
         required=False)
 
     parser.add_argument(
-        '-nsfw',
         '--nsfw',
         action='store_true',
         help="enable NSFW content download",
         required=False)
+
+    parser.add_argument(
+        '--sub',
+        type=str,
+        nargs='*',
+        help="only download media that belongs to the given subreddit(s)",
+        metavar='SUBREDDIT',
+        required=None)
 
     metadata_group.add_argument(
         '--save-metadata',
@@ -148,7 +150,8 @@ def run():
 
     # GUI version of the app
     else:
-        run_gui()
+        print('GUI version coming soon...')
+        #run_gui()
 
 
 if __name__ == '__main__':

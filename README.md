@@ -72,7 +72,7 @@ $ python3 myreddit-dl [REQUIRED] [OPTIONS]
 
     --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
     --only-video              only download video files
-    --nsfw, --nsfw             enable NSFW content download (default: False)
+    --nsfw                    enable NSFW content download (default: False)
     
 ###### Confgiguration:
     --config-save OPT         change how the filenames are saved (by username or subreddit)

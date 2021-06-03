@@ -67,8 +67,8 @@ class FileHandler():
         try:
             # TODO: REFACTOR ME!
             # TODO: change user_links.json ----> user_metadata.json
-            if os.path.isfile(self.path + '.' + self.cls.user + '_links.json'):
-                os.remove(self.path + '.' + self.cls.user + '_links.json')
+            if os.path.isfile(self.path + self.cls.user + '_metadata.json'):
+                os.remove(self.path + self.cls.user + '_metadata.json')
                 utils.print_file_removed('Database deleted')
         except IOError:
             utils.print_error('While deleting databse.')
@@ -114,13 +114,14 @@ class FileHandler():
         return {'Author': self.cls.item_author,
                 'Subreddit': self.cls.item_subreddit,
                 'Title': self.cls.item_title,
+                'Link': self.cls.item_link,
                 'Upvotes': self.cls.item_upvotes,
                 'NSFW': self.cls.item_nsfw,
-                'Link': self.cls.item_link
+                'Post creation date': self.cls.item_creation_date
                 }
 
     def save_metadata(self, path: str, filename: str):
-        json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
+        json_file = str(self.path) + str(self.cls.user) + '_metadata.json'
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)
@@ -139,7 +140,7 @@ class FileHandler():
             json.dump(data, f, indent=4)
 
     def get_metadata(self, filename, meta_type=None):
-        json_file = str(self.path) + '.' + str(self.cls.user) + '_links.json'
+        json_file = str(self.path) + str(self.cls.user) + '_metadata.json'
         try:
             with open(json_file, 'r') as f:
                 data = json.load(f)

@@ -5,6 +5,7 @@ import praw
 import re
 import requests
 import utils
+from datetime import datetime
 from file_handler import FileHandler
 
 
@@ -62,6 +63,11 @@ class Downloader:
     @property
     def item_nsfw(self) -> bool:
         return self._item.over_18
+
+    @property
+    def item_creation_date(self) -> str:
+        time_utc = self._item.created_utc
+        return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
     @property
     def user(self) -> str:
@@ -223,8 +229,8 @@ class Downloader:
                 if self.client.args['save_metadata']:
                     self.file_handler.save_metadata(path, str(filename))
 
-                if self.client.args['verbose']:
-                    utils.print_file_added_verbose(filename, path)
+                if self.client.args['debug']:
+                    utils.print_file_added_debug(filename, path)
                 else:
                     utils.print_file_added(filename)
                 self.download_counter += 1

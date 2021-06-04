@@ -14,9 +14,11 @@ SEP = os.sep
 class FileHandler():
     def __init__(self, cls: 'Downloader') -> None:
         self.cls = cls
-        self.defaults = Defaults(self.cls.args)
+        self.defaults = Defaults(True) if self.cls.args['debug'] else Defaults()
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
-        self.path = DEBUG_PATH if self.cls.args['debug'] else DEFAULT_PATH
+        self.path = self.defaults.get_base_path()
+        self.path = self.path if self.path.endswith('/') else self.path + os.sep
+
 
     @property
     def gallery_data(self) -> list:

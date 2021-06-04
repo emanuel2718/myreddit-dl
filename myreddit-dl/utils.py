@@ -1,5 +1,5 @@
 # config file
-CFG_FILE = 'config.ini'
+CFG_FILENAME = 'config.ini'
 CFG_SAVE_DEFAULT = 'subreddit'
 
 INVALID_CFG_OPTION = ('Invalid save option.\n\n'

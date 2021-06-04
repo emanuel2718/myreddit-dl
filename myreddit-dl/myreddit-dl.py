@@ -46,8 +46,25 @@ def get_cli_args():
         help=textwrap.dedent('''\
         change how the filenames are saved as (username_id.ext or subreddit_id.ext).
         Defaults: subreddit
+
         '''),
         metavar='OPT',
+        required=False)
+
+    config_group.add_argument(
+        '--config-path',
+        type=str,
+        default=None,
+        help=textwrap.dedent('''\
+        path to the folder were media will be downloaded to
+
+        Examples:
+        --config-path $HOME/media_chosen_folder/custom_chosen_folder/
+        --config-path ~/random/destination_folder/
+
+        Default Path: $HOME/Pictures/User_myreddit/
+        '''),
+        metavar='PATH',
         required=False)
 
     parser.add_argument(

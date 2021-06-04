@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+# TODO: refactor this entire file.
 
 # Project directory: myreddit-dl/myreddit-dl/
 PROJECT_DIR = str(Path(__file__).parent) + os.sep
@@ -9,7 +10,7 @@ PROJECT_PARENT_DIR = str(Path(__file__).parent.parent) + os.sep
 
 # config file
 CFG_FILENAME = PROJECT_DIR + 'config.ini'
-CFG_SAVE_DEFAULT = 'subreddit'
+CFG_PREFIX_DEFAULT = 'subreddit'
 
 INVALID_CFG_OPTION = ('Invalid save option.\n\n'
                       'Valid Options:\n'

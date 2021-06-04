@@ -40,12 +40,20 @@ def get_cli_args():
         required=False)
 
     config_group.add_argument(
-        '--config-save',
+        '--config-prefix',
         type=str,
         default=None,
         help=textwrap.dedent('''\
-        change how the filenames are saved as (username_id.ext or subreddit_id.ext).
-        Defaults: subreddit
+        change how the filenames are prefixed (post author username and/or post subreddit name)
+
+        Options:
+
+            '--config-prefix username'           ---> username_id.extension
+            '--config-prefix username subreddit' ---> username_subreddit_id.extension
+            '--config-prefix subreddit username' ---> subreddit_username_id.exension
+            '--config-prefix subreddit'          ---> subreddit_id.exension
+
+        Default: subreddit ---> subreddit_id.extension
 
         '''),
         metavar='OPT',
@@ -59,8 +67,17 @@ def get_cli_args():
         path to the folder were media will be downloaded to
 
         Examples:
-        --config-path $HOME/media_chosen_folder/custom_chosen_folder/
-        --config-path ~/random/destination_folder/
+
+        To download the media to the folder ~/Pictures/reddit_media:
+            --config-path $HOME/Pictures/reddit_media
+                                or
+            --config-path ~/Pictures/reddit_media
+
+        To download the media to the current working directory:
+            --config-path ./
+
+        To download the media to a folder in the current working directory
+            --config-path ./random_folder_destination
 
         Default Path: $HOME/Pictures/User_myreddit/
         '''),

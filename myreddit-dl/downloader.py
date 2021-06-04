@@ -304,13 +304,13 @@ class Downloader:
                 return
 
     def start(self) -> None:
-        if self.args['config_save']:
-            Defaults().set_config_save(str(self.args['config_save']))
+        if self.args['config_prefix']:
+            Defaults().set_config_prefix(str(self.args['config_prefix']))
             exit(0)
 
         if self.args['config_path']:
             if self.args['config_path'].lower() == 'default':
-                Defaults().set_path_to_default(str(self.user))
+                Defaults().set_path_to_default()
             else:
                 Defaults().set_base_path(str(self.args['config_path']))
             exit(0)

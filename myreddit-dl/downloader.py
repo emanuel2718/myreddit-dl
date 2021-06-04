@@ -20,7 +20,7 @@ class Downloader:
         self._item = None  # current upvoted or saved post we are looking at.
         self.media_url = None
         self.file_handler = None  # will eventually hold current instance of FileHandler
-        self.check_metadata_request()
+        self._check_metadata_request()
         self.start()
 
     @property
@@ -275,8 +275,9 @@ class Downloader:
                     f'File exists: {self.file_handler.get_filename(self.media_url)}')
             return False
 
-        if not os.path.exists(self.file_handler.base_path):
-            os.makedirs(self.file_handler.base_path)
+        # NOTE: DONT DO THIS HERE. REFACTOR ME!
+        if not os.path.exists(self.file_handler.get_path()):
+            self.file_handler.create_path()
         return True
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
@@ -290,7 +291,7 @@ class Downloader:
                     self.download()
         self.__print_counters
 
-    def check_metadata_request(self):
+    def _check_metadata_request(self):
         options = {
             'get_metadata': None,
             'get_link': 'Link',

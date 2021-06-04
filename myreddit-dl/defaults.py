@@ -1,3 +1,4 @@
+import pathlib
 import utils
 import configparser
 import os
@@ -8,6 +9,7 @@ class Defaults:
         self.debug = debug
         self.config = configparser.ConfigParser()
         self.HOME_DIR = os.path.expanduser('~')
+        self.PROJECT_DIR = utils.PROJECT_DIR
 
     def __write_config(self, section: str, key: str, value: str) -> None:
         self.config.set(section, key, value)
@@ -74,45 +76,21 @@ class Defaults:
             return path
         return None # not valid path
 
+    @property
+    def media_folder(self) -> str:
+        return str(self.PROJECT_DIR + 'media' + os.sep)
+
 
     def get_metadata_file(self, username: str) -> str:
-        return f'{username}_metadata.json'
+        return self.media_folder + username + '_metadata.json'
 
+    def get_file_prefix(self) -> str:
+        self.config.read(utils.CFG_FILENAME)
+        return str(self.config['DEFAULT']['filename_save'])
 
     def get_base_path(self) -> str:
         if self.debug:
-            return str(os.getcwd() + os.sep + 'test_media' + os.sep)
+            return str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)
 
         self.config.read(utils.CFG_FILENAME)
         return str(self.config['DEFAULT']['path'])
-
-        # TODO: might want to double check that the current option is valid
-        #       in case of user manually changing it in the config.ini
-
-        # NOTE: media/user_metadata.json will store only the metadata of all
-        # the users
-
-        # NOTE: Case: We are in debug mode
-        #   myreddit-dl/debug_dir
-
-        # NOTE: Case: NOT path given or given path is NOT valid.
-        #   $HOME/Pictures/reddit_user/ ...
-
-        # NOTE: Case: Given path is valid
-        #   $PATH/reddit_user/ ...
-
-
-#    def _parse_path(self) -> str:
-#        if self.arg_dict['debug']:
-#            return os.getcwd() + os.sep + 'test_media' + os.sep
-#
-#        given_path = self.config['PATH']['path']
-#
-#        # no path given. Default to $HOME/Pictures
-#        if len(given_path) == 0:
-#            if os.path.isdir(self.DEFAULT_DIR):
-#                return self.DEFAULT_DIR
-#        else:
-#            if os.path.isdir(given_path):
-#                return given_path
-#            else:

@@ -8,7 +8,7 @@ class RedditClient:
     def __init__(self, arg_dict: dict) -> None:
         self.arg_dict = arg_dict
         self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        self.config.read(utils.CFG_FILENAME)
 
         self.username = None
         self.reddit_instance = self.build_reddit_instance()

@@ -1,5 +1,14 @@
+import os
+from pathlib import Path
+
+
+# Project directory: myreddit-dl/myreddit-dl/
+PROJECT_DIR = str(Path(__file__).parent) + os.sep
+# Project parent directory: myreddit-dl/
+PROJECT_PARENT_DIR = str(Path(__file__).parent.parent) + os.sep
+
 # config file
-CFG_FILENAME = 'config.ini'
+CFG_FILENAME = PROJECT_DIR + 'config.ini'
 CFG_SAVE_DEFAULT = 'subreddit'
 
 INVALID_CFG_OPTION = ('Invalid save option.\n\n'

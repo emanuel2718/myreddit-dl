@@ -5,11 +5,6 @@ import json
 from defaults import Defaults
 from urllib.parse import urlparse
 
-# TODO: refactor this
-DEBUG_PATH = os.getcwd() + os.sep + 'test_media' + os.sep
-DEFAULT_PATH = os.getcwd() + os.sep + 'media' + os.sep
-SEP = os.sep
-
 
 class FileHandler():
     def __init__(self, cls: 'Downloader') -> None:
@@ -18,26 +13,48 @@ class FileHandler():
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
         self.path = self.defaults.get_base_path()
         self.path = self.path if self.path.endswith('/') else self.path + os.sep
+        self.json_file = self.defaults.get_metadata_file(self.cls.user)
 
+    def create_path(self):
+        if os.path.isdir(self.path):
+            return
+        try:
+            os.makedirs(self.path)
+            utils.print_info(f'Path created: {self.path}')
+        except BaseException:
+            utils.print_error(f'Invalid path: {self.path}')
+
+    def get_path(self) -> str:
+        return self.path
+
+    def get_prefix(self) -> str:
+        # TODO: the user will be able to select with --config-save:
+        #       1. subreddit_user_id.ext (--config-save subreddit user)
+        #       2. subreddit_id.ext (--config-save subreddit)
+        #       3. user_subreddit_id.ext (--config-save user subreddit)
+        #       4. user_id.ext (--config-save user)
+        #       BETTER YET: Ask user to select from a set of options with (1, 2, 3, 4)
+
+        ''' Returns {chosen prefix}_'''
+        sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
+        if self.defaults.get_file_prefix() == 'username':
+            return str(self.cls.item_author) + '_'
+        return str(sub) + '_'
 
     @property
     def gallery_data(self) -> list:
         data = []
         for index, url in enumerate(self.media_url):
             self.cls.set_media_url(url)
-            data.append({'url': url, 'path': self.base_path +
+            data.append({'url': url, 'path': self.path +
                          self.get_filename(url, str(index))})
         return data
-
-    @property
-    def base_path(self) -> str:
-        return self.path + self.cls.user + SEP
 
     @property
     def absolute_path(self) -> list or str:
         if isinstance(self.media_url, list):
             return self.gallery_data
-        return self.base_path + self.get_filename(self.media_url)
+        return self.path + self.get_filename(self.media_url)
 
     @property
     def file_exist(self) -> bool:
@@ -69,10 +86,8 @@ class FileHandler():
     @property
     def delete_database(self) -> None:
         try:
-            # TODO: REFACTOR ME!
-            # TODO: change user_links.json ----> user_metadata.json
-            if os.path.isfile(self.path + self.cls.user + '_metadata.json'):
-                os.remove(self.path + self.cls.user + '_metadata.json')
+            if os.path.isfile(self.json_file):
+                os.remove(self.json_file)
                 utils.print_file_removed('Database deleted')
         except IOError:
             utils.print_error('While deleting databse.')
@@ -89,13 +104,7 @@ class FileHandler():
         url = url[0] if isinstance(url, list) else url
         extension = str(self.get_file_extension(url))
 
-        #if self.cls.args['by_user']:
-        return str(self.cls.item_author + '_' + self.cls.item_id
-                    + index + extension)
-
-        #sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
-        #return str(sub + '_' + self.cls.item_author + '_' + self.cls.item_id
-        #           + index + extension)
+        return str(self.get_prefix() + self.cls.item_id + index + extension)
 
     def get_subreddit_without_prefix(self, sub: str) -> str:
         ''' Receive a r/subreddit string and return subreddit without
@@ -125,9 +134,8 @@ class FileHandler():
                 }
 
     def save_metadata(self, path: str, filename: str):
-        json_file = str(self.path) + str(self.cls.user) + '_metadata.json'
         try:
-            with open(json_file, 'r') as f:
+            with open(self.json_file, 'r') as f:
                 data = json.load(f)
                 if filename not in data:
                     data[filename] = self._get_item_metadata()
@@ -140,13 +148,12 @@ class FileHandler():
             utils.print_info(f'Database created for {self.cls.user}')
             data = {f'{filename}': self._get_item_metadata()}
 
-        with open(json_file, 'w') as f:
+        with open(self.json_file, 'w') as f:
             json.dump(data, f, indent=4)
 
     def get_metadata(self, filename, meta_type=None):
-        json_file = str(self.path) + str(self.cls.user) + '_metadata.json'
         try:
-            with open(json_file, 'r') as f:
+            with open(self.json_file, 'r') as f:
                 data = json.load(f)
                 if filename in data.keys():
                     if meta_type:

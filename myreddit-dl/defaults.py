@@ -15,7 +15,7 @@ class Defaults:
             self.config.write(config_file)
 
     def set_path_to_default(self, username: str) -> None:
-        default_path = f'{self.HOME_DIR}/Pictures/{username}_media/'
+        default_path = f'{self.HOME_DIR}{os.sep}Pictures{os.sep}{username}_media{os.sep}'
         self.config.read(utils.CFG_FILENAME)
         self.__write_config(f'DEFAULT', 'path', default_path)
         utils.print_info(f'Path set to default: {default_path}')

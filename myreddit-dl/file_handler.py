@@ -37,9 +37,15 @@ class FileHandler():
 
         ''' Returns {chosen prefix}_'''
         sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
-        if self.defaults.get_file_prefix() == 'username':
-            return str(self.cls.item_author) + '_'
-        return str(sub) + '_'
+        username = str(self.cls.item_author)
+        current_set_prefix = self.defaults.get_file_prefix()
+        if current_set_prefix == 'username':
+            return username + '_'
+        elif current_set_prefix == 'subreddit':
+            return sub + '_'
+        elif current_set_prefix == 'subreddit_username':
+            return sub + '_' + username + '_'
+        return username + '_' + sub + '_'
 
     @property
     def gallery_data(self) -> list:

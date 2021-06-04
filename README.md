@@ -99,8 +99,8 @@ coming soon
 - [x] `--get-title` flag in which the title of the given image is returned.
 - [x] Make flag to store in either: sub_user_id.ext or user_id.ext (eliminate sub folders?)
 - [x] Fix bug caused by using getcwd() in entire codebase...
-- [ ] Handle case where path and username are empy in `config.ini`
-- [ ] Refactor `filename_save` to `filename_prefix`
+- [x] Handle case where path and username are empy in `config.ini`
+- [x] Refactor `filename_save` to `filename_prefix`
 - [ ] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
 - [ ] Give the user the option to insert the credentials if no credentials are found.
 - [ ] Sanitize metadata titles (remove unicode characters)

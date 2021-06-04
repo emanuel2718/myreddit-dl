@@ -23,39 +23,39 @@ class Defaults:
         utils.print_info(f'Path set to default: {default_path}')
 
 
-    def set_config_save(self, save_as: str) -> None:
-        save_as = save_as.lower()
-        if save_as != utils.CFG_SAVE_DEFAULT and save_as != 'username':
+    def set_config_prefix(self, prefix: str) -> None:
+        prefix = prefix.lower()
+        if prefix != utils.CFG_PREFIX_DEFAULT and prefix != 'username':
             utils.print_error(utils.INVALID_CFG_OPTION)
             return
 
         self.config.read(utils.CFG_FILENAME)
-        if save_as == self.config['DEFAULT']['filename_save']:
-            utils.print_info('This is already the current set saving option.')
+        if prefix == self.config['DEFAULT']['filename_prefix']:
+            utils.print_info('This is already the current set prefix option.')
             return
 
         # Different valid option given (username or subreddit)
         try:
-            self.__write_config('DEFAULT', 'filename_save', save_as)
-            utils.print_info(f'Save format changed to: {save_as}')
+            self.__write_config('DEFAULT', 'filename_prefix', prefix)
+            utils.print_info(f'Prefix format changed to: {prefix}')
 
         except BaseException:
             utils.print_error(
-                'Something went wrong changing the saving format.')
+                'Something went wrong changing the prefix format.')
             exit(1)
 
     def set_base_path(self, path: str) -> None:
+        sanitized_path = self._sanitize_path(path)
         self.config.read(utils.CFG_FILENAME)
-        if os.path.exists(path):
-            self.__write_config('DEFAULT', 'path', path)
-            utils.print_info(f'Path set to: {path}')
+        if os.path.exists(sanitized_path):
+            self.__write_config('DEFAULT', 'path', sanitized_path)
+            utils.print_info(f'Path set to: {sanitized_path}')
             return
 
-        sanitized_path = self._sanitize_path(path)
 
         if sanitized_path is not None:
-            self.__write_config('DEFAULT', 'path', path)
-            utils.print_info(f'Path set to: {path}')
+            self.__write_config('DEFAULT', 'path', sanitized_path)
+            utils.print_info(f'Path set to: {sanitized_path}')
 
 
     def _sanitize_path(self, path: str) -> str or None:
@@ -86,7 +86,7 @@ class Defaults:
 
     def get_file_prefix(self) -> str:
         self.config.read(utils.CFG_FILENAME)
-        return str(self.config['DEFAULT']['filename_save'])
+        return str(self.config['DEFAULT']['filename_prefix'])
 
     def get_base_path(self) -> str:
         if self.debug:

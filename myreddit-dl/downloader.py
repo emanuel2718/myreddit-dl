@@ -304,8 +304,8 @@ class Downloader:
                 return
 
     def start(self) -> None:
-        if self.args['config_save']:
-            Defaults().set_config_save(str(self.args['config_save']))
+        if self.args['config_prefix']:
+            Defaults().set_config_prefix(str(self.args['config_prefix']))
             exit(0)
 
         if self.args['config_path']:

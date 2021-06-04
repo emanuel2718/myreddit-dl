@@ -98,6 +98,10 @@ coming soon
 - [x] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
 - [x] `--get-title` flag in which the title of the given image is returned.
 - [x] Make flag to store in either: sub_user_id.ext or user_id.ext (eliminate sub folders?)
+- [x] Fix bug caused by using getcwd() in entire codebase...
+- [ ] Handle case where path and username are empy in `config.ini`
+- [ ] Refactor `filename_save` to `filename_prefix`
+- [ ] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
 - [ ] Give the user the option to insert the credentials if no credentials are found.
 - [ ] Sanitize metadata titles (remove unicode characters)
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
@@ -105,9 +109,8 @@ coming soon
 - [ ] Make test suite
 - [ ] Handle better the --debug flag. Better logging
 - [ ] If config.ini is empty run script to ask user for the information
-- [ ] Clean titles (remove unicodes like \u00f1)
-- [ ] use os.path.expanduser('~') for home dir
 - [ ] Add logging of adding to path on which we are saving media
+- [ ] Add flag --get-path that prints the current set path and --get-filesave
 - [ ] improve logging messages
 - [ ] upload to PyPy and add instruction here
 - [ ] Make custom exceptions `exceptions.py`

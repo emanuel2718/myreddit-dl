@@ -12,10 +12,14 @@ PROJECT_PARENT_DIR = str(Path(__file__).parent.parent) + os.sep
 CFG_FILENAME = PROJECT_DIR + 'config.ini'
 CFG_PREFIX_DEFAULT = 'subreddit'
 
-INVALID_CFG_OPTION = ('Invalid save option.\n\n'
-                      'Valid Options:\n'
-                      '1. --config-save username\n'
-                      '2. --config-save subreddit\n')
+
+
+INVALID_CFG_OPTION_MESSAGE = ('Invalid save option.\n\n'
+                              'Valid Options:\n'
+                              '1. --config-prefix username\n'
+                              '2. --config-prefix subreddit\n'
+                              '3. --config-prefix subreddit username\n'
+                              '4. --config-prefix username subreddit\n')
 
 # Domains and usefuls urls
 REDDIT_GALLERY_URL = 'https://www.reddit.com/gallery/'
@@ -47,6 +51,16 @@ MISSING_DOWNLOAD_SOURCE = ('Required argument missing.\n\n'
                            '-U   download upvoted media\n'
                            '-S   download saved media\n')
 
+def get_valid_prefix_options():
+    return ('subreddit', 'username', 'subreddit_username', 'username_subreddit')
+
+#def print_prefix_options():
+#    print('Please chose an option: \n')
+#    print('\n Filename prefix options:\n')
+#    print('1. username_id.ext')
+#    print('2. subreddit_id.ext')
+#    print('3. username_subreddit_id.ext')
+#    print('4. subreddit_username_id.ext')
 
 # MISSING_SEARCH_SOURCE = ('Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
 # 'See myreddit-dl --help for more information.')

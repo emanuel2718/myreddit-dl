@@ -42,9 +42,10 @@ def get_cli_args():
     config_group.add_argument(
         '--config-prefix',
         type=str,
+        nargs='*',
         default=None,
         help=textwrap.dedent('''\
-        change how the filenames are prefixed (post author username and/or post subreddit name)
+        set filename prefix (post author username and/or post subreddit name)
 
         Options:
 

@@ -14,42 +14,40 @@ class Defaults:
         self.USERNAME = str(self.config['REDDIT']['username'])
 
     def __write_config(self, section: str, key: str, value: str) -> None:
-        self.config.read(utils.CFG_FILENAME)
         self.config.set(section, key, value)
         with open(utils.CFG_FILENAME, 'w') as config_file:
             self.config.write(config_file)
 
     def set_path_to_default(self) -> None:
         default_path = self.default_config_path
-        #self.config.read(utils.CFG_FILENAME)
         self.__write_config(f'DEFAULT', 'path', default_path)
         utils.print_info(f'Path set to default: {default_path}')
 
 
-    def set_config_prefix(self, prefix: str) -> None:
-        prefix = prefix.lower()
-        if prefix != utils.CFG_PREFIX_DEFAULT and prefix != 'username':
-            utils.print_error(utils.INVALID_CFG_OPTION)
-            return
+    def set_config_prefix(self, prefix: list) -> None:
+        valid_options = utils.get_valid_prefix_options()
+        given = '_'.join(prefix).lower()
 
-        self.config.read(utils.CFG_FILENAME)
-        if prefix == self.config['DEFAULT']['filename_prefix']:
+        if given not in valid_options:
+            utils.print_error(utils.INVALID_CFG_OPTION_MESSAGE)
+            return
+        if given == self.config['DEFAULT']['filename_prefix']:
             utils.print_info('This is already the current set prefix option.')
             return
 
         # Different valid option given (username or subreddit)
         try:
-            self.__write_config('DEFAULT', 'filename_prefix', prefix)
-            utils.print_info(f'Prefix format changed to: {prefix}')
+            self.__write_config('DEFAULT', 'filename_prefix', given)
+            utils.print_info(f'Prefix format changed to: {given}')
 
         except BaseException:
             utils.print_error(
                 'Something went wrong changing the prefix format.')
             exit(1)
 
+
     def set_base_path(self, path: str) -> None:
         sanitized_path = self._sanitize_path(path)
-        #self.config.read(utils.CFG_FILENAME)
         if os.path.exists(sanitized_path):
             self.__write_config('DEFAULT', 'path', sanitized_path)
             utils.print_info(f'Path set to: {sanitized_path}')
@@ -93,7 +91,6 @@ class Defaults:
         return self.media_folder + username + '_metadata.json'
 
     def get_file_prefix(self) -> str:
-        self.config.read(utils.CFG_FILENAME)
         return str(self.config['DEFAULT']['filename_prefix'])
 
     def get_base_path(self) -> str:
@@ -106,11 +103,6 @@ class Defaults:
 
         self.set_path_to_default()
         return self.default_config_path
-        # TODO: script to ask user for new path.
-        #print('Config file is empty...would you like to set a valid path? '
-        #      '(y)es, (n)o, (d)efault (~/Picutres/Username_reddit)')
-        #if self.user_accepts_default_path():
-        #    pass
 
 
     def is_valid_path(self, path: str) -> bool:

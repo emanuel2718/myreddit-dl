@@ -310,7 +310,7 @@ class Downloader:
 
         if self.args['config_path']:
             if self.args['config_path'].lower() == 'default':
-                Defaults().set_path_to_default(str(self.user))
+                Defaults().set_path_to_default()
             else:
                 Defaults().set_base_path(str(self.args['config_path']))
             exit(0)

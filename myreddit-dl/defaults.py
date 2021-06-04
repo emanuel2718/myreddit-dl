@@ -8,17 +8,20 @@ class Defaults:
     def __init__(self, debug=False) -> None:
         self.debug = debug
         self.config = configparser.ConfigParser()
+        self.config.read(utils.CFG_FILENAME)
         self.HOME_DIR = os.path.expanduser('~')
         self.PROJECT_DIR = utils.PROJECT_DIR
+        self.USERNAME = str(self.config['REDDIT']['username'])
 
     def __write_config(self, section: str, key: str, value: str) -> None:
+        self.config.read(utils.CFG_FILENAME)
         self.config.set(section, key, value)
         with open(utils.CFG_FILENAME, 'w') as config_file:
             self.config.write(config_file)
 
-    def set_path_to_default(self, username: str) -> None:
-        default_path = f'{self.HOME_DIR}{os.sep}Pictures{os.sep}{username}_media{os.sep}'
-        self.config.read(utils.CFG_FILENAME)
+    def set_path_to_default(self) -> None:
+        default_path = self.default_config_path
+        #self.config.read(utils.CFG_FILENAME)
         self.__write_config(f'DEFAULT', 'path', default_path)
         utils.print_info(f'Path set to default: {default_path}')
 
@@ -46,7 +49,7 @@ class Defaults:
 
     def set_base_path(self, path: str) -> None:
         sanitized_path = self._sanitize_path(path)
-        self.config.read(utils.CFG_FILENAME)
+        #self.config.read(utils.CFG_FILENAME)
         if os.path.exists(sanitized_path):
             self.__write_config('DEFAULT', 'path', sanitized_path)
             utils.print_info(f'Path set to: {sanitized_path}')
@@ -72,13 +75,18 @@ class Defaults:
 
         path = path if path.endswith(os.sep) else path + os.sep
 
-        if os.path.isabs(path):
+        if self.is_valid_path(path):
             return path
-        return None # not valid path
+        return self.default_config_path
 
     @property
     def media_folder(self) -> str:
         return str(self.PROJECT_DIR + 'media' + os.sep)
+
+    @property
+    def default_config_path(self) -> str:
+        return str(self.HOME_DIR + os.sep + 'Pictures' + os.sep +
+                   self.USERNAME + '_reddit' + os.sep)
 
 
     def get_metadata_file(self, username: str) -> str:
@@ -92,5 +100,18 @@ class Defaults:
         if self.debug:
             return str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)
 
-        self.config.read(utils.CFG_FILENAME)
-        return str(self.config['DEFAULT']['path'])
+        config_path = str(self.config['DEFAULT']['path'])
+        if self.is_valid_path(config_path):
+            return config_path
+
+        self.set_path_to_default()
+        return self.default_config_path
+        # TODO: script to ask user for new path.
+        #print('Config file is empty...would you like to set a valid path? '
+        #      '(y)es, (n)o, (d)efault (~/Picutres/Username_reddit)')
+        #if self.user_accepts_default_path():
+        #    pass
+
+
+    def is_valid_path(self, path: str) -> bool:
+        return True if os.path.isabs(path) else False

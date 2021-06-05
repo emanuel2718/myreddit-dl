@@ -2,6 +2,7 @@ import pathlib
 import utils
 import configparser
 import os
+from platform import system
 
 
 class Defaults:
@@ -60,7 +61,13 @@ class Defaults:
 
 
     def _sanitize_path(self, path: str) -> str or None:
-        if path.startswith('~/'):
+        # TODO: I don't like this. Refactor this.
+        if path.startswith(self.HOME_DIR):
+            pass
+        # user forgot /home/user and typed home/user
+        elif path.startswith(self.HOME_DIR.lstrip(os.sep)):
+            path = self.HOME_DIR + path[len(self.HOME_DIR)-1:]
+        elif path.startswith('~/'):
             path = self.HOME_DIR + os.sep + path[1:]
         elif path.startswith('$HOME/'):
             path = self.HOME_DIR + os.sep + path[6:]
@@ -72,6 +79,9 @@ class Defaults:
             path = self.HOME_DIR + os.sep + path
 
         path = path if path.endswith(os.sep) else path + os.sep
+
+        if system() == 'Windows':
+            path = path.replace('/', '\\')
 
         if self.is_valid_path(path):
             return path

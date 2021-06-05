@@ -97,8 +97,9 @@ class Defaults:
                    self.USERNAME + '_reddit' + os.sep)
 
 
-    def get_metadata_file(self, username: str) -> str:
-        return self.media_folder + username + '_metadata.json'
+    def get_metadata_file(self) -> str:
+        # TODO: remove this username req
+        return self.media_folder + self.USERNAME + '_metadata.json'
 
     def get_file_prefix(self) -> str:
         return str(self.config['DEFAULT']['filename_prefix'])

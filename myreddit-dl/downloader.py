@@ -47,7 +47,9 @@ class Downloader:
 
     @property
     def item_title(self) -> str:
-        return str(self._item.title)
+        title = str(self._item.title).encode('ascii', 'ignore').decode()
+        return str(title)
+        #return str(self._item.title)
 
     @property
     def item_subreddit(self) -> str:
@@ -295,7 +297,7 @@ class Downloader:
         options = {
             'get_metadata': None,
             'get_link': 'Link',
-            'get_title': 'Title'}
+            'get_title': 'Title',}
         for opt, val in options.items():
             if self.client.args[opt]:
                 handler = FileHandler(self)
@@ -304,6 +306,7 @@ class Downloader:
                 return
 
     def start(self) -> None:
+
         if self.args['config_prefix']:
             Defaults().set_config_prefix(self.args['config_prefix'])
             exit(0)

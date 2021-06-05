@@ -101,7 +101,7 @@ coming soon
 - [x] Fix bug caused by using getcwd() in entire codebase...
 - [x] Handle case where path and username are empy in `config.ini`
 - [x] Refactor `filename_save` to `filename_prefix`
-- [ ] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
+- [x] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
 - [ ] Give the user the option to insert the credentials if no credentials are found.
 - [ ] Sanitize metadata titles (remove unicode characters)
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only

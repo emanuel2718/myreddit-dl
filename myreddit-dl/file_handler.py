@@ -4,6 +4,7 @@ import utils
 import json
 from defaults import Defaults
 from urllib.parse import urlparse
+from pprint import pprint
 
 
 class FileHandler():
@@ -13,7 +14,7 @@ class FileHandler():
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
         self.path = self.defaults.get_base_path()
         self.path = self.path if self.path.endswith('/') else self.path + os.sep
-        self.json_file = self.defaults.get_metadata_file(self.cls.user)
+        self.json_file = self.defaults.get_metadata_file()
 
     def create_path(self):
         if os.path.isdir(self.path):

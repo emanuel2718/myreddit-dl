@@ -13,6 +13,9 @@ CFG_FILENAME = PROJECT_DIR + 'config.ini'
 CFG_PREFIX_DEFAULT = 'subreddit'
 
 
+DEVELOPER_APP_INSTRUCTIONS = ('https://github.com/emanuel2718/myreddit-dl'
+                              '/blob/master/PRE_INSTALL.md')
+
 
 INVALID_CFG_OPTION_MESSAGE = ('Invalid save option.\n\n'
                               'Valid Options:\n'
@@ -20,6 +23,8 @@ INVALID_CFG_OPTION_MESSAGE = ('Invalid save option.\n\n'
                               '2. --config-prefix subreddit\n'
                               '3. --config-prefix subreddit username\n'
                               '4. --config-prefix username subreddit\n')
+
+
 
 # Domains and usefuls urls
 REDDIT_GALLERY_URL = 'https://www.reddit.com/gallery/'
@@ -34,7 +39,7 @@ EXTENSION_STRING = '.jpg.png.jpeg.gif.gifv.mp4'
 DONT_RUN_THIS_FILE = ('This file is not intended to be run by itself. '
                       'See myreddit-dl -h for more information')
 
-USER_NOT_FOUND = 'User not found. Make sure the `config.ini` file is correct.\n'
+USER_NOT_FOUND = 'User not found. Possible error in the `config.ini` file.\n'
 
 MISSING_STORING_METHOD = (
     'Required argument missing.\n\n'

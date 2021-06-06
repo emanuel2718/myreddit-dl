@@ -22,6 +22,7 @@ def get_cli_args():
 
     required_group = parser.add_argument_group(
         'Required Arguments (only required to download)')
+
     config_group = parser.add_argument_group('Configuration')
     metadata_group = parser.add_argument_group('Metadata')
 
@@ -37,6 +38,24 @@ def get_cli_args():
         '--saved',
         action='store_true',
         help="Download saved media",
+        required=False)
+
+    config_group.add_argument(
+        '--client-config',
+        action='store_true',
+        help="change the reddit app client information (id, secret, username, password)",
+        required=False)
+
+    config_group.add_argument(
+        '--get-config',
+        action='store_true',
+        help="prints the configuration file information to the terminal",
+        required=False)
+
+    config_group.add_argument(
+        '--get-config-show',
+        action='store_true',
+        help="prints the configuration file information to the terminal and show password",
         required=False)
 
     config_group.add_argument(
@@ -186,7 +205,7 @@ def run():
     # GUI version of the app
     else:
         print('GUI version coming soon...')
-        #run_gui()
+        # run_gui()
 
 
 if __name__ == '__main__':

@@ -29,9 +29,8 @@ class Downloader:
 
     @property
     def __print_counters(self) -> None:
-        if self.client.args['debug'] or self.client.args['verbose']:
-            utils.print_info(f'{self.download_counter} items downloaded.')
-            utils.print_info(f'{self.items_iterated} posts iterated.')
+        utils.print_info(f'{self.download_counter} items downloaded.')
+        utils.print_info(f'{self.items_iterated} posts iterated.')
 
     @property
     def item(self) -> 'RedditPostItem':
@@ -305,18 +304,8 @@ class Downloader:
                 exit(0)
                 return
 
+
     def start(self) -> None:
-
-        if self.args['config_prefix']:
-            Defaults().set_config_prefix(self.args['config_prefix'])
-            exit(0)
-
-        if self.args['config_path']:
-            if self.args['config_path'].lower() == 'default':
-                Defaults().set_path_to_default()
-            else:
-                Defaults().set_base_path(str(self.args['config_path']))
-            exit(0)
 
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)

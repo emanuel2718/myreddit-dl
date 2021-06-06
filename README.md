@@ -102,21 +102,19 @@ coming soon
 - [x] Handle case where path and username are empy in `config.ini`
 - [x] Refactor `filename_save` to `filename_prefix`
 - [x] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
-- [ ] Give the user the option to insert the credentials if no credentials are found.
-- [ ] Sanitize metadata titles (remove unicode characters)
+- [x] Give the user the option to insert the credentials if no credentials are found.
+- [x] If config.ini is empty run script to ask user for the information
+- [x] Sanitize metadata titles (remove unicode characters)
+- [x] Add flag --get-path that prints the current set path and --get-filesave
+- [ ] Improve loggin messages (regular and --debug)
+- [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
+- [ ] Make custom exceptions `exceptions.py`
+- [ ] --clean-database flag that will remove all the links entries of files not longer present
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
 - [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))
 - [ ] Make test suite
-- [ ] Handle better the --debug flag. Better logging
-- [ ] If config.ini is empty run script to ask user for the information
 - [ ] Add logging of adding to path on which we are saving media
-- [ ] Add flag --get-path that prints the current set path and --get-filesave
-- [ ] improve logging messages
 - [ ] upload to PyPy and add instruction here
-- [ ] Make custom exceptions `exceptions.py`
-- [ ] allow the user to enter custom paths `-p, --path` to download media to.
-- [ ] fix argparser description
-- [ ] --clean-database flag that will remove all the links entries of files not longer present
 - [ ] Use item.thumbnail picture for the GUI displays (maybe)
 - [ ] make a last_seen.txt file and include the item that was last downloaded
 

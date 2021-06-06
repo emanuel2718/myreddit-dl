@@ -1,6 +1,4 @@
 import utils
-from PyQt5.QtWidgets import *
-
 
 def run_gui():
     print("Printing from gui_launcher.py!!!!")

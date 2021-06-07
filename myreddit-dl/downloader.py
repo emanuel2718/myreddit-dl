@@ -252,7 +252,7 @@ class Downloader:
 
         if self.client.args['debug']:
             self.file_handler.remove_file
-            self.file_handler.delete_database
+            self.file_handler.delete_database()
 
     def can_download_item(self):
         if self.media_url is None:
@@ -294,7 +294,7 @@ class Downloader:
 
     def _check_metadata_request(self):
         if self.client.args['delete_database']:
-            FileHandler(self).delete_database
+            FileHandler(self).delete_database()
             exit(0)
 
         options = {

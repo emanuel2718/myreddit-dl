@@ -90,7 +90,6 @@ class FileHandler():
                 os.remove(self.absolute_path)
                 utils.print_file_removed(self.absolute_path)
 
-    @property
     def delete_database(self) -> None:
         try:
             if os.path.isfile(self.json_file):

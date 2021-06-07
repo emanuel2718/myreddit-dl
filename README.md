@@ -43,12 +43,15 @@ $ cd myreddit-dl
 $ pip install -r requirements.txt
 ```
 
-### 3. Fill reddit developer app information in `myreddit-dl/config.ini`
+### 3. Fill reddit developer app information
+``` sh
+$ myreddit-dl --client-config
+```
 
 
 # How to use
 ```sh
-$ python3 myreddit-dl [REQUIRED] [OPTIONS]
+$ myreddit-dl [REQUIRED] [OPTIONS]
 ```
 
 ##### REQUIRED
@@ -75,17 +78,146 @@ $ python3 myreddit-dl [REQUIRED] [OPTIONS]
     --nsfw                    enable NSFW content download (default: False)
     
 ###### Confgiguration:
-    --config-save OPT         change how the filenames are saved (by username or subreddit)
+    --client-config           change reddit app client information (id, secret, username, password)
+    --get-config              prints the configuration file information to the terminal
+    --get-config-show         prints the configuration file to the terminal and show password
+    --config-prefix OPT       set filename prefix (post author username and/or post subreddit name)
+                              
+                              Options:
+                                  '--config-prefix username'           --> username_id.ext
+                                  '--config-prefix username subreddit' --> username_subreddit_id.ext
+                                  '--config-prefix subreddit username' --> subreddit_username_id.ext
+                                  '--config-prefix subreddit'          --> subreddit_id.ext
+                                  
+                              Default: subreddit --> subreddit_id.ext
+                              
+    --config-path PATH        path to the folder were media will be downloaded to
+                              
+                              Examples:
+                              
+                              To download the media to the folder ~/Pictures/reddit_media
+                                  --config-path $HOME/Pictures/reddit_media
+                                                    or
+                                  --config-path ~/Picutres/reddit_media
+                              
+                              To download the media to the current working directory
+                                  --config-path ./
+                                  
+                              To download the media to a folder in the current working directory
+                                  --config-path ./random_folder_destination
+                                  
+                              Default Path: $HOME/Pictures/User_myreddit/
+                                                    
+    
 
 ###### Metadata:
     --save-metadata           enable this to save downloaded media metadata in a file
-    --get-metadata FILE       print reddit metadata of given FILE
+    --get-metadata FILE       print all the reddit metadata of the given FILE
     --get-link FILE           print reddit link of given FILE
     --get-title FILE          print post title of given FILE
+    --delete-database         delete the database of the current active reddit client user
 
-# Advanced Configuration
+# Configuration
 
-coming soon
+Set the reddit client information to be able to use myreddit-dl
+``` sh
+$ myreddit-dl --client-config
+```
+
+Set the path to the destination folder for the downloaded media
+``` sh
+$ myreddit-dl --config-path ~/Path/to/destination
+```
+
+Set the filenames prefix scheme of the downloaded media
+``` sh
+# This will save all the files with the scheme: `subredditName_uniqueId.extension`
+$ myreddit-dl --config-prefix subreddit
+```
+
+``` sh
+# This will save all the files with the scheme: `postAuthorName_uniqueId.extension`
+$ myreddit-dl --config-prefix username
+```
+
+``` sh
+# This will save all the files with the scheme: `subredditName_postAuthorName_uniqueId.extension`
+$ myreddit-dl --config-prefix subreddit username
+```
+
+Show the current configuration
+``` sh
+$ myreddit-dl --get-config
+```
+
+# Usage:
+
+Download all user upvoted media (limited to 1000 posts: Praw's API hard limit)
+``` sh
+$ myreddit-dl -U
+```
+
+Download all user saved media and save metadata of posts
+``` sh
+# This will save all the downloaded media metadata (use this flag if you want to save any of the following post data)
+  # post author reddit name
+  # post title
+  # post link
+  # post upvotes at the moment of download
+  # post date of submission
+$ myreddit-dl -S --save-metadata
+```
+
+Download all user upvoted and saved media and accept NSFW posts media
+``` sh
+$ myreddit-dl -U -S --nsfw
+```
+
+Download all the user upvoted posts from the r/MechanicalKeyboards subreddit
+
+``` sh
+$ myreddit-dl -U --sub MechanicalKeyboards
+```
+
+Download all the user upvoted posts from the r/MechanicalKeyboards and r/Battlestations subreddits
+
+``` sh
+# There's no limit to how many subreddits can be chained together
+$ myreddit-dl -U --sub MechanicalKeyboards Battlestations
+```
+
+Download all the user upvoted posts from the r/MechanicalKeyboards and r/Battlestations subreddits
+
+``` sh
+$ myreddit-dl -U --sub MechanicalKeyboards Battlestations
+```
+
+Download only 10 posts media and only download images (don't download videos)
+
+``` sh
+$ myreddit-dl -U --limit 10 --no-video
+```
+
+Get the post link of a downloaded media (only if --save-metadata was used)
+
+``` sh
+# This will print the post link of that image
+$ myreddit-dl --get-link random_image.png
+```
+
+Get the post title of a downloaded media (only if --save-metadata was used)
+
+``` sh
+# This will print the post title of that video
+$ myreddit-dl --get-title random_video.mp4
+```
+
+Get the metadata of downloaded media (only if --save-metadata was used)
+
+``` sh
+# This will print the metadata of the image
+$ myreddit-dl --get-metadata random_image.jpg
+```
 
 # TODOLIST
 - [x] --max-depth argument for max number of posts to search

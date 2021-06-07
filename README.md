@@ -186,33 +186,27 @@ Download all the user upvoted posts from the r/MechanicalKeyboards and r/Battles
 $ myreddit-dl -U --sub MechanicalKeyboards Battlestations
 ```
 
-Download all the user upvoted posts from the r/MechanicalKeyboards and r/Battlestations subreddits
-
-``` sh
-$ myreddit-dl -U --sub MechanicalKeyboards Battlestations
-```
-
 Download only 10 posts media and only download images (don't download videos)
 
 ``` sh
 $ myreddit-dl -U --limit 10 --no-video
 ```
 
-Get the post link of a downloaded media (only if --save-metadata was used)
+Get the post link of a downloaded media (only if `--save-metadata` was used)
 
 ``` sh
 # This will print the post link of that image
 $ myreddit-dl --get-link random_image.png
 ```
 
-Get the post title of a downloaded media (only if --save-metadata was used)
+Get the post title of a downloaded media (only if `--save-metadata` was used)
 
 ``` sh
 # This will print the post title of that video
 $ myreddit-dl --get-title random_video.mp4
 ```
 
-Get the metadata of downloaded media (only if --save-metadata was used)
+Get the metadata of downloaded media (only if `--save-metadata` was used)
 
 ``` sh
 # This will print the metadata of the image

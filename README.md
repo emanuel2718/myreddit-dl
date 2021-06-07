@@ -111,7 +111,7 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
     
 
 ###### Metadata:
-    --save-metadata           enable this to save downloaded media metadata in a file
+    --no-metadata             don't save metadata for the downloaded media
     --get-metadata FILE       print all the reddit metadata of the given FILE
     --get-link FILE           print reddit link of given FILE
     --get-title FILE          print post title of given FILE
@@ -157,15 +157,9 @@ Download all user upvoted media (limited to 1000 posts: Praw's API hard limit)
 $ myreddit-dl -U
 ```
 
-Download all user saved media and save metadata of posts
+Download all user saved media and don't save metadata of posts
 ``` sh
-# This will save all the downloaded media metadata (use this flag if you want to save any of the following post data)
-  # post author reddit name
-  # post title
-  # post link
-  # post upvotes at the moment of download
-  # post date of submission
-$ myreddit-dl -S --save-metadata
+$ myreddit-dl -S --no-metadata
 ```
 
 Download all user upvoted and saved media and accept NSFW posts media
@@ -192,21 +186,21 @@ Download only 10 posts media and only download images (don't download videos)
 $ myreddit-dl -U --limit 10 --no-video
 ```
 
-Get the post link of a downloaded media (only if `--save-metadata` was used)
+Get the post link of a downloaded media
 
 ``` sh
 # This will print the post link of that image
 $ myreddit-dl --get-link random_image.png
 ```
 
-Get the post title of a downloaded media (only if `--save-metadata` was used)
+Get the post title of a downloaded media
 
 ``` sh
 # This will print the post title of that video
 $ myreddit-dl --get-title random_video.mp4
 ```
 
-Get the metadata of downloaded media (only if `--save-metadata` was used)
+Get the metadata of downloaded media
 
 ``` sh
 # This will print the metadata of the image
@@ -232,6 +226,8 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] If config.ini is empty run script to ask user for the information
 - [x] Sanitize metadata titles (remove unicode characters)
 - [x] Add flag --get-path that prints the current set path and --get-filesave
+- [x] Change `--save-metadata` to `--no-metadata` (Defaults to saving the metadata)
+- [ ] Why is __print_counters triggering twice sometimes?
 - [ ] Improve loggin messages (regular and --debug)
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make custom exceptions `exceptions.py`

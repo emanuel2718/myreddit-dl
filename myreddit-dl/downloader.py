@@ -228,7 +228,8 @@ class Downloader:
             r = requests.get(url)
             with open(path, 'wb') as f:
                 f.write(r.content)
-                if self.client.args['save_metadata']:
+                # User didn't specify --no-metadata, go ahead an save metadata
+                if not self.client.args['no_metadata']:
                     self.file_handler.save_metadata(path, str(filename))
 
                 if self.client.args['debug']:

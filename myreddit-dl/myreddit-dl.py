@@ -164,9 +164,9 @@ def get_cli_args():
         required=None)
 
     metadata_group.add_argument(
-        '--save-metadata',
+        '--no-metadata',
         action='store_true',
-        help="enable this to save the metadata of downloaded media in a file",
+        help="don't save metadata for the downloaded media",
         required=False)
 
     metadata_group.add_argument(

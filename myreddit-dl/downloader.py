@@ -290,8 +290,7 @@ class Downloader:
                 self.file_handler = FileHandler(self)
                 if self.can_download_item():
                     self.download()
-        self.__print_counters
-        return
+        return self.__print_counters
 
     def _check_metadata_request(self):
         if self.client.args['delete_database']:

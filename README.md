@@ -228,16 +228,15 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] Add flag --get-path that prints the current set path and --get-filesave
 - [x] Change `--save-metadata` to `--no-metadata` (Defaults to saving the metadata)
 - [x] Why is __print_counters triggering twice sometimes?
+- [ ] write --debug information to debug.log file instead
+- [ ] Use `logging` module to improve logging
 - [ ] `--no-gallery` flag to skip gallery media
-- [ ] Improve loggin messages (regular and --debug)
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
+- [ ] Make test suite
 - [ ] Make custom exceptions `exceptions.py`
+- [ ] upload to PyPy and add instruction here
 - [ ] --clean-database flag that will remove all the links entries of files not longer present
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
 - [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))
-- [ ] Make test suite
-- [ ] Add logging of adding to path on which we are saving media
-- [ ] upload to PyPy and add instruction here
 - [ ] Use item.thumbnail picture for the GUI displays (maybe)
-- [ ] make a last_seen.txt file and include the item that was last downloaded
 

@@ -227,7 +227,8 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] Sanitize metadata titles (remove unicode characters)
 - [x] Add flag --get-path that prints the current set path and --get-filesave
 - [x] Change `--save-metadata` to `--no-metadata` (Defaults to saving the metadata)
-- [ ] Why is __print_counters triggering twice sometimes?
+- [x] Why is __print_counters triggering twice sometimes?
+- [ ] `--no-gallery` flag to skip gallery media
 - [ ] Improve loggin messages (regular and --debug)
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make custom exceptions `exceptions.py`

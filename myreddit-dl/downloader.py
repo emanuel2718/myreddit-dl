@@ -21,7 +21,6 @@ class Downloader:
         self.media_url = None
         self.file_handler = None  # will eventually hold current instance of FileHandler
         self._check_metadata_request()
-        self.start()
 
     @property
     def __print_item(self) -> None:
@@ -292,6 +291,7 @@ class Downloader:
                 if self.can_download_item():
                     self.download()
         self.__print_counters
+        return
 
     def _check_metadata_request(self):
         if self.client.args['delete_database']:

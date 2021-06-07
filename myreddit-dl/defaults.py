@@ -114,5 +114,8 @@ class Defaults:
     def clean_debug(self):
         import shutil
         debug_path = self.get_base_path(True)
-        shutil.rmtree(debug_path)
-        self.log.debug(f'Removed debug folder: {debug_path}')
+        try:
+            shutil.rmtree(debug_path)
+            self.log.info(f'Removed debug folder: {debug_path}')
+        except BaseException:
+            self.log.info(f'Debug folder not found.')

@@ -293,14 +293,17 @@ class Downloader:
         self.__print_counters
 
     def _check_metadata_request(self):
+        if self.client.args['delete_database']:
+            FileHandler(self).delete_database
+            exit(0)
+
         options = {
             'get_metadata': None,
             'get_link': 'Link',
             'get_title': 'Title',}
         for opt, val in options.items():
             if self.client.args[opt]:
-                handler = FileHandler(self)
-                handler.get_metadata(self.client.args[opt], val)
+                FileHandler(self).get_metadata(self.client.args[opt], val)
                 exit(0)
                 return
 

@@ -21,7 +21,7 @@ def get_cli_args():
         formatter_class=argparse.RawTextHelpFormatter)
 
     required_group = parser.add_argument_group(
-        'Required Arguments (only required to download)')
+        'Required Arguments')
 
     config_group = parser.add_argument_group('Configuration')
     metadata_group = parser.add_argument_group('Metadata')
@@ -191,6 +191,12 @@ def get_cli_args():
         metavar='FILE',
         required=False)
 
+    metadata_group.add_argument(
+        '--delete-database',
+        action='store_true',
+        help="delete the database of the current active reddit client user",
+        required=False)
+
     return vars(parser.parse_args())
 
 
@@ -200,7 +206,7 @@ def run():
     if len(sys.argv) > 1:
         cli_args = get_cli_args()
         reddit_client = RedditClient(cli_args)
-        downloader = Downloader(reddit_client)
+        Downloader(reddit_client).start()
 
     # GUI version of the app
     else:

@@ -1,12 +1,15 @@
 import configparser
 import praw
 import utils
+import logging
+import logging.handlers
 from terminal import Terminal
 
 
 class RedditClient:
 
     def __init__(self, arg_dict: dict) -> None:
+        self.log = utils.setup_logger(__name__, arg_dict['debug'])
         self.arg_dict = arg_dict
         self.config = configparser.ConfigParser()
         self.config.read(utils.CFG_FILENAME)
@@ -17,6 +20,7 @@ class RedditClient:
         self.__check_instance_validity()
 
     def build_reddit_instance(self) -> praw.Reddit or None:
+        self.log.debug('Building reddit instance')
         instance = praw.Reddit(
             user_agent='MyReddit-dl',
             client_id=self.config['REDDIT']['client_id'],
@@ -27,15 +31,17 @@ class RedditClient:
         try:
             if instance.user.me() is not None:
                 self.username = instance.user.me()
-                utils.print_info('Reddit Instance build status: OK!\n')
+                self.log.info('Reddit Instance build status: OK!')
                 return instance
         except BaseException:
+            self.log.exception('Reddit instance build status: Failed')
             return None
         return None
 
     def __check_instance_validity(self) -> None:
         if self.reddit_instance is None:
             Terminal().prompt_client_config_setup()
+            self.log.info('Client configuration status: Done\n\n')
             self.__init__(self.arg_dict)
         return
 

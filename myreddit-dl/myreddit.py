@@ -8,8 +8,11 @@ Description: Reddit upvoted & saved media downloader
 import argparse
 import textwrap
 import configparser
+import logging
+import utils
 import sys
 from gui import run_gui
+from defaults import Defaults
 from reddit_client import RedditClient
 from downloader import Downloader
 
@@ -163,6 +166,12 @@ def get_cli_args():
         metavar='SUBREDDIT',
         required=None)
 
+    parser.add_argument(
+        '--clean-debug',
+        action='store_true',
+        help="remove all debug files",
+        required=False)
+
     metadata_group.add_argument(
         '--no-metadata',
         action='store_true',
@@ -201,10 +210,15 @@ def get_cli_args():
 
 
 def run():
-
     # cli version of the app
     if len(sys.argv) > 1:
         cli_args = get_cli_args()
+        utils.setup_logger(__name__, cli_args['debug'])
+
+        if cli_args['clean_debug']:
+            Defaults().clean_debug()
+            exit(0)
+
         reddit_client = RedditClient(cli_args)
         Downloader(reddit_client).start()
 

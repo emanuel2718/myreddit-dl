@@ -2,6 +2,7 @@ __*
 myreddit-dl/config.ini
 myreddit-dl/config.backup
 debug_media/
+debug_log
 reddit_media/
 media/
 test_dir/

@@ -230,6 +230,7 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] Why is __print_counters triggering twice sometimes?
 - [ ] write --debug information to debug.log file instead
 - [ ] Use `logging` module to improve logging
+- [ ] Add color to output (jupyter-notebook as an example)
 - [ ] `--no-gallery` flag to skip gallery media
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make test suite

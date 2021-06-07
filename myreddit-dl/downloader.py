@@ -13,6 +13,7 @@ from file_handler import FileHandler
 class Downloader:
     def __init__(self, client: 'RedditClient') -> None:
         self.client = client
+        self.log = utils.setup_logger(__name__, self.client.args['debug'])
         self.valid_domains = utils.SFW_DOMAINS
         self.download_counter = 0
         self.items_iterated = 0
@@ -28,8 +29,8 @@ class Downloader:
 
     @property
     def __print_counters(self) -> None:
-        utils.print_info(f'{self.download_counter} items downloaded.')
-        utils.print_info(f'{self.items_iterated} posts iterated.')
+        self.log.info(f'{self.download_counter} media downloaded')
+        self.log.info(f'{self.items_iterated} posts searched')
 
     @property
     def item(self) -> 'RedditPostItem':
@@ -47,7 +48,6 @@ class Downloader:
     def item_title(self) -> str:
         title = str(self._item.title).encode('ascii', 'ignore').decode()
         return str(title)
-        #return str(self._item.title)
 
     @property
     def item_subreddit(self) -> str:
@@ -110,6 +110,7 @@ class Downloader:
         try:
             return self._item.preview['reddit_video_preview']['fallback_url']
         except BaseException:
+            self.log.exception('gyfact_url exception raised')
             return None
 
     @property
@@ -117,6 +118,7 @@ class Downloader:
         try:
             return self._item.preview['reddit_video_preview']['fallback_url']
         except BaseException:
+            self.log.exception('redgifs_url exception raised')
             pass
 
         # need to extract the video link through html requests
@@ -134,6 +136,7 @@ class Downloader:
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
             return url + '.mp4'
         except BaseException:
+            self.log.exception('streamable_url exception raised')
             return None
 
     @property
@@ -142,6 +145,7 @@ class Downloader:
             metadata = self._item.media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
         except BaseException:
+            self.log.exception('reddit_gallery_url exception raised')
             return None  # deleted post
 
     @property
@@ -149,6 +153,7 @@ class Downloader:
         try:
             return [self._item.preview['images'][0]['source']['url']]
         except BaseException:
+            self.log.exception('imgur_gallery_url exception raised')
             return None
 
     @property
@@ -232,13 +237,13 @@ class Downloader:
                     self.file_handler.save_metadata(path, str(filename))
 
                 if self.client.args['debug']:
-                    utils.print_file_added_debug(filename, path)
+                    self.log.debug(f'ADDED: {filename} to {path}')
                 else:
-                    utils.print_file_added(filename)
+                    self.log.info(f'ADDED: {filename}')
                 self.download_counter += 1
         except BaseException:
             if self.client.args['verbose']:
-                utils.print_failed(f'While adding file: {filename}')
+                self.log.exception(f'While adding file {filename}')
 
     def download(self):
         data = self.file_handler.absolute_path
@@ -250,30 +255,29 @@ class Downloader:
             filename = self.file_handler.get_filename(self.media_url)
             self.__write__(self.media_url, data, filename)
 
-        if self.client.args['debug']:
-            self.file_handler.remove_file
-            self.file_handler.delete_database()
-
     def can_download_item(self):
         if self.media_url is None:
             return False
 
+        filename = self.file_handler.get_filename(self.media_url)
+
         if self.client.args['only_video'] and not self.file_handler.is_video:
             if self.client.args['verbose']:
-                utils.print_skipped_image(
-                    self.file_handler.get_filename(self.media_url))
+                self.log.info(f'Skipped image: {filename}')
+                # utils.print_skipped_image(
+                #    self.file_handler.get_filename(self.media_url))
             return False
 
         if self.client.args['no_video'] and self.file_handler.is_video:
             if self.client.args['verbose']:
-                utils.print_skipped_video(
-                    self.file_handler.get_filename(self.media_url))
+                self.log.info(f'Skipped video: {filename}')
+                # utils.print_skipped_video(
+                #    self.file_handler.get_filename(self.media_url))
             return False
 
         if self.file_handler.file_exist:
             if self.client.args['verbose']:
-                utils.print_info(
-                    f'File exists: {self.file_handler.get_filename(self.media_url)}')
+                self.log.info(f'File exists: {filename}')
             return False
 
         # NOTE: DONT DO THIS HERE. REFACTOR ME!
@@ -300,15 +304,16 @@ class Downloader:
         options = {
             'get_metadata': None,
             'get_link': 'Link',
-            'get_title': 'Title',}
+            'get_title': 'Title', }
         for opt, val in options.items():
             if self.client.args[opt]:
                 FileHandler(self).get_metadata(self.client.args[opt], val)
                 exit(0)
                 return
 
-
     def start(self) -> None:
+        if self.client.args['clean_debug']:
+            FileHandler(self).clean_debug()
 
         if self.client.args['nsfw']:
             self.valid_domains = self.sfw_domains.union(self.nsfw_domains)

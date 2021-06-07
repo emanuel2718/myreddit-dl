@@ -1,4 +1,5 @@
 import os
+import logging
 from pathlib import Path
 
 # TODO: refactor this entire file.
@@ -23,7 +24,6 @@ INVALID_CFG_OPTION_MESSAGE = ('Invalid save option.\n\n'
                               '2. --config-prefix subreddit\n'
                               '3. --config-prefix subreddit username\n'
                               '4. --config-prefix username subreddit\n')
-
 
 
 # Domains and usefuls urls
@@ -56,10 +56,15 @@ MISSING_DOWNLOAD_SOURCE = ('Required argument missing.\n\n'
                            '-U   download upvoted media\n'
                            '-S   download saved media\n')
 
-def get_valid_prefix_options():
-    return ('subreddit', 'username', 'subreddit_username', 'username_subreddit')
 
-#def print_prefix_options():
+def get_valid_prefix_options():
+    return (
+        'subreddit',
+        'username',
+        'subreddit_username',
+        'username_subreddit')
+
+# def print_prefix_options():
 #    print('Please chose an option: \n')
 #    print('\n Filename prefix options:\n')
 #    print('1. username_id.ext')
@@ -94,8 +99,10 @@ def print_failed(msg: str) -> None:
 def print_file_added_debug(filename: str, path: str) -> None:
     print(f'[ADDED] {filename} at {path}')
 
+
 def print_file_added(filename: str) -> None:
     print(f'[ADDED] {filename}')
+
 
 def print_already_exists(filename: str) -> None:
     print(f'[ALREADY EXISTS] {filename}')
@@ -139,6 +146,34 @@ def print_ok(msg: str) -> None:
 
 def print_warning(msg: str) -> None:
     print(f'[WARNING] {msg}')
+
+
+def __rm_debug():
+    return os.remove('debug_log')
+
+
+def setup_logger(module: str, debug=False):
+    logger = logging.getLogger(module)
+    logger.setLevel(logging.DEBUG if debug else logging.INFO)
+
+    fh = logging.FileHandler('debug_log', 'a')
+    fh.setLevel(logging.DEBUG)
+
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.INFO)
+
+    if module == '__main__':
+        __rm_debug()
+
+    fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
+    sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
+    fh.setFormatter(fh_formatter)
+    sh.setFormatter(sh_formatter)
+
+    logger.addHandler(fh)
+    logger.addHandler(sh)
+    logging.getLogger('praw').setLevel(logging.CRITICAL)
+    return logger
 
 
 if __name__ == '__main__':

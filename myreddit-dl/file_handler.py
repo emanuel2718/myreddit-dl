@@ -10,10 +10,13 @@ from pprint import pprint
 class FileHandler():
     def __init__(self, cls: 'Downloader') -> None:
         self.cls = cls
-        self.defaults = Defaults(True) if self.cls.args['debug'] else Defaults()
+        self.log = utils.setup_logger(__name__, self.cls.args['debug'])
+        self.defaults = Defaults(
+            True) if self.cls.args['debug'] else Defaults()
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
         self.path = self.defaults.get_base_path()
-        self.path = self.path if self.path.endswith('/') else self.path + os.sep
+        self.path = self.path if self.path.endswith(
+            '/') else self.path + os.sep
         self.json_file = self.defaults.get_metadata_file()
 
     def create_path(self):
@@ -21,22 +24,14 @@ class FileHandler():
             return
         try:
             os.makedirs(self.path)
-            utils.print_info(f'Path created: {self.path}')
+            self.log.info(f'Path created: {self.path}')
         except BaseException:
-            utils.print_error(f'Invalid path: {self.path}')
+            self.log.error(f'Invalid path: {self.path}')
 
     def get_path(self) -> str:
         return self.path
 
     def get_prefix(self) -> str:
-        # TODO: the user will be able to select with --config-save:
-        #       1. subreddit_user_id.ext (--config-save subreddit user)
-        #       2. subreddit_id.ext (--config-save subreddit)
-        #       3. user_subreddit_id.ext (--config-save user subreddit)
-        #       4. user_id.ext (--config-save user)
-        #       BETTER YET: Ask user to select from a set of options with (1, 2, 3, 4)
-
-        ''' Returns {chosen prefix}_'''
         sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
         username = str(self.cls.item_author)
         current_set_prefix = self.defaults.get_file_prefix()
@@ -70,8 +65,8 @@ class FileHandler():
                 if os.path.isfile(self.absolute_path[0]['path']):
                     return True
             except BaseException:
-                utils.print_error(
-                    f'File not found: {self.absolute_path[0]["path"]}')
+                self.log.error(
+                    f"File not found: {self.absolute_path[0]['path']}")
                 return False
 
         elif os.path.isfile(self.absolute_path):
@@ -84,19 +79,19 @@ class FileHandler():
             for data in self.gallery_data:
                 if os.path.exists(data['path']):
                     os.remove(data['path'])
-                    utils.print_file_removed(data['path'])
+                    self.log.debug(f"File removed: {data['path']}")
         else:
             if os.path.exists(self.absolute_path):
                 os.remove(self.absolute_path)
-                utils.print_file_removed(self.absolute_path)
+                self.log.debug(f"File removed: {self.absolute_path}")
 
     def delete_database(self) -> None:
         try:
             if os.path.isfile(self.json_file):
                 os.remove(self.json_file)
-                utils.print_file_removed('Database deleted')
+                self.log.debug('Database deleted')
         except IOError:
-            utils.print_error('While deleting databse.')
+            self.log.error('While deleting database')
 
     @property
     def is_video(self) -> bool:
@@ -124,7 +119,7 @@ class FileHandler():
             _, ext = os.path.splitext(parsed.path)
             return ext if not ext.endswith('.gifv') else '.mp4'
         except BaseException:
-            utils.print_error(f'Getting the file extension of {url}\n')
+            self.log.error(f'Getting file extension of {url}')
 
     def get_filename_from_path(self, path: str):
         return path.rpartition(os.sep)[-1]
@@ -146,12 +141,12 @@ class FileHandler():
                 if filename not in data:
                     data[filename] = self._get_item_metadata()
                     if self.cls.args['verbose']:
-                        utils.print_editing(f'Database addition {filename}')
+                        self.log.debug(f'Added to database: {filename}')
                 else:
-                    utils.print_info(f'Repeated file: {filename}. Not added')
+                    self.log.debug(f'Already in database: {filename}')
 
         except IOError:
-            utils.print_info(f'Database created for {self.cls.user}')
+            self.log.debug(f'Database created for {self.cls.user}')
             data = {f'{filename}': self._get_item_metadata()}
 
         with open(self.json_file, 'w') as f:
@@ -168,11 +163,15 @@ class FileHandler():
                     else:
                         utils.print_metadata(f'{data[filename]}')
                 else:
-                    utils.print_error(f'No data found for {filename}')
+                    self.log.error(f'No data found for {filename}')
 
         except IOError:
-            utils.print_error(
-                'Database file not found. Must download content first to build database.')
+            self.log.error('Database not found. Must download content first')
+
+    def clean_debug(self):
+        debug_path = self.defaults.get_base_path(True)
+        print(debug_path)
+        exit(0)
 
 
 if __name__ == '__main__':

@@ -44,21 +44,12 @@ def get_cli_args():
         required=False)
 
     config_group.add_argument(
-        '--client-config',
+        '--config-client',
         action='store_true',
-        help="change the reddit app client information (id, secret, username, password)",
-        required=False)
+        help=textwrap.dedent('''\
+        change the reddit app client information (id, secret, username, password)
 
-    config_group.add_argument(
-        '--get-config',
-        action='store_true',
-        help="prints the configuration file information to the terminal",
-        required=False)
-
-    config_group.add_argument(
-        '--get-config-show',
-        action='store_true',
-        help="prints the configuration file information to the terminal and show password",
+        '''),
         required=False)
 
     config_group.add_argument(
@@ -103,8 +94,21 @@ def get_cli_args():
             --config-path ./random_folder_destination
 
         Default Path: $HOME/Pictures/User_myreddit/
+
         '''),
         metavar='PATH',
+        required=False)
+
+    config_group.add_argument(
+        '--get-config',
+        action='store_true',
+        help="prints the configuration file information to the terminal",
+        required=False)
+
+    config_group.add_argument(
+        '--get-config-show',
+        action='store_true',
+        help="prints the configuration file information to the terminal and show password",
         required=False)
 
     parser.add_argument(
@@ -138,6 +142,12 @@ def get_cli_args():
         type=int,
         help="maximum amount of posts to iterate through",
         metavar='DEPTH',
+        required=False)
+
+    parser.add_argument(
+        '--no-gallery',
+        action='store_true',
+        help="don't download galleries (posts with more than one image/video)",
         required=False)
 
     parser.add_argument(

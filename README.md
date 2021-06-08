@@ -45,7 +45,7 @@ $ pip install -r requirements.txt
 
 ### 3. Fill reddit developer app information
 ``` sh
-$ myreddit-dl --client-config
+$ myreddit-dl --config-client
 ```
 
 
@@ -76,11 +76,10 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
     --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
     --only-video              only download video files
     --nsfw                    enable NSFW content download (default: False)
+    --clean-debug             remove all debug files
     
 ###### Confgiguration:
-    --client-config           change reddit app client information (id, secret, username, password)
-    --get-config              prints the configuration file information to the terminal
-    --get-config-show         prints the configuration file to the terminal and show password
+    --config-client           change reddit app client information (id, secret, username, password)
     --config-prefix OPT       set filename prefix (post author username and/or post subreddit name)
                               
                               Options:
@@ -108,6 +107,8 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
                                   
                               Default Path: $HOME/Pictures/User_myreddit/
                                                     
+    --get-config              prints the configuration file information to the terminal
+    --get-config-show         prints the configuration file to the terminal and show password
     
 
 ###### Metadata:
@@ -150,7 +151,7 @@ Show the current configuration
 $ myreddit-dl --get-config
 ```
 
-# Usage:
+# Example usage:
 
 Download all user upvoted media (limited to 1000 posts: Praw's API hard limit)
 ``` sh
@@ -228,14 +229,19 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] Add flag --get-path that prints the current set path and --get-filesave
 - [x] Change `--save-metadata` to `--no-metadata` (Defaults to saving the metadata)
 - [x] Why is __print_counters triggering twice sometimes?
-- [ ] write --debug information to debug.log file instead
-- [ ] Use `logging` module to improve logging
-- [ ] Add color to output (jupyter-notebook as an example)
-- [ ] `--no-gallery` flag to skip gallery media
+- [x] write --debug information to debug.log file instead
+- [x] Use `logging` module to improve logging
+- [x] `--no-gallery` flag to skip gallery media
+- [ ] `--add-user` flag to add another profile.
+- [ ] `--change-user` flag to change to another profile if user has more than one account.
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make test suite
+- [ ] Fix path issues with ( ./ and / ), especially on Windows
+- [ ] figure out why the stack trace is repeating...
 - [ ] Make custom exceptions `exceptions.py`
+- [ ] Optimize code!!
 - [ ] upload to PyPy and add instruction here
+- [ ] Add color to output (jupyter-notebook as an example)
 - [ ] --clean-database flag that will remove all the links entries of files not longer present
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
 - [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))

@@ -46,26 +46,25 @@ class RedditClient:
         return
 
     def __check_config_request(self):
-        if self.arg_dict['client_config']:
+        if self.arg_dict['config_client']:
             Terminal().client_config_setup()
-            exit(0)
-        elif self.arg_dict['get_config']:
-            Terminal().print_config_data()
-            exit(0)
-        elif self.arg_dict['get_config_show']:
-            Terminal().print_config_data(True)
             exit(0)
         elif self.arg_dict['config_prefix']:
             from defaults import Defaults
             Defaults().set_config_prefix(self.args['config_prefix'])
             exit(0)
-
         elif self.arg_dict['config_path']:
             from defaults import Defaults
             if self.args['config_path'].lower() == 'default':
                 Defaults().set_path_to_default()
             else:
                 Defaults().set_base_path(str(self.args['config_path']))
+            exit(0)
+        elif self.arg_dict['get_config']:
+            Terminal().print_config_data()
+            exit(0)
+        elif self.arg_dict['get_config_show']:
+            Terminal().print_config_data(True)
             exit(0)
         return
 

@@ -16,6 +16,7 @@ class Downloader:
         self.log = utils.setup_logger(__name__, self.client.args['debug'])
         self.valid_domains = utils.SFW_DOMAINS
         self.download_counter = 0
+        self.skipped_counter = 0
         self.items_iterated = 0
 
         self._item = None  # current upvoted or saved post we are looking at.
@@ -29,6 +30,7 @@ class Downloader:
 
     @property
     def __print_counters(self) -> None:
+        self.log.info(f'{self.skipped_counter} media skipped')
         self.log.info(f'{self.download_counter} media downloaded')
         self.log.info(f'{self.items_iterated} posts searched')
 
@@ -183,6 +185,12 @@ class Downloader:
             return True
         return self.subreddit in self.client.args['sub']
 
+    def __debug_item(self):
+        return (f'- Link: {self.item_link}\n'
+                f'- Domain: {self._item.domain}\n'
+                f'- Subreddit: {self.item_subreddit}\n'
+                f'- Author: {self.item_author}\n')
+
     def _is_valid_post(self) -> bool:
         # TODO: think about a more clean way to handle this.
         if self._item is None:
@@ -235,10 +243,6 @@ class Downloader:
                 # User didn't specify --no-metadata, go ahead an save metadata
                 if not self.client.args['no_metadata']:
                     self.file_handler.save_metadata(path, str(filename))
-
-                if self.client.args['debug']:
-                    self.log.debug(f'ADDED: {filename} to {path}')
-                else:
                     self.log.info(f'ADDED: {filename}')
                 self.download_counter += 1
         except BaseException:
@@ -259,20 +263,18 @@ class Downloader:
         if self.media_url is None:
             return False
 
+        if isinstance(self.media_url, list) and self.client.args['no_gallery']:
+            self.log.debug(f'Skipped Gallery Item\n{self.__debug_item()}')
+            return False
+
         filename = self.file_handler.get_filename(self.media_url)
 
         if self.client.args['only_video'] and not self.file_handler.is_video:
-            if self.client.args['verbose']:
-                self.log.info(f'Skipped image: {filename}')
-                # utils.print_skipped_image(
-                #    self.file_handler.get_filename(self.media_url))
+            self.log.bug(f'Skipped Image: {filename}')
             return False
 
         if self.client.args['no_video'] and self.file_handler.is_video:
-            if self.client.args['verbose']:
-                self.log.info(f'Skipped video: {filename}')
-                # utils.print_skipped_video(
-                #    self.file_handler.get_filename(self.media_url))
+            self.log.debug(f'Skipped Video: {filename}')
             return False
 
         if self.file_handler.file_exist:
@@ -294,7 +296,11 @@ class Downloader:
                 self.file_handler = FileHandler(self)
                 if self.can_download_item():
                     self.download()
+                else:
+                    self.skipped_counter += 1
         return self.__print_counters
+
+
 
     def _check_metadata_request(self):
         if self.client.args['delete_database']:

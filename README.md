@@ -5,7 +5,8 @@
 
 &nbsp; 
 
-NOTE: This is a work in progress not all features are yet implemented. When this is ready for production this message will not be here and `myreddit-dl` will be found on PyPi
+NOTE: This is a work in progress not all features are yet implemented. If you see this message; use at your own risk.
+NOTE: When this is ready for production this message will not be here and `myreddit-dl` will be found on PyPi
 
 # Index
 
@@ -190,14 +191,14 @@ $ myreddit-dl -U --limit 10 --no-video
 Get the post link of a downloaded media
 
 ``` sh
-# This will print the post link of that image
+# This will print the reddit post link of that image
 $ myreddit-dl --get-link random_image.png
 ```
 
 Get the post title of a downloaded media
 
 ``` sh
-# This will print the post title of that video
+# This will print the reddit post title of that video
 $ myreddit-dl --get-title random_video.mp4
 ```
 

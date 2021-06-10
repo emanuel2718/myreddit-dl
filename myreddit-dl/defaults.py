@@ -4,21 +4,52 @@ import configparser
 import os
 from platform import system
 
+# TODO: Make this have the args...
 
 class Defaults:
     def __init__(self, debug=False) -> None:
         self.log = utils.setup_logger(__name__, True)
         self.debug = debug
-        self.config = configparser.ConfigParser()
-        self.config.read(utils.CFG_FILENAME)
-        self.HOME_DIR = os.path.expanduser('~')
-        self.PROJECT_DIR = utils.PROJECT_DIR
-        self.USERNAME = str(self.config['REDDIT']['username'])
+        #self.log.debug('THIS HAPPENS Defaults().__init__()')
+
+    @property
+    def config(self):
+        config = configparser.ConfigParser()
+        config.read(utils.CFG_FILENAME)
+        return config
+        #return configparser.ConfigParser().read(utils.CFG_FILENAME)
+
+    @property
+    def home_dir(self) -> str:
+        return os.path.expanduser('~')
+
+    @property
+    def project_dir(self) -> str:
+        return utils.PROJECT_DIR
+
+    @property
+    def user_section_name(self) -> str:
+        ''' Returns the current user config [SECTION] name'''
+        return str(self.config['USERS']['current_user_section_name'])
+
+    @property
+    def username(self) -> str:
+        return str(self.config[self.user_section_name]['username'])
+
+    @property
+    def media_folder(self) -> str:
+        return str(self.project_dir + 'media' + os.sep)
+
+    @property
+    def default_config_path(self) -> str:
+        return str(self.home_dir + os.sep + 'Pictures' + os.sep +
+                   self.username + '_reddit' + os.sep)
+
 
     def __write_config(self, section: str, key: str, value: str) -> None:
         self.config.set(section, key, value)
-        with open(utils.CFG_FILENAME, 'w') as config_file:
-            self.config.write(config_file)
+        with open(utils.CFG_FILENAME, 'w') as config:
+            self.config.write(config)
 
     def set_path_to_default(self) -> None:
         default_path = self.default_config_path
@@ -54,21 +85,21 @@ class Defaults:
 
     def _sanitize_path(self, path: str) -> str or None:
         # TODO: I don't like this. Refactor this.
-        if path.startswith(self.HOME_DIR):
+        if path.startswith(self.home_dir):
             pass
         # user forgot /home/user and typed home/user
-        elif path.startswith(self.HOME_DIR.lstrip(os.sep)):
-            path = self.HOME_DIR + path[len(self.HOME_DIR) - 1:]
+        elif path.startswith(self.home_dir.lstrip(os.sep)):
+            path = self.home_dir + path[len(self.home_dir) - 1:]
         elif path.startswith('~/'):
-            path = self.HOME_DIR + os.sep + path[1:]
+            path = self.home_dir + os.sep + path[1:]
         elif path.startswith('$HOME/'):
-            path = self.HOME_DIR + os.sep + path[6:]
+            path = self.home_dir + os.sep + path[6:]
         elif path.startswith('./'):
             path = os.getcwd() + path[1:]
         elif path.startswith('/'):
             path = path
         else:
-            path = self.HOME_DIR + os.sep + path
+            path = self.home_dir + os.sep + path
 
         path = path if path.endswith(os.sep) else path + os.sep
 
@@ -79,17 +110,9 @@ class Defaults:
             return path
         return self.default_config_path
 
-    @property
-    def media_folder(self) -> str:
-        return str(self.PROJECT_DIR + 'media' + os.sep)
-
-    @property
-    def default_config_path(self) -> str:
-        return str(self.HOME_DIR + os.sep + 'Pictures' + os.sep +
-                   self.USERNAME + '_reddit' + os.sep)
 
     def get_metadata_file(self) -> str:
-        return self.media_folder + self.USERNAME + '_metadata.json'
+        return self.media_folder + self.username + '_metadata.json'
 
     def get_file_prefix(self) -> str:
         return str(self.config['DEFAULT']['filename_prefix'])
@@ -119,3 +142,41 @@ class Defaults:
             self.log.info(f'Removed debug folder: {debug_path}')
         except BaseException:
             self.log.info(f'Debug folder not found.')
+
+# [DEFAULT]
+# prefix =
+# path =
+#
+# [USERS]
+# all_users = ZENS167, LOGNEPI
+# current_user = LOGNEPI # This points to the current user. Refactor 'REDDIT'
+#
+#
+# [LOGENPI]
+# client_id =
+# client_secret =
+# username =
+# password =
+#
+#
+#
+#
+# myreddit-dl --add-user zens167
+#
+# > check if user exists in ['USERS']['all_users']
+# > prompt config
+# > add user to ['USERS']['all_users']
+#
+#
+# [ZENS167]
+# client_id =
+# client_secret =
+# username =
+# password =
+#
+#
+# myreddit-dl --change-user lognepi
+#
+# >prompt available users with 1, 2, 3...n = exit options
+# >check if arg.upper() in 'all_users'
+# >change current_user > arg.upper()

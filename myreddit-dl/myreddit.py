@@ -43,11 +43,30 @@ def get_cli_args():
         help="Download saved media",
         required=False)
 
+
     config_group.add_argument(
-        '--config-client',
+        '--add-client',
         action='store_true',
         help=textwrap.dedent('''\
-        change the reddit app client information (id, secret, username, password)
+        add new reddit account
+
+        '''),
+        required=False)
+
+    config_group.add_argument(
+        '--add-client-hidden',
+        action='store_true',
+        help=textwrap.dedent('''\
+        add new reddit account with password prompt hidden
+
+        '''),
+        required=False)
+
+    config_group.add_argument(
+        '--change-client',
+        action='store_true',
+        help=textwrap.dedent('''\
+        change to another valid existing reddit client (account)
 
         '''),
         required=False)
@@ -62,10 +81,10 @@ def get_cli_args():
 
         Options:
 
-            '--config-prefix username'           ---> username_id.extension
-            '--config-prefix username subreddit' ---> username_subreddit_id.extension
-            '--config-prefix subreddit username' ---> subreddit_username_id.exension
-            '--config-prefix subreddit'          ---> subreddit_id.exension
+            --config-prefix username           ---> username_id.extension
+            --config-prefix username subreddit ---> username_subreddit_id.extension
+            --config-prefix subreddit username ---> subreddit_username_id.exension
+            --config-prefix subreddit          ---> subreddit_id.exension
 
         Default: subreddit ---> subreddit_id.extension
 

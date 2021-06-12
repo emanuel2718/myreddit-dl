@@ -46,7 +46,7 @@ $ pip install -r requirements.txt
 
 ### 3. Fill reddit developer app information
 ``` sh
-$ myreddit-dl --config-client
+$ myreddit-dl --add-client
 ```
 
 

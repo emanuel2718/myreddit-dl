@@ -80,7 +80,9 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
     --clean-debug             remove all debug files
     
 ###### Confgiguration:
-    --config-client           change reddit app client information (id, secret, username, password)
+    --add-client              add a new Reddit account
+    --add-client-hidden       add a new Reddit account with password prompt hidden
+    --change-client           change to another valid existing reddit client (account)
     --config-prefix OPT       set filename prefix (post author username and/or post subreddit name)
                               
                               Options:

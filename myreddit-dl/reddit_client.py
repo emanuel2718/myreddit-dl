@@ -22,12 +22,22 @@ class RedditClient(Defaults):
     def build_reddit_instance(self) -> praw.Reddit or None:
         self.log.debug('Building reddit instance')
 
-        instance = praw.Reddit(
-            user_agent = 'MyReddit-dl',
-            client_id = self.config[self.user_section_name]['client_id'],
-            client_secret = self.config[self.user_section_name]['client_secret'],
-            username = self.config[self.user_section_name]['username'],
-            password = self.config[self.user_section_name]['password'])
+        if len(self.user_section_name) == 0:
+            Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
+            exit(0)
+
+
+        try:
+            instance = praw.Reddit(
+                user_agent = 'MyReddit-dl',
+                client_id = self.config[self.user_section_name]['client_id'],
+                client_secret = self.config[self.user_section_name]['client_secret'],
+                username = self.config[self.user_section_name]['username'],
+                password = self.config[self.user_section_name]['password'])
+
+        except BaseException:
+            Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
+            self.build_reddit_instance()
 
         try:
             if instance.user.me() is not None:
@@ -43,16 +53,21 @@ class RedditClient(Defaults):
             return None
         return None
 
+
     def __check_instance_validity(self) -> None:
         if self.reddit_instance is None:
-            Terminal().prompt_client_config_setup()
-            self.log.info('Client configuration status: Done\n\n')
-            self.__init__(self.arg_dict)
+            Terminal().prompt_client_config_setup(self.arg_dict['add_client_hidden'])
+            self.log.info('Client configuration status: Done\n')
+            exit(0)
         return
 
     def __check_config_request(self):
-        if self.arg_dict['config_client']:
+        if self.arg_dict['add_client']:
             Terminal().client_config_setup()
+            exit(0)
+        if self.arg_dict['change_client']:
+            Terminal().change_client(self.arg_dict['change_client'])
+            #self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:
             from defaults import Defaults

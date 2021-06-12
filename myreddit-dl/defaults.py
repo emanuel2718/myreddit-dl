@@ -5,6 +5,7 @@ import os
 from platform import system
 
 # TODO: Make this have the args...
+# TODO: Refactor this whole entire file.
 
 class Defaults:
     def __init__(self, debug=False) -> None:
@@ -29,7 +30,11 @@ class Defaults:
 
     @property
     def user_section_name(self) -> str:
-        ''' Returns the current user config [SECTION] name'''
+        '''
+        Returns the current user config [SECTION] name
+
+        @return: str: current user section name.
+        '''
         return str(self.config['USERS']['current_user_section_name'])
 
     @property
@@ -53,7 +58,7 @@ class Defaults:
 
     def set_path_to_default(self) -> None:
         default_path = self.default_config_path
-        self.__write_config(f'DEFAULT', 'path', default_path)
+        self.__write_config(f'DEFAULTS', 'path', default_path)
         self.log.info(f'Path set to myreddit-dl default path: {default_path}')
 
     def set_config_prefix(self, prefix: list) -> None:
@@ -63,13 +68,13 @@ class Defaults:
         if given not in valid_options:
             self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
             return
-        if given == self.config['DEFAULT']['filename_prefix']:
+        if given == self.config['DEFAULTS']['prefix']:
             self.log.info('This is already the current set prefix option.')
             return
 
         # Different valid option given (username or subreddit)
         try:
-            self.__write_config('DEFAULT', 'filename_prefix', given)
+            self.__write_config('DEFAULTS', 'prefix', given)
             self.log.info(f'Prefix format changed to: {given}')
 
         except BaseException:
@@ -79,7 +84,7 @@ class Defaults:
     def set_base_path(self, path: str) -> None:
         sanitized_path = self._sanitize_path(path)
         if os.path.exists(sanitized_path) or sanitized_path is not None:
-            self.__write_config('DEFAULT', 'path', sanitized_path)
+            self.__write_config('DEFAULTS', 'path', sanitized_path)
             self.log.info(f'Path set to: {sanitized_path}')
             return
 
@@ -115,7 +120,7 @@ class Defaults:
         return self.media_folder + self.username + '_metadata.json'
 
     def get_file_prefix(self) -> str:
-        return str(self.config['DEFAULT']['filename_prefix'])
+        return str(self.config['DEFAULTS']['prefix'])
 
     def get_base_path(self, clean=False) -> str:
         if self.debug or clean:
@@ -124,9 +129,10 @@ class Defaults:
                 f"{str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)}")
             return str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)
 
-        config_path = str(self.config['DEFAULT']['path'])
-        if self.is_valid_path(config_path):
-            return config_path
+        if len(self.config['DEFAULTS']['path']) != 0:
+            config_path = str(self.config['DEFAULTS']['path'])
+            if self.is_valid_path(config_path):
+                return config_path
 
         self.set_path_to_default()
         return self.default_config_path
@@ -142,41 +148,3 @@ class Defaults:
             self.log.info(f'Removed debug folder: {debug_path}')
         except BaseException:
             self.log.info(f'Debug folder not found.')
-
-# [DEFAULT]
-# prefix =
-# path =
-#
-# [USERS]
-# all_users = ZENS167, LOGNEPI
-# current_user = LOGNEPI # This points to the current user. Refactor 'REDDIT'
-#
-#
-# [LOGENPI]
-# client_id =
-# client_secret =
-# username =
-# password =
-#
-#
-#
-#
-# myreddit-dl --add-user zens167
-#
-# > check if user exists in ['USERS']['all_users']
-# > prompt config
-# > add user to ['USERS']['all_users']
-#
-#
-# [ZENS167]
-# client_id =
-# client_secret =
-# username =
-# password =
-#
-#
-# myreddit-dl --change-user lognepi
-#
-# >prompt available users with 1, 2, 3...n = exit options
-# >check if arg.upper() in 'all_users'
-# >change current_user > arg.upper()

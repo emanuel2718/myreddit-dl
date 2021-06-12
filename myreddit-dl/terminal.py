@@ -7,23 +7,66 @@ class Terminal:
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read(utils.CFG_FILENAME)
+        self.log = utils.setup_logger(__name__, False)
 
-    def client_config_setup(self):
+    def client_config_setup(self, hidden_password=False):
         self._config_setup_header()
         client_id = input('1. Client Id: ').strip(' ')
         client_secret = input('2. Client Secret: ').strip(' ')
         username = input('3. Username: ').strip(' ')
-        password = getpass.getpass('4. Password (hidden): ').strip(' ')
 
-        self.config.set('REDDIT', 'client_id', client_id)
-        self.config.set('REDDIT', 'client_secret', client_secret)
-        self.config.set('REDDIT', 'username', username)
-        self.config.set('REDDIT', 'password', password)
+        if hidden_password:
+            password = getpass.getpass('4. Password (hidden): ').strip(' ')
+        else:
+            password = input('4. Password: ').strip(' ')
+
+        section_name = username.upper()
+        if not self.config.has_section(section_name):
+            self.config.add_section(section_name)
+
+
+        self.config.set(section_name, 'client_id', client_id)
+        self.config.set(section_name, 'client_secret', client_secret)
+        self.config.set(section_name, 'username', username)
+        self.config.set(section_name, 'password', password)
+
+        if len(self.config['USERS']['current_user_section_name']) == 0:
+            self.config['USERS']['current_user_section_name'] = section_name
+            self.log.info(f'\n{username} added as default client.')
+
+        elif self.config['USERS']['current_user_section_name'] != section_name:
+            response = self._prompt_user_change(username)
+            if response == 'y':
+                self.config['USERS']['current_user_section_name'] = section_name
+                self.log.info(f'{username} set as default client.')
+            else:
+                self.log.info(f"{self.config['USERS']['current_user_section_name']} "
+                      "left as default client.")
+
 
         with open(utils.CFG_FILENAME, 'w') as config_file:
             self.config.write(config_file)
-            print('\nReddit developer app updated succesfully.\n')
+            self.log.info('Reddit developer app updated succesfully.\n')
+
         return
+
+    def change_client(self, username: str) -> str:
+        if self.config.has_section(username.upper()):
+            print(f'Config has {username.upper()} section')
+        else:
+            print(f'NO Config for {username.upper()} was found...')
+
+
+
+
+
+    def _prompt_user_change(self, username: str) -> str:
+        res = ''
+        while res not in {'y', 'yes', 'n', 'no'}:
+            res = input(f'\nINFO: {username} is not currently set as the default client.\n'
+                        f'\nWould you like to set {username} as default client?'
+                        ' (y)es, (n)o: ').lower()
+        return res
 
     def _config_setup_header(self):
         instructions = utils.DEVELOPER_APP_INSTRUCTIONS
@@ -39,7 +82,7 @@ class Terminal:
             '\nInput your reddit developer credentials below. Make sure they are correct.\n')
         print('-' * len(header))
 
-    def prompt_client_config_setup(self):
+    def prompt_client_config_setup(self, hidden_password=False):
         print()
         utils.print_warning(
             'Either this is your first time using myreddit-dl'
@@ -51,18 +94,18 @@ class Terminal:
 
         if response == 'n' or response == 'no':
             exit(0)
-        return self.client_config_setup()
+        return self.client_config_setup(hidden_password)
 
     def print_config_data(self, show_password=False):
         print('Current Configuration:')
 
-        print('\n[DEFAULT]\n')
-        print('Prefix:', self.config['DEFAULT']['filename_prefix'])
-        print('Path:', self.config['DEFAULT']['path'])
-
-        print('\n[REDDIT]\n')
-        print('Client Id:', self.config['REDDIT']['client_id'])
-        print('Client Secret:', self.config['REDDIT']['client_secret'])
-        print('Username:', self.config['REDDIT']['username'])
-        if show_password:
-            print('Password:', self.config['REDDIT']['password'])
+        for section in self.config.sections():
+            print(f'\n\n[{section}]')
+            for (key, val) in dict(self.config[section]).items():
+                if key == 'password':
+                    if show_password:
+                        print(f'{key.upper()} = {val}')
+                    else:
+                        continue
+                else:
+                    print(f'{key.upper()} = {val}')

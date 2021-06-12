@@ -64,18 +64,11 @@ def get_cli_args():
 
     config_group.add_argument(
         '--change-client',
-        type=str,
+        action='store_true',
         help=textwrap.dedent('''\
         change to another valid existing reddit client (account)
-        must provide valid reddit username.
-
-        Example:
-            --change-client randomRedditUsername
-
-        Note: account must have been previously added with --add-client
 
         '''),
-        metavar='User',
         required=False)
 
     config_group.add_argument(

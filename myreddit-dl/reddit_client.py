@@ -66,7 +66,7 @@ class RedditClient(Defaults):
             Terminal().client_config_setup()
             exit(0)
         if self.arg_dict['change_client']:
-            Terminal().change_client(self.arg_dict['change_client'])
+            Terminal().change_client()
             #self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:

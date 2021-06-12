@@ -50,14 +50,34 @@ class Terminal:
 
         return
 
-    def change_client(self, username: str) -> str:
-        if self.config.has_section(username.upper()):
-            print(f'Config has {username.upper()} section')
-        else:
-            print(f'NO Config for {username.upper()} was found...')
+    def change_client(self):
+        invalid_sections = {'DEFAULTS', 'USERS', 'REDDIT'}
+        sections = [sec for sec in self.config.sections() if sec not in invalid_sections]
+        options = {}
+        res = ''
+        print('\nValid Reddit clients:\n')
+        for i, section in enumerate(sections, 1):
+            print(f'{i}. {self.config[section]["username"]}')
+            options[str(i)] = self.config[section]['username']
+        options[str(len(sections)+1)] = 'Exit'
+        print(f'{len(sections)+1}. Exit Program')
 
 
+        while res not in list(options.keys()):
+            res = input('\nPlease chose the client you want to change to: ')
 
+        if res == str(len(sections) + 1):
+            exit(0)
+
+        if self.config['USERS']['current_user_section_name'] == options[res].upper():
+            self.log.info(f'{options[res]} is already the current reddit client.')
+            exit(0)
+
+
+        self.config['USERS']['current_user_section_name'] = options[res].upper()
+        with open(utils.CFG_FILENAME, 'w') as config_file:
+            self.config.write(config_file)
+            self.log.info(f'Reddit client changed to {options[res]}')
 
 
     def _prompt_user_change(self, username: str) -> str:

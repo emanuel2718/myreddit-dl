@@ -235,12 +235,13 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] write --debug information to debug.log file instead
 - [x] Use `logging` module to improve logging
 - [x] `--no-gallery` flag to skip gallery media
-- [ ] `--add-user` flag to add another profile.
-- [ ] `--change-user` flag to change to another profile if user has more than one account.
+- [x] `--add-user` flag to add another profile.
+- [x] `--change-user` flag to change to another profile if user has more than one account.
+- [ ] refactor downloader reddit post item into a separate Item class (item.py)
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make test suite
 - [ ] Fix path issues with ( ./ and / ), especially on Windows
-- [ ] figure out why the stack trace is repeating...
+- [ ] figure out why the stack trace log is repeating certain functions (get_base_path)...
 - [ ] Make custom exceptions `exceptions.py`
 - [ ] Optimize code!!
 - [ ] upload to PyPy and add instruction here

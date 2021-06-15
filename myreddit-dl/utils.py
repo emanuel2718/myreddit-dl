@@ -162,8 +162,8 @@ def setup_logger(module: str, debug=False):
     sh = logging.StreamHandler()
     sh.setLevel(logging.INFO)
 
-    if module == '__main__':
-        __rm_debug()
+    #if module == '__main__':
+        #__rm_debug()
 
     fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
     sh_formatter = logging.Formatter('%(levelname)s: %(message)s')

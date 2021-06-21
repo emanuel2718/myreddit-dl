@@ -7,11 +7,12 @@ from terminal import Terminal
 from defaults import Defaults
 
 
-class RedditClient(Defaults):
+class RedditClient():
 
     def __init__(self, arg_dict: dict) -> None:
-        super().__init__()
+        self.arg_dict = arg_dict
         self.log = utils.setup_logger(__name__, arg_dict['debug'])
+        self.defaults = Defaults()
         self.arg_dict = arg_dict
         self.user_instance = None
         self.__check_config_request()
@@ -19,10 +20,18 @@ class RedditClient(Defaults):
         self.reddit_instance = self.build_reddit_instance()
         self.__check_instance_validity()
 
+    @property
+    def config(self):
+        return self.defaults.config
+
+    @property
+    def section_name(self):
+        return self.defaults.user_section_name
+
     def build_reddit_instance(self) -> praw.Reddit or None:
         self.log.debug('Building reddit instance')
 
-        if len(self.user_section_name) == 0:
+        if len(self.section_name) == 0:
             Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
             exit(0)
 
@@ -30,10 +39,10 @@ class RedditClient(Defaults):
         try:
             instance = praw.Reddit(
                 user_agent = 'MyReddit-dl',
-                client_id = self.config[self.user_section_name]['client_id'],
-                client_secret = self.config[self.user_section_name]['client_secret'],
-                username = self.config[self.user_section_name]['username'],
-                password = self.config[self.user_section_name]['password'])
+                client_id = self.config[self.section_name]['client_id'],
+                client_secret = self.config[self.section_name]['client_secret'],
+                username = self.config[self.section_name]['username'],
+                password = self.config[self.section_name]['password'])
 
         except BaseException:
             Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
@@ -70,15 +79,13 @@ class RedditClient(Defaults):
             #self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:
-            from defaults import Defaults
-            Defaults().set_config_prefix(self.args['config_prefix'])
+            self.defaults.set_prefix(self.args['config_prefix'])
             exit(0)
         elif self.arg_dict['config_path']:
-            from defaults import Defaults
             if self.args['config_path'].lower() == 'default':
-                Defaults().set_path_to_default()
+                self.defaults.set_path_to_default()
             else:
-                Defaults().set_base_path(str(self.args['config_path']))
+                self.defaults.set_base_path(str(self.args['config_path']))
             exit(0)
         elif self.arg_dict['get_config']:
             Terminal().print_config_data()

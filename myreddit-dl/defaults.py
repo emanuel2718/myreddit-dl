@@ -11,84 +11,112 @@ class Defaults:
     def __init__(self, debug=False) -> None:
         self.log = utils.setup_logger(__name__, True)
         self.debug = debug
+        self.conf = configparser.ConfigParser()
+        self.conf.read(self._config_filepath)
         #self.log.debug('THIS HAPPENS Defaults().__init__()')
 
     @property
     def config(self):
-        config = configparser.ConfigParser()
-        config.read(utils.CFG_FILENAME)
-        return config
-        #return configparser.ConfigParser().read(utils.CFG_FILENAME)
+        return self.conf
 
     @property
-    def home_dir(self) -> str:
-        return os.path.expanduser('~')
+    def _config_filepath(self) -> str:
+        return self.project_dir + 'config.ini'
+
+
+    @property
+    def project_parent_dir(self) -> str:
+        return str(pathlib.Path(__file__).parent.parent) + os.sep
 
     @property
     def project_dir(self) -> str:
-        return utils.PROJECT_DIR
-
-    @property
-    def user_section_name(self) -> str:
-        '''
-        Returns the current user config [SECTION] name
-
-        @return: str: current user section name.
-        '''
-        return str(self.config['USERS']['current_user_section_name'])
-
-    @property
-    def username(self) -> str:
-        return str(self.config[self.user_section_name]['username'])
+        return str(pathlib.Path(__file__).parent) + os.sep
 
     @property
     def media_folder(self) -> str:
         return str(self.project_dir + 'media' + os.sep)
 
     @property
-    def default_config_path(self) -> str:
-        return str(self.home_dir + os.sep + 'Pictures' + os.sep +
-                   self.username + '_reddit' + os.sep)
+    def home_dir(self) -> str:
+        return str(os.path.expanduser('~'))
 
+    @property
+    def client_username(self) -> str:
+        return str(self.config[self.user_section_name]['username'])
+
+    @property
+    def user_section_name(self) -> str:
+        ''' Returns the current user config [SECTION] name '''
+        return str(self.config['USERS']['current_user_section_name'])
+
+    @property
+    def current_prefix(self) -> str:
+        return self.config['DEFAULTS']['prefix']
+
+    @property
+    def media_path(self) -> str:
+        return str(self.config['DEFAULTS']['path'])
+
+
+    @property
+    def debug_path(self) -> str:
+        return str(self.project_parent_dir + 'debug_media' + os.sep)
+
+
+    @property
+    def metadata_file(self) -> str:
+        ''' Returns the full path of the metadata file'''
+        return self.media_folder + self.client_username + '_metadata.json'
 
     def __write_config(self, section: str, key: str, value: str) -> None:
         self.config.set(section, key, value)
-        with open(utils.CFG_FILENAME, 'w') as config:
-            self.config.write(config)
+        with open(self._config_filepath, 'w') as configfile:
+            self.config.write(configfile)
 
-    def set_path_to_default(self) -> None:
-        default_path = self.default_config_path
-        self.__write_config(f'DEFAULTS', 'path', default_path)
-        self.log.info(f'Path set to myreddit-dl default path: {default_path}')
+    def __get_default_media_path(self) -> str:
+        return str(self.home_dir + os.sep + 'Pictures' + os.sep +
+                   self.client_username + '_reddit' + os.sep)
 
-    def set_config_prefix(self, prefix: list) -> None:
-        valid_options = utils.get_valid_prefix_options()
+    def __get_valid_prefix_options(self) -> str:
+        return (
+            'subreddit',
+            'username',
+            'subreddit_username',
+            'username_subreddit')
+
+
+    def set_default_media_path(self) -> None:
+        default_path = self.__get_default_media_path()
+        self.__write_config('DEFAULTS', 'path', default_path)
+        self.log.info(f'Path set to default path: {default_path}')
+
+    def set_prefix(self, prefix: list) -> None:
+        valid_options = self.__get_valid_prefix_options()
         given = '_'.join(prefix).lower()
 
-        if given not in valid_options:
-            self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
-            return
-        if given == self.config['DEFAULTS']['prefix']:
-            self.log.info('This is already the current set prefix option.')
+        if given == self.current_prefix:
+            self.log.info(f'{given} is already the current prefix option.')
             return
 
-        # Different valid option given (username or subreddit)
-        try:
+        if given in valid_options:
             self.__write_config('DEFAULTS', 'prefix', given)
             self.log.info(f'Prefix format changed to: {given}')
+            return
 
-        except BaseException:
-            self.log.error('Something went wrong changing the prefix format')
-            exit(1)
+        self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
 
-    def set_base_path(self, path: str) -> None:
-        sanitized_path = self._sanitize_path(path)
+
+    def set_media_path(self, path: str) -> None:
+        sanitized_path = self.__sanitize_path(path)
         if os.path.exists(sanitized_path) or sanitized_path is not None:
             self.__write_config('DEFAULTS', 'path', sanitized_path)
             self.log.info(f'Path set to: {sanitized_path}')
             return
 
-    def _sanitize_path(self, path: str) -> str or None:
+    def __is_valid_path(self, path: str) -> bool:
+        return True if os.path.isabs(path) else False
+
+    def __sanitize_path(self, path: str) -> str or None:
         # TODO: I don't like this. Refactor this.
         if path.startswith(self.home_dir):
             pass
@@ -111,40 +139,34 @@ class Defaults:
         if system() == 'Windows':
             path = path.replace('/', '\\')
 
-        if self.is_valid_path(path):
+        if self.__is_valid_path(path):
             return path
         return self.default_config_path
 
 
-    def get_metadata_file(self) -> str:
-        return self.media_folder + self.username + '_metadata.json'
 
-    def get_file_prefix(self) -> str:
-        return str(self.config['DEFAULTS']['prefix'])
+    #def get_base_path(self) -> str:
+    #    if len(self.config['DEFAULTS']['path']) != 0:
+    #        config_path = str(self.config['DEFAULTS']['path'])
+    #        if self.__is_valid_path(config_path):
+    #            return config_path
 
-    def get_base_path(self, clean=False) -> str:
-        if self.debug or clean:
-            self.log.debug(
-                f"get_base_path() ->"
-                f"{str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)}")
-            return str(utils.PROJECT_PARENT_DIR + 'debug_media' + os.sep)
+    #    self.set_path_to_default()
+    #    return self.default_config_path
 
-        if len(self.config['DEFAULTS']['path']) != 0:
-            config_path = str(self.config['DEFAULTS']['path'])
-            if self.is_valid_path(config_path):
-                return config_path
-
-        self.set_path_to_default()
-        return self.default_config_path
-
-    def is_valid_path(self, path: str) -> bool:
-        return True if os.path.isabs(path) else False
 
     def clean_debug(self):
         import shutil
-        debug_path = self.get_base_path(True)
+        path = self.debug_path
         try:
-            shutil.rmtree(debug_path)
-            self.log.info(f'Removed debug folder: {debug_path}')
-        except BaseException:
+            os.remove('debug_log')
+            self.log.info(f'Removed debug_log')
+
+        except FileNotFoundError:
+            self.log.error('debug_log not found')
+        try:
+            shutil.rmtree(path)
+            self.log.info(f'Removed debug folder: {path}')
+
+        except FileNotFoundError:
             self.log.info(f'Debug folder not found.')

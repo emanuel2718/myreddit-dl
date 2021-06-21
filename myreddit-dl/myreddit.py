@@ -249,6 +249,7 @@ def run():
             exit(0)
 
         reddit_client = RedditClient(cli_args)
+        reddit_client.build_reddit_instance()
         Downloader(reddit_client).start()
 
     # GUI version of the app

@@ -32,11 +32,11 @@ class Terminal:
 
         if len(self.config['USERS']['current_user_section_name']) == 0:
             self.config['USERS']['current_user_section_name'] = section_name
-            self.log.info(f'\n{username} added as default client.')
+            self.log.info(f'{username} added as default client.')
 
         elif self.config['USERS']['current_user_section_name'] != section_name:
             response = self._prompt_user_change(username)
-            if response == 'y':
+            if response == 'y' or response == 'yes':
                 self.config['USERS']['current_user_section_name'] = section_name
                 self.log.info(f'{username} set as default client.')
             else:

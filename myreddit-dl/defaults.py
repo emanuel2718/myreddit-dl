@@ -5,15 +5,13 @@ import os
 from platform import system
 
 # TODO: Make this have the args...
-# TODO: Refactor this whole entire file.
+
 
 class Defaults:
     def __init__(self, debug=False) -> None:
-        self.log = utils.setup_logger(__name__, True)
-        self.debug = debug
+        self.log = utils.setup_logger(__name__, debug)
         self.conf = configparser.ConfigParser()
         self.conf.read(self._config_filepath)
-        #self.log.debug('THIS HAPPENS Defaults().__init__()')
 
     @property
     def config(self):
@@ -22,7 +20,6 @@ class Defaults:
     @property
     def _config_filepath(self) -> str:
         return self.project_dir + 'config.ini'
-
 
     @property
     def project_parent_dir(self) -> str:
@@ -42,26 +39,25 @@ class Defaults:
 
     @property
     def client_username(self) -> str:
-        return str(self.config[self.user_section_name]['username'])
+        ''' Current Reddit client username'''
+        return str(self.config[self.config_section_name]['username'])
 
     @property
-    def user_section_name(self) -> str:
+    def config_section_name(self) -> str:
         ''' Returns the current user config [SECTION] name '''
         return str(self.config['USERS']['current_user_section_name'])
 
     @property
-    def current_prefix(self) -> str:
+    def config_prefix(self) -> str:
         return self.config['DEFAULTS']['prefix']
 
     @property
-    def media_path(self) -> str:
+    def config_media_path(self) -> str:
         return str(self.config['DEFAULTS']['path'])
-
 
     @property
     def debug_path(self) -> str:
         return str(self.project_parent_dir + 'debug_media' + os.sep)
-
 
     @property
     def metadata_file(self) -> str:
@@ -73,28 +69,27 @@ class Defaults:
         with open(self._config_filepath, 'w') as configfile:
             self.config.write(configfile)
 
-    def __get_default_media_path(self) -> str:
+    def __get_default_config_media_path(self) -> str:
         return str(self.home_dir + os.sep + 'Pictures' + os.sep +
                    self.client_username + '_reddit' + os.sep)
 
-    def __get_valid_prefix_options(self) -> str:
+    def __get_valid_config_prefix_options(self) -> str:
         return (
             'subreddit',
             'username',
             'subreddit_username',
             'username_subreddit')
 
-
-    def set_default_media_path(self) -> None:
-        default_path = self.__get_default_media_path()
+    def set_default_config_media_path(self) -> None:
+        default_path = self.__get_default_config_media_path()
         self.__write_config('DEFAULTS', 'path', default_path)
         self.log.info(f'Path set to default path: {default_path}')
 
-    def set_prefix(self, prefix: list) -> None:
-        valid_options = self.__get_valid_prefix_options()
+    def set_config_prefix(self, prefix: list) -> None:
+        valid_options = self.__get_valid_config_prefix_options()
         given = '_'.join(prefix).lower()
 
-        if given == self.current_prefix:
+        if given == self.config_prefix:
             self.log.info(f'{given} is already the current prefix option.')
             return
 
@@ -105,13 +100,13 @@ class Defaults:
 
         self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
 
-
     def set_media_path(self, path: str) -> None:
         sanitized_path = self.__sanitize_path(path)
         if os.path.exists(sanitized_path) or sanitized_path is not None:
             self.__write_config('DEFAULTS', 'path', sanitized_path)
             self.log.info(f'Path set to: {sanitized_path}')
             return
+        self.set_default_config_media_path()
 
     def __is_valid_path(self, path: str) -> bool:
         return True if os.path.isabs(path) else False
@@ -142,18 +137,6 @@ class Defaults:
         if self.__is_valid_path(path):
             return path
         return self.default_config_path
-
-
-
-    #def get_base_path(self) -> str:
-    #    if len(self.config['DEFAULTS']['path']) != 0:
-    #        config_path = str(self.config['DEFAULTS']['path'])
-    #        if self.__is_valid_path(config_path):
-    #            return config_path
-
-    #    self.set_path_to_default()
-    #    return self.default_config_path
-
 
     def clean_debug(self):
         import shutil

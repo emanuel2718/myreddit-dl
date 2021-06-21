@@ -26,7 +26,7 @@ class RedditClient():
 
     @property
     def section_name(self):
-        return self.defaults.user_section_name
+        return self.defaults.config_section_name
 
     def build_reddit_instance(self) -> praw.Reddit or None:
         self.log.debug('Building reddit instance')
@@ -79,13 +79,13 @@ class RedditClient():
             #self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:
-            self.defaults.set_prefix(self.args['config_prefix'])
+            self.defaults.set_config_prefix(self.args['config_prefix'])
             exit(0)
         elif self.arg_dict['config_path']:
             if self.args['config_path'].lower() == 'default':
-                self.defaults.set_path_to_default()
+                self.defaults.set_default_config_media_path()
             else:
-                self.defaults.set_base_path(str(self.args['config_path']))
+                self.defaults.set_media_path(str(self.args['config_path']))
             exit(0)
         elif self.arg_dict['get_config']:
             Terminal().print_config_data()

@@ -14,7 +14,7 @@ class FileHandler():
         self.defaults = Defaults(
             True) if self.cls.args['debug'] else Defaults()
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
-        self.path = self.defaults.media_path
+        self.path = self.defaults.config_media_path
         self.path = self.path if self.path.endswith(
             '/') else self.path + os.sep
         self.json_file = self.defaults.metadata_file
@@ -34,7 +34,7 @@ class FileHandler():
     def get_prefix(self) -> str:
         sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
         username = str(self.cls.item_author)
-        current_set_prefix = self.defaults.current_prefix
+        current_set_prefix = self.defaults.config_prefix
         if current_set_prefix == 'username':
             return username + '_'
         elif current_set_prefix == 'subreddit':

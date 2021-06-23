@@ -5,6 +5,7 @@ import praw
 import re
 import requests
 import utils
+from item import Item
 from datetime import datetime
 from defaults import Defaults
 from file_handler import FileHandler
@@ -14,63 +15,20 @@ class Downloader:
     def __init__(self, client: 'RedditClient') -> None:
         self.client = client
         self.log = utils.setup_logger(__name__, self.client.args['debug'])
-        self.valid_domains = utils.SFW_DOMAINS
+        self.valid_domains = self._sfw_domains
         self.download_counter = 0
         self.skipped_counter = 0
         self.items_iterated = 0
-
-        self._item = None  # current upvoted or saved post we are looking at.
+        self.item = None
         self.media_url = None
         self.file_handler = None  # will eventually hold current instance of FileHandler
         self._check_metadata_request()
-
-    @property
-    def __print_item(self) -> None:
-        pprint.pprint(vars(self._item))
 
     @property
     def __print_counters(self) -> None:
         self.log.info(f'{self.skipped_counter} media skipped')
         self.log.info(f'{self.download_counter} media downloaded')
         self.log.info(f'{self.items_iterated} posts searched')
-
-    @property
-    def item(self) -> 'RedditPostItem':
-        return self._item
-
-    @property
-    def item_id(self) -> str:
-        return self._item.id
-
-    @property
-    def item_link(self) -> str:
-        return str('https://reddit.com' + self._item.permalink)
-
-    @property
-    def item_title(self) -> str:
-        title = str(self._item.title).encode('ascii', 'ignore').decode()
-        return str(title)
-
-    @property
-    def item_subreddit(self) -> str:
-        return str(self._item.subreddit_name_prefixed)
-
-    @property
-    def item_upvotes(self) -> int:
-        return self._item.ups
-
-    @property
-    def item_author(self) -> str:
-        return str(self._item.author)
-
-    @property
-    def item_nsfw(self) -> bool:
-        return self._item.over_18
-
-    @property
-    def item_creation_date(self) -> str:
-        time_utc = self._item.created_utc
-        return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
     @property
     def user(self) -> str:
@@ -81,10 +39,6 @@ class Downloader:
         return self.client.args
 
     @property
-    def subreddit(self) -> str:
-        return str(self._item.subreddit)
-
-    @property
     def curr_media_url(self) -> str or list:
         return self.media_url
 
@@ -92,25 +46,33 @@ class Downloader:
         self.media_url = url
 
     @property
-    def sfw_domains(self) -> set:
-        return utils.SFW_DOMAINS
+    def _sfw_domains(self) -> set:
+        return {'v.redd.it',
+                'i.redd.it',
+                'i.imgur.com',
+                'gfycat.com',
+                'streamable.com',
+                'reddit.com',
+                'imgur.com'}
 
     @property
-    def nsfw_domains(self) -> set:
-        return utils.NSFW_DOMAINS
+    def _nsfw_domains(self) -> set:
+        return {'redgifs.com', 'erome.com'}
 
+    # TODO: should all this url function be moved to the item file? I think so..
     @property
     def _vreddit_url(self) -> str:
         ''' For the https://v.redd.it posts'''
-        if self._item.media is None:
-            return self._item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
+        if self.item.get_item().media is None:
+        #if self._item.media is None:
+            return self.item.get_item().crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
         else:
-            return self._item.media['reddit_video']['fallback_url']
+            return self.item.get_item().media['reddit_video']['fallback_url']
 
     @property
     def _gyfcat_url(self) -> str:
         try:
-            return self._item.preview['reddit_video_preview']['fallback_url']
+            return self.item.get_item().preview['reddit_video_preview']['fallback_url']
         except BaseException:
             self.log.exception('gyfact_url exception raised')
             return None
@@ -118,13 +80,13 @@ class Downloader:
     @property
     def _redgifs_url(self) -> str:
         try:
-            return self._item.preview['reddit_video_preview']['fallback_url']
+            return self.item.get_item().preview['reddit_video_preview']['fallback_url']
         except BaseException:
             self.log.exception('redgifs_url exception raised')
             pass
 
         # need to extract the video link through html requests
-        response = requests.get(self._item.url).text
+        response = requests.get(self.item.url).text
         urls = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(response))
         for url in urls:
             if url.endswith('.mp4'):
@@ -134,7 +96,7 @@ class Downloader:
     @property
     def _streamable_url(self) -> str:
         try:
-            html = self._item.media['oembed']['html']
+            html = self.item.get_item().media['oembed']['html']
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
             return url + '.mp4'
         except BaseException:
@@ -144,7 +106,7 @@ class Downloader:
     @property
     def _reddit_gallery_url(self) -> list:
         try:
-            metadata = self._item.media_metadata.values()
+            metadata = self.item.get_item().media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
         except BaseException:
             self.log.exception('reddit_gallery_url exception raised')
@@ -153,7 +115,7 @@ class Downloader:
     @property
     def _imgur_gallery_url(self) -> list:
         try:
-            return [self._item.preview['images'][0]['source']['url']]
+            return [self.item.get_item().preview['images'][0]['source']['url']]
         except BaseException:
             self.log.exception('imgur_gallery_url exception raised')
             return None
@@ -161,17 +123,17 @@ class Downloader:
     @property
     def _mp4_url_from_gif_url(self) -> str:
         ''' Replace .gifv and .gif extensions with .mp4 extension.'''
-        return self._item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
+        return self.item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
 
     @property
     def _is_comment(self) -> bool:
-        if isinstance(self._item, praw.models.reddit.comment.Comment):
+        if isinstance(self.item.get_item(), praw.models.reddit.comment.Comment):
             return True
         return False
 
     @property
     def _is_valid_domain(self) -> bool:
-        return True if self._item.domain in self.valid_domains else False
+        return True if self.item.get_item().domain in self.valid_domains else False
 
     @property
     def _is_valid_subreddit(self) -> bool:
@@ -186,18 +148,18 @@ class Downloader:
         return self.subreddit in self.client.args['sub']
 
     def __debug_item(self):
-        return (f'- Link: {self.item_link}\n'
-                f'- Domain: {self._item.domain}\n'
-                f'- Subreddit: {self.item_subreddit}\n'
-                f'- Author: {self.item_author}\n')
+        return (f'- Link: {self.item.link}\n'
+                f'- Domain: {self.item.domain}\n'
+                f'- Subreddit: {self.item.subreddit_prefixed}\n'
+                f'- Author: {self.item.author}\n')
 
     def _is_valid_post(self) -> bool:
         # TODO: think about a more clean way to handle this.
-        if self._item is None:
+        if self.item.get_item() is None:
             return False
-        if self._item.author is None:
+        if self.item.author is None:
             return False
-        if self._item.id is None:
+        if self.item.item_id is None:
             return False
         if self._is_comment:
             return False
@@ -210,22 +172,22 @@ class Downloader:
     def get_media_url(self) -> list:
         # TODO: maybe make this into some kind of for loop through
         #       the valid domains?
-        if self._item.domain == 'v.redd.it':
+        if self.item.domain == 'v.redd.it':
             media_url = self._vreddit_url
-        elif self._item.domain == 'gfycat.com':
+        elif self.item.domain == 'gfycat.com':
             media_url = self._gyfcat_url
-        elif self._item.domain == 'redgifs.com':
+        elif self.item.domain == 'redgifs.com':
             media_url = self._redgifs_url
-        elif self._item.domain == 'streamable.com':
+        elif self.item.domain == 'streamable.com':
             media_url = self._streamable_url
-        elif self._item.domain == 'imgur.com' and not self._item.url.endswith(('jpg', 'png')):
+        elif self.item.domain == 'imgur.com' and not self.item.url.endswith(('jpg', 'png')):
             media_url = self._imgur_gallery_url
-        elif self._item.url.startswith(utils.REDDIT_GALLERY_URL):
+        elif self.item.url.startswith(utils.REDDIT_GALLERY_URL):
             media_url = self._reddit_gallery_url
-        elif self._item.url.endswith('gifv'):
+        elif self.item.url.endswith('gifv'):
             media_url = self._mp4_url_from_gif_url
         else:
-            media_url = self._item.url  # all the png and jpg ready for download
+            media_url = self.item.url  # all the png and jpg ready for download
         return media_url
 
     def download_limit_reached(self) -> bool:
@@ -289,11 +251,14 @@ class Downloader:
 
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
-            self._item = item
+            self.item = Item(item)
+            #print(i.__repr__())
+            #print(i)
+            #self._item = item
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
                 self.media_url = self.get_media_url()
-                self.file_handler = FileHandler(self)
+                self.file_handler = FileHandler(self, self.item)
                 if self.can_download_item():
                     self.download()
                 else:
@@ -322,7 +287,7 @@ class Downloader:
             FileHandler(self).clean_debug()
 
         if self.client.args['nsfw']:
-            self.valid_domains = self.sfw_domains.union(self.nsfw_domains)
+            self.valid_domains = self._sfw_domains.union(self._nsfw_domains)
         if self.client.args['upvote'] and not self.client.args['saved']:
             self._iterate_items(self.client.upvotes)
         elif self.client.args['saved'] and not self.client.args['upvote']:

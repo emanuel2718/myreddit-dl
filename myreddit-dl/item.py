@@ -1,22 +1,5 @@
 from datetime import datetime
 
-# TODO: use this
-# from collections import namedtuple
-#
-# Item = namedtuple('Item', 'id subreddit title user link upvotes nsfw')
-# curr = Item('7dyu5', 'r/MechanicalKeyboards', 'This is a title',
-#             'random_user', 'https://reddit.com/r/mecha..', '12452', True)
-# print(curr)
-#
-# curr._fields
-#  To make a dictionary. Damn!!!
-# curr._make
-# curr._asdict(u)
-
-# It can be used as
-# curr.id
-# curr[0]
-
 class Item:
     def __init__(self, item):
         self._item = item
@@ -46,6 +29,9 @@ class Item:
                           'Sub', self.subreddit_prefixed,
                           'Author', self.author)
 
+    def get_item(self) -> 'RedditPostItem':
+        return self._item
+
     @property
     def title(self) -> str:
         return str(self._item.title)
@@ -53,6 +39,14 @@ class Item:
     @property
     def item_id(self) -> str:
         return str(self._item.id)
+
+    @property
+    def domain(self) -> str:
+        return str(self._item.domain)
+
+    @property
+    def url(self) -> str:
+        return str(self._item.url)
 
     @property
     def link(self) -> str:

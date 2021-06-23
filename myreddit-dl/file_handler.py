@@ -8,11 +8,14 @@ from pprint import pprint
 
 
 class FileHandler():
-    def __init__(self, cls: 'Downloader') -> None:
+    def __init__(self, cls: 'Downloader', item=None) -> None:
         self.cls = cls
+        self.item = item
         self.log = utils.setup_logger(__name__, self.cls.args['debug'])
         self.defaults = Defaults(
             True) if self.cls.args['debug'] else Defaults()
+        # TODO: refactor all of this to their own functions. So we can instantitate
+        #       file_handler without getting paths and stuff.
         self.media_url = self.cls.curr_media_url if self.cls.curr_media_url else ''
         self.path = self.defaults.config_media_path
         self.path = self.path if self.path.endswith(
@@ -32,8 +35,8 @@ class FileHandler():
         return self.path
 
     def get_prefix(self) -> str:
-        sub = self.get_subreddit_without_prefix(self.cls.item_subreddit)
-        username = str(self.cls.item_author)
+        sub = self.get_subreddit_without_prefix(self.item.subreddit_prefixed)
+        username = str(self.item.author)
         current_set_prefix = self.defaults.config_prefix
         if current_set_prefix == 'username':
             return username + '_'
@@ -105,7 +108,7 @@ class FileHandler():
         url = url[0] if isinstance(url, list) else url
         extension = str(self.get_file_extension(url))
 
-        return str(self.get_prefix() + self.cls.item_id + index + extension)
+        return str(self.get_prefix() + self.item.item_id + index + extension)
 
     def get_subreddit_without_prefix(self, sub: str) -> str:
         ''' Receive a r/subreddit string and return subreddit without
@@ -125,13 +128,13 @@ class FileHandler():
         return path.rpartition(os.sep)[-1]
 
     def _get_item_metadata(self) -> dict:
-        return {'Author': self.cls.item_author,
-                'Subreddit': self.cls.item_subreddit,
-                'Title': self.cls.item_title,
-                'Link': self.cls.item_link,
-                'Upvotes': self.cls.item_upvotes,
-                'NSFW': self.cls.item_nsfw,
-                'Post creation date': self.cls.item_creation_date
+        return {'Author': self.item.author,
+                'Subreddit': self.item.subreddit_prefixed,
+                'Title': self.item.title,
+                'Link': self.item.link,
+                'Upvotes': self.item.upvotes_amount,
+                'NSFW': self.item.is_nsfw(),
+                'Post creation date': self.item.get_creation_date()
                 }
 
     def save_metadata(self, path: str, filename: str):

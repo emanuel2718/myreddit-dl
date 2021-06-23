@@ -24,7 +24,6 @@ class Terminal:
         if not self.config.has_section(section_name):
             self.config.add_section(section_name)
 
-
         self.config.set(section_name, 'client_id', client_id)
         self.config.set(section_name, 'client_secret', client_secret)
         self.config.set(section_name, 'username', username)
@@ -40,9 +39,9 @@ class Terminal:
                 self.config['USERS']['current_user_section_name'] = section_name
                 self.log.info(f'{username} set as default client.')
             else:
-                self.log.info(f"{self.config['USERS']['current_user_section_name']} "
-                      "left as default client.")
-
+                self.log.info(
+                    f"{self.config['USERS']['current_user_section_name']} "
+                    "left as default client.")
 
         with open(utils.CFG_FILENAME, 'w') as config_file:
             self.config.write(config_file)
@@ -52,16 +51,16 @@ class Terminal:
 
     def change_client(self):
         invalid_sections = {'DEFAULTS', 'USERS', 'REDDIT'}
-        sections = [sec for sec in self.config.sections() if sec not in invalid_sections]
+        sections = [sec for sec in self.config.sections()
+                    if sec not in invalid_sections]
         options = {}
         res = ''
         print('\nValid Reddit clients:\n')
         for i, section in enumerate(sections, 1):
             print(f'{i}. {self.config[section]["username"]}')
             options[str(i)] = self.config[section]['username']
-        options[str(len(sections)+1)] = 'Exit'
+        options[str(len(sections) + 1)] = 'Exit'
         print(f'{len(sections)+1}. Exit Program')
-
 
         while res not in list(options.keys()):
             res = input('\nPlease chose the client you want to change to: ')
@@ -70,22 +69,22 @@ class Terminal:
             exit(0)
 
         if self.config['USERS']['current_user_section_name'] == options[res].upper():
-            self.log.info(f'{options[res]} is already the current reddit client.')
+            self.log.info(
+                f'{options[res]} is already the current reddit client.')
             exit(0)
-
 
         self.config['USERS']['current_user_section_name'] = options[res].upper()
         with open(utils.CFG_FILENAME, 'w') as config_file:
             self.config.write(config_file)
             self.log.info(f'Reddit client changed to {options[res]}')
 
-
     def _prompt_user_change(self, username: str) -> str:
         res = ''
         while res not in {'y', 'yes', 'n', 'no'}:
-            res = input(f'\nINFO: {username} is not currently set as the default client.\n'
-                        f'\nWould you like to set {username} as default client?'
-                        ' (y)es, (n)o: ').lower()
+            res = input(
+                f'\nINFO: {username} is not currently set as the default client.\n'
+                f'\nWould you like to set {username} as default client?'
+                ' (y)es, (n)o: ').lower()
         return res
 
     def _config_setup_header(self):

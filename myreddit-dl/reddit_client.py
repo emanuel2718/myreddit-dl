@@ -35,14 +35,13 @@ class RedditClient():
             Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
             exit(0)
 
-
         try:
             instance = praw.Reddit(
-                user_agent = 'MyReddit-dl',
-                client_id = self.config[self.section_name]['client_id'],
-                client_secret = self.config[self.section_name]['client_secret'],
-                username = self.config[self.section_name]['username'],
-                password = self.config[self.section_name]['password'])
+                user_agent='MyReddit-dl',
+                client_id=self.config[self.section_name]['client_id'],
+                client_secret=self.config[self.section_name]['client_secret'],
+                username=self.config[self.section_name]['username'],
+                password=self.config[self.section_name]['password'])
 
         except BaseException:
             Terminal().client_config_setup(self.arg_dict['add_client_hidden'])
@@ -53,19 +52,19 @@ class RedditClient():
                 self.user_instance = instance.user.me()
                 return instance
                 # TODO: maybe this is not needed. Make sure the instance is correct elsewhere?
-                #if str(instance.user.me()).lower() == self.username:
-                    #self.log.info('Reddit Instance build status: OK!')
-                    #return instance
+                # if str(instance.user.me()).lower() == self.username:
+                #self.log.info('Reddit Instance build status: OK!')
+                # return instance
                 #self.log.info('Error in reddit instance build')
         except BaseException:
             self.log.exception('Reddit instance build status: Failed')
             return None
         return None
 
-
     def __check_instance_validity(self) -> None:
         if self.reddit_instance is None:
-            Terminal().prompt_client_config_setup(self.arg_dict['add_client_hidden'])
+            Terminal().prompt_client_config_setup(
+                self.arg_dict['add_client_hidden'])
             self.log.info('Client configuration status: Done\n')
             exit(0)
         return
@@ -76,7 +75,7 @@ class RedditClient():
             exit(0)
         if self.arg_dict['change_client']:
             Terminal().change_client()
-            #self.set_path_to_default()
+            # self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:
             self.defaults.set_config_prefix(self.args['config_prefix'])

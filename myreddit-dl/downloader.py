@@ -59,78 +59,6 @@ class Downloader:
     def _nsfw_domains(self) -> set:
         return {'redgifs.com', 'erome.com'}
 
-    # TODO: should all this url function be moved to the item file? I think so..
-    @property
-    def _vreddit_url(self) -> str:
-        ''' For the https://v.redd.it posts'''
-        if self.item.get_item().media is None:
-        #if self._item.media is None:
-            return self.item.get_item().crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
-        else:
-            return self.item.get_item().media['reddit_video']['fallback_url']
-
-    @property
-    def _gyfcat_url(self) -> str:
-        try:
-            return self.item.get_item().preview['reddit_video_preview']['fallback_url']
-        except BaseException:
-            self.log.exception('gyfact_url exception raised')
-            return None
-
-    @property
-    def _redgifs_url(self) -> str:
-        try:
-            return self.item.get_item().preview['reddit_video_preview']['fallback_url']
-        except BaseException:
-            self.log.exception('redgifs_url exception raised')
-            pass
-
-        # need to extract the video link through html requests
-        response = requests.get(self.item.url).text
-        urls = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(response))
-        for url in urls:
-            if url.endswith('.mp4'):
-                return url
-        return None
-
-    @property
-    def _streamable_url(self) -> str:
-        try:
-            html = self.item.get_item().media['oembed']['html']
-            url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
-            return url + '.mp4'
-        except BaseException:
-            self.log.exception('streamable_url exception raised')
-            return None
-
-    @property
-    def _reddit_gallery_url(self) -> list:
-        try:
-            metadata = self.item.get_item().media_metadata.values()
-            return [i['s']['u'] for i in metadata if i['e'] == 'Image']
-        except BaseException:
-            self.log.exception('reddit_gallery_url exception raised')
-            return None  # deleted post
-
-    @property
-    def _imgur_gallery_url(self) -> list:
-        try:
-            return [self.item.get_item().preview['images'][0]['source']['url']]
-        except BaseException:
-            self.log.exception('imgur_gallery_url exception raised')
-            return None
-
-    @property
-    def _mp4_url_from_gif_url(self) -> str:
-        ''' Replace .gifv and .gif extensions with .mp4 extension.'''
-        return self.item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
-
-    @property
-    def _is_comment(self) -> bool:
-        if isinstance(self.item.get_item(), praw.models.reddit.comment.Comment):
-            return True
-        return False
-
     @property
     def _is_valid_domain(self) -> bool:
         return True if self.item.get_item().domain in self.valid_domains else False
@@ -161,7 +89,7 @@ class Downloader:
             return False
         if self.item.item_id is None:
             return False
-        if self._is_comment:
+        if self.is_comment():
             return False
         if not self._is_valid_subreddit:
             return False
@@ -169,23 +97,28 @@ class Downloader:
             return False
         return True
 
+    def is_comment(self) -> bool:
+        if isinstance(self.item, praw.models.reddit.comment.Comment):
+            return True
+        return False
+
     def get_media_url(self) -> list:
         # TODO: maybe make this into some kind of for loop through
         #       the valid domains?
         if self.item.domain == 'v.redd.it':
-            media_url = self._vreddit_url
+            media_url = self.item.get_vreddit_url()
         elif self.item.domain == 'gfycat.com':
-            media_url = self._gyfcat_url
+            media_url = self.item.get_gyfcat_url()
         elif self.item.domain == 'redgifs.com':
-            media_url = self._redgifs_url
+            media_url = self.item.get_redgifs_url()
         elif self.item.domain == 'streamable.com':
-            media_url = self._streamable_url
+            media_url = self.item.get_streamable_url()
         elif self.item.domain == 'imgur.com' and not self.item.url.endswith(('jpg', 'png')):
-            media_url = self._imgur_gallery_url
+            media_url = self.item.get_imgur_gallery_url()
         elif self.item.url.startswith(utils.REDDIT_GALLERY_URL):
-            media_url = self._reddit_gallery_url
+            media_url = self.item.get_reddit_gallery_url()
         elif self.item.url.endswith('gifv'):
-            media_url = self._mp4_url_from_gif_url
+            media_url = self.item.get_mp4_url_from_gif_url()
         else:
             media_url = self.item.url  # all the png and jpg ready for download
         return media_url
@@ -252,8 +185,8 @@ class Downloader:
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
             self.item = Item(item)
-            #print(i.__repr__())
-            #print(i)
+            # print(i.__repr__())
+            # print(i)
             #self._item = item
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
@@ -264,8 +197,6 @@ class Downloader:
                 else:
                     self.skipped_counter += 1
         return self.__print_counters
-
-
 
     def _check_metadata_request(self):
         if self.client.args['delete_database']:

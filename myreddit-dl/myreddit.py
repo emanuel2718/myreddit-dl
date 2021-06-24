@@ -237,7 +237,9 @@ def get_cli_args():
 
     return vars(parser.parse_args())
 
-
+# TODO: move argparser into it's own separate module for better handling.
+#       Now I'm just passing it through all the modules manually.
+#       importing it when needed it's much cleaner.
 def run():
     # cli version of the app
     if len(sys.argv) > 1:

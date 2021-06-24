@@ -86,6 +86,11 @@ class Defaults:
         self.log.info(f'Path set to default path: {default_path}')
 
     def set_config_prefix(self, prefix: list) -> None:
+        # TODO: Make this smarter to be more expansive in the future
+        #       __get_valid_config_prefix_options() needs to be changed
+        #       Example: The user want the prefix to be title_username or
+        #                tags_subreddit or something crazy like
+        #                tags_subreddit_title_username (for whatever reason...)
         valid_options = self.__get_valid_config_prefix_options()
         given = '_'.join(prefix).lower()
 

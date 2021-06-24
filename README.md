@@ -237,10 +237,11 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] `--no-gallery` flag to skip gallery media
 - [x] `--add-user` flag to add another profile.
 - [x] `--change-user` flag to change to another profile if user has more than one account.
+- [x] refactor downloader reddit post item into a separate Item class (item.py)
+- [ ] make a new module console_args.py and import it when needed. This is better than passing it everytime.
 - [ ] _, filename = os.path.split(full_path)
 - [ ] entire refactorization of the project.
 - [ ] think about refactoring argparser to be able to have it globally without instantiating or passing it
-- [ ] refactor downloader reddit post item into a separate Item class (item.py)
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
 - [ ] Make test suite
 - [ ] Fix path issues with ( ./ and / ), especially on Windows

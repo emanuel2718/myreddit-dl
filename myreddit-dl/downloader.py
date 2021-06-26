@@ -5,6 +5,7 @@ import praw
 import re
 import requests
 import utils
+import console_args
 from item import Item
 from datetime import datetime
 from defaults import Defaults
@@ -36,7 +37,7 @@ class Downloader:
 
     @property
     def args(self) -> dict:
-        return self.client.args
+        return console_args.get_args()
 
     @property
     def curr_media_url(self) -> str or list:

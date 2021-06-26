@@ -1,4 +1,5 @@
 import configparser
+import console_args
 import praw
 import utils
 import logging
@@ -9,11 +10,10 @@ from defaults import Defaults
 
 class RedditClient():
 
-    def __init__(self, arg_dict: dict) -> None:
-        self.arg_dict = arg_dict
-        self.log = utils.setup_logger(__name__, arg_dict['debug'])
+    def __init__(self) -> None:
+        self.arg_dict = console_args.get_args()
+        self.log = utils.setup_logger(__name__, self.arg_dict['debug'])
         self.defaults = Defaults()
-        self.arg_dict = arg_dict
         self.user_instance = None
         self.__check_config_request()
 
@@ -78,13 +78,13 @@ class RedditClient():
             # self.set_path_to_default()
             exit(0)
         elif self.arg_dict['config_prefix']:
-            self.defaults.set_config_prefix(self.args['config_prefix'])
+            self.defaults.set_config_prefix(self.arg_dict['config_prefix'])
             exit(0)
         elif self.arg_dict['config_path']:
-            if self.args['config_path'].lower() == 'default':
+            if self.arg_dict['config_path'].lower() == 'default':
                 self.defaults.set_default_config_media_path()
             else:
-                self.defaults.set_media_path(str(self.args['config_path']))
+                self.defaults.set_media_path(str(self.arg_dict['config_path']))
             exit(0)
         elif self.arg_dict['get_config']:
             Terminal().print_config_data()
@@ -113,7 +113,7 @@ class RedditClient():
             Otherwise, return None
         '''
         return self.user_instance.upvoted(
-            limit=self.args['max_depth']) if self.args['upvote'] else None
+            limit=self.arg_dict['max_depth']) if self.arg_dict['upvote'] else None
 
     @property
     def saves(self) -> 'User saved posts':
@@ -122,7 +122,7 @@ class RedditClient():
             Otherwise, return None
         '''
         return self.user_instance.saved(
-            limit=self.args['max_depth']) if self.args['saved'] else None
+            limit=self.arg_dict['max_depth']) if self.arg_dict['saved'] else None
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 __*
 myreddit-dl/config.backup
 myreddit-dl/config.ini
+myreddit-dl/*_reddit/
 debug_media/
 debug_log
 reddit_media/

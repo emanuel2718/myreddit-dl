@@ -25,6 +25,10 @@ class RedditClient():
         return self.defaults.config
 
     @property
+    def args(self):
+        return self.arg_dict
+
+    @property
     def section_name(self):
         return self.defaults.config_section_name
 

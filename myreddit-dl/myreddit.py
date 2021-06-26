@@ -12,9 +12,7 @@ from downloader import Downloader
 
 def run():
     if len(sys.argv) > 1:
-        reddit_client = RedditClient()
-        reddit_client.build_reddit_instance()
-        Downloader(reddit_client).start()
+        Downloader().start()
 
     # GUI version of the app
     else:

@@ -6,16 +6,17 @@ import re
 import requests
 import utils
 import console_args
+from reddit_client import RedditClient
 from item import Item
 from datetime import datetime
 from defaults import Defaults
 from file_handler import FileHandler
 
 
-class Downloader:
-    def __init__(self, client: 'RedditClient') -> None:
-        self.client = client
-        self.log = utils.setup_logger(__name__, self.client.args['debug'])
+class Downloader(RedditClient):
+    def __init__(self) -> None:
+        super().__init__()
+        self.log = utils.setup_logger(__name__)
         self.valid_domains = self._sfw_domains
         self.download_counter = 0
         self.skipped_counter = 0
@@ -30,14 +31,6 @@ class Downloader:
         self.log.info(f'{self.skipped_counter} media skipped')
         self.log.info(f'{self.download_counter} media downloaded')
         self.log.info(f'{self.items_iterated} posts searched')
-
-    @property
-    def user(self) -> str:
-        return str(self.client.user)
-
-    @property
-    def args(self) -> dict:
-        return console_args.get_args()
 
     @property
     def curr_media_url(self) -> str or list:
@@ -72,9 +65,9 @@ class Downloader:
             Also returns True if the user didn't specify any subreddit, as
             then it is implied that the user wants all the posts.
         '''
-        if self.client.args['sub'] is None:
+        if self.args['sub'] is None:
             return True
-        return self.subreddit in self.client.args['sub']
+        return self.subreddit in self.args['sub']
 
     def __debug_item(self):
         return (f'- Link: {self.item.link}\n'
@@ -137,12 +130,12 @@ class Downloader:
             with open(path, 'wb') as f:
                 f.write(r.content)
                 # User didn't specify --no-metadata, go ahead an save metadata
-                if not self.client.args['no_metadata']:
+                if not self.args['no_metadata']:
                     self.file_handler.save_metadata(path, str(filename))
                     self.log.info(f'ADDED: {filename}')
                 self.download_counter += 1
         except BaseException:
-            if self.client.args['verbose']:
+            if self.args['verbose']:
                 self.log.exception(f'While adding file {filename}')
 
     def download(self):
@@ -159,22 +152,22 @@ class Downloader:
         if self.media_url is None:
             return False
 
-        if isinstance(self.media_url, list) and self.client.args['no_gallery']:
+        if isinstance(self.media_url, list) and self.args['no_gallery']:
             self.log.debug(f'Skipped Gallery Item\n{self.__debug_item()}')
             return False
 
         filename = self.file_handler.get_filename(self.media_url)
 
-        if self.client.args['only_video'] and not self.file_handler.is_video:
+        if self.args['only_video'] and not self.file_handler.is_video:
             self.log.bug(f'Skipped Image: {filename}')
             return False
 
-        if self.client.args['no_video'] and self.file_handler.is_video:
+        if self.args['no_video'] and self.file_handler.is_video:
             self.log.debug(f'Skipped Video: {filename}')
             return False
 
         if self.file_handler.file_exist:
-            if self.client.args['verbose']:
+            if self.args['verbose']:
                 self.log.info(f'File exists: {filename}')
             return False
 
@@ -200,7 +193,7 @@ class Downloader:
         return self.__print_counters
 
     def _check_metadata_request(self):
-        if self.client.args['delete_database']:
+        if self.args['delete_database']:
             FileHandler(self).delete_database()
             exit(0)
 
@@ -209,23 +202,23 @@ class Downloader:
             'get_link': 'Link',
             'get_title': 'Title', }
         for opt, val in options.items():
-            if self.client.args[opt]:
-                FileHandler(self).get_metadata(self.client.args[opt], val)
+            if self.args[opt]:
+                FileHandler(self).get_metadata(self.args[opt], val)
                 exit(0)
                 return
 
     def start(self) -> None:
-        if self.client.args['clean_debug']:
+        if self.args['clean_debug']:
             FileHandler(self).clean_debug()
 
-        if self.client.args['nsfw']:
+        if self.args['nsfw']:
             # union of nsfw and sfw domains
             self.valid_domains |= self._nsfw_domains
-        if self.client.args['upvote'] and not self.client.args['saved']:
-            self._iterate_items(self.client.upvotes)
-        elif self.client.args['saved'] and not self.client.args['upvote']:
-            self._iterate_items(self.client.saves)
-        elif self.client.args['saved'] and self.client.args['upvote']:
+        if self.args['upvote'] and not self.args['saved']:
+            self._iterate_items(self.upvotes)
+        elif self.args['saved'] and not self.args['upvote']:
+            self._iterate_items(self.saves)
+        elif self.args['saved'] and self.args['upvote']:
             print('THREADS: iterating both saved and upvotes')
         else:
             utils.print_error(utils.MISSING_DOWNLOAD_SOURCE)

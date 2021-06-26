@@ -218,7 +218,8 @@ class Downloader:
             FileHandler(self).clean_debug()
 
         if self.client.args['nsfw']:
-            self.valid_domains = self._sfw_domains.union(self._nsfw_domains)
+            # union of nsfw and sfw domains
+            self.valid_domains |= self._nsfw_domains
         if self.client.args['upvote'] and not self.client.args['saved']:
             self._iterate_items(self.client.upvotes)
         elif self.client.args['saved'] and not self.client.args['upvote']:

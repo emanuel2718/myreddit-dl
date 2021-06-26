@@ -2,7 +2,9 @@ from datetime import datetime
 import requests
 
 
-class Item: def __init__(self, item):
+class Item:
+
+    def __init__(self, item):
         self._item = item
 
     def __len__(self):
@@ -76,7 +78,7 @@ class Item: def __init__(self, item):
     def get_vreddit_url(self) -> str:
         ''' For the https://v.redd.it posts'''
         if self._item.media is None:
-        # if self._item.media is None:
+            # if self._item.media is None:
             return self._item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
         else:
             return self._item.media['reddit_video']['fallback_url']
@@ -131,4 +133,3 @@ class Item: def __init__(self, item):
     def get_mp4_url_from_gif_url(self) -> str:
         ''' Replace .gifv and .gif extensions with .mp4 extension.'''
         return self._item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
-

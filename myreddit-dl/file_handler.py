@@ -172,8 +172,19 @@ class FileHandler():
             self.log.error('Database not found. Must download content first')
 
     def clean_debug(self):
-        debug_path = self.defaults.get_base_path(True)
-        print(debug_path)
+        try:
+            os.removedirs(self.defaults.debug_path)
+            self.log.info('debug_media/ removed')
+
+        except:
+            self.log.info('No debug_media folder to delete')
+
+        try:
+            os.remove(self.defaults.debug_log_file)
+            self.log.info('debug_log file removed')
+
+        except:
+            self.log.info('No debug_log file found')
         exit(0)
 
 

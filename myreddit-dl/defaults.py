@@ -19,19 +19,24 @@ class Defaults:
 
     @property
     def _config_filepath(self) -> str:
-        return self.project_dir + 'config.ini'
+        return self.src_dir + 'config.ini'
 
     @property
     def project_parent_dir(self) -> str:
         return str(pathlib.Path(__file__).parent.parent) + os.sep
 
     @property
-    def project_dir(self) -> str:
+    def src_dir(self) -> str:
+        ''' Folder of all the source files.'''
         return str(pathlib.Path(__file__).parent) + os.sep
 
     @property
+    def debug_log_file(self) -> str:
+        return self.src_dir + os.sep + 'debug_log'
+
+    @property
     def media_folder(self) -> str:
-        return str(self.project_dir + 'media' + os.sep)
+        return str(self.src_dir + 'media' + os.sep)
 
     @property
     def home_dir(self) -> str:

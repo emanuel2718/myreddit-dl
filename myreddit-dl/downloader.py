@@ -96,26 +96,47 @@ class Downloader(RedditClient):
             return True
         return False
 
-    def get_media_url(self) -> list:
-        # TODO: maybe make this into some kind of for loop through
-        #       the valid domains?
-        if self.item.domain == 'v.redd.it':
-            media_url = self.item.get_vreddit_url()
-        elif self.item.domain == 'gfycat.com':
-            media_url = self.item.get_gyfcat_url()
-        elif self.item.domain == 'redgifs.com':
-            media_url = self.item.get_redgifs_url()
-        elif self.item.domain == 'streamable.com':
-            media_url = self.item.get_streamable_url()
-        elif self.item.domain == 'imgur.com' and not self.item.url.endswith(('jpg', 'png')):
-            media_url = self.item.get_imgur_gallery_url()
-        elif self.item.url.startswith(utils.REDDIT_GALLERY_URL):
-            media_url = self.item.get_reddit_gallery_url()
-        elif self.item.url.endswith('gifv'):
-            media_url = self.item.get_mp4_url_from_gif_url()
-        else:
-            media_url = self.item.url  # all the png and jpg ready for download
-        return media_url
+    @property
+    def _domains(self) -> dict:
+        return {'v.redd.it': self.item.get_vreddit_url,
+                'gfycat.com': self.item.get_gyfcat_url,
+                'redgifs.com': self.item.get_redgifs_url,
+                'streamable.com': self.item.get_streamable_url,
+                'imgur.com': self.item.get_imgur_gallery_url
+                }
+
+    def get_media_url(self, domain: str, url: str) -> str:
+        # TODO: check for imgur.com and not item.endswith(jpg, png)
+        print(domain, url)
+        if domain in self._domains.keys():
+            return self._domains[domain]()
+        elif url.startswith(utils.REDDIT_GALLERY_URL):
+            return self.item.get_reddit_gallery_url()
+        elif url.endswith('gifv'):
+            return self.item.get_mp4_url_from_gif_url()
+        return url
+
+
+    #def get_media_url(self) -> list:
+    #    # TODO: maybe make this into some kind of for loop through
+    #    #       the valid domains?
+    #    if self.item.domain == 'v.redd.it':
+    #        media_url = self.item.get_vreddit_url()
+    #    elif self.item.domain == 'gfycat.com':
+    #        media_url = self.item.get_gyfcat_url()
+    #    elif self.item.domain == 'redgifs.com':
+    #        media_url = self.item.get_redgifs_url()
+    #    elif self.item.domain == 'streamable.com':
+    #        media_url = self.item.get_streamable_url()
+    #    elif self.item.domain == 'imgur.com' and not self.item.url.endswith(('jpg', 'png')):
+    #        media_url = self.item.get_imgur_gallery_url()
+    #    elif self.item.url.startswith(utils.REDDIT_GALLERY_URL):
+    #        media_url = self.item.get_reddit_gallery_url()
+    #    elif self.item.url.endswith('gifv'):
+    #        media_url = self.item.get_mp4_url_from_gif_url()
+    #    else:
+    #        media_url = self.item.url  # all the png and jpg ready for download
+    #    return media_url
 
     def download_limit_reached(self) -> bool:
         if self.args['limit'] and self.download_counter >= self.args['limit']:
@@ -179,12 +200,9 @@ class Downloader(RedditClient):
     def _iterate_items(self, items: 'Upvoted or Saved posts') -> None:
         for item in items:
             self.item = Item(item)
-            # print(i.__repr__())
-            # print(i)
-            #self._item = item
             self.items_iterated += 1
             if not self.download_limit_reached() and self._is_valid_post():
-                self.media_url = self.get_media_url()
+                self.media_url = self.get_media_url(self.item.domain, self.item.url)
                 self.file_handler = FileHandler(self, self.item)
                 if self.can_download_item():
                     self.download()

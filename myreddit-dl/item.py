@@ -8,6 +8,7 @@ class Item:
 
     def __init__(self, item):
         self.__item = item
+        # TODO: create logger
 
     def __len__(self):
         return len(self.__item)
@@ -82,31 +83,32 @@ class Item:
         time_utc = self.__item.created_utc
         return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
-    def get_vreddit_url(self) -> str:
+    def get_vreddit_url(self) -> list:
         ''' For the https://v.redd.it posts'''
         if self.__item.media is None:
             # if self.__item.media is None:
-            return self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']
+            return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
         else:
             # TODO: fix this. Some redgifs that don't have preview are causing exceptions
             try:
-                return self.__item.media['reddit_video']['fallback_url']
+                return [self.__item.media['reddit_video']['fallback_url']]
             except:
-                return self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')
+                return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
 
-    def get_gyfcat_url(self) -> str:
+    def get_gyfcat_url(self) -> list:
         try:
-            return self.__item.preview['reddit_video_preview']['fallback_url']
+            return [self.__item.preview['reddit_video_preview']['fallback_url']]
         except BaseException:
             print('gyfact_url exception')
             # self.log.exception('gyfact_url exception raised')
             return None
 
-    def get_redgifs_url(self) -> str:
+    def get_redgifs_url(self) -> list:
         try:
-            return self.__item.preview['reddit_video_preview']['fallback_url']
+            return [self.__item.preview['reddit_video_preview']['fallback_url']]
         except BaseException:
-            print('redgifs_url exception raised: ')
+            print('redgifs_url exception raised:')
+            print(self)
             pass
 
         # need to extract the video link through html requests
@@ -114,14 +116,14 @@ class Item:
         urls = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(response))
         for url in urls:
             if url.endswith('.mp4'):
-                return url
+                return [url]
         return None
 
-    def get_streamable_url(self) -> str:
+    def get_streamable_url(self) -> list:
         try:
             html = self.__item.media['oembed']['html']
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
-            return url + '.mp4'
+            return [url + '.mp4']
         except BaseException:
             print('streamable_url exception raised')
             return None

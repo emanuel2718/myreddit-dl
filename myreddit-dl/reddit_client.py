@@ -1,3 +1,4 @@
+import time
 import configparser
 import console_args
 import praw
@@ -11,7 +12,10 @@ from defaults import Defaults
 class RedditClient():
 
     def __init__(self) -> None:
-        self.arg_dict = console_args.get_args()
+        # TODO: remove arg dict from here.
+        #       Almost everything could be handled by defaults
+        self.client_time = time.time()
+        self.arg_dict = console_args.get_console_args()
         self.log = utils.setup_logger(__name__, self.arg_dict['debug'])
         self.defaults = Defaults()
         self.user_instance = None
@@ -23,10 +27,6 @@ class RedditClient():
     @property
     def config(self):
         return self.defaults.config
-
-    @property
-    def args(self):
-        return self.arg_dict
 
     @property
     def section_name(self):
@@ -100,19 +100,17 @@ class RedditClient():
 
     @property
     def max_depth(self):
+        # TODO: should this be here?
         return self.arg_dict['max_depth']
 
     @property
-    def user(self) -> str:
+    def client_username(self) -> str:
         return str(self.username)
 
-    @property
-    def args(self) -> dict:
-        return self.arg_dict
 
     @property
-    def upvotes(self) -> 'User upvoted posts':
-        ''' Returns a ListingGenerator of the user upvoted posts if the
+    def client_upvotes(self) -> 'User upvoted posts':
+        ''' Yields a ListingGenerator of the user upvoted posts if the
             user asked for the saved files with the (-U --upvote) flag.
             Otherwise, return None
         '''
@@ -120,8 +118,8 @@ class RedditClient():
             limit=self.arg_dict['max_depth']) if self.arg_dict['upvote'] else None
 
     @property
-    def saves(self) -> 'User saved posts':
-        ''' Returns a ListingGenerator of the user saved posts if the
+    def client_saves(self) -> 'User saved posts':
+        ''' Yields a ListingGenerator of the user saved posts if the
             user asked for the saved files with the (-S --saved) flag.
             Otherwise, return None
         '''

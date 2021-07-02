@@ -14,6 +14,10 @@ class Defaults:
         self.conf.read(self._config_filepath)
 
     @property
+    def args(self):
+        return console_args.get_args()
+
+    @property
     def config(self):
         return self.conf
 

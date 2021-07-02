@@ -6,7 +6,6 @@ Program: myreddit-dl
 Description: Reddit upvoted & saved media downloader
 """
 import sys
-from reddit_client import RedditClient
 from downloader import Downloader
 
 

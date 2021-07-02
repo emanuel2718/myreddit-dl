@@ -4,8 +4,11 @@ import utils
 import logging
 
 
+def get_used_flags():
+    return set(k for k, v in get_args().items() if v)
 
-def get_args():
+
+def get_console_args():
     log = utils.setup_logger(__name__, True)
     log.debug('get_args is called')
 

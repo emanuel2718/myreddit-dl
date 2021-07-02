@@ -35,7 +35,7 @@ class FileHandler():
         return self.path
 
     def get_prefix(self) -> str:
-        sub = self.get_subreddit_without_prefix(self.item.subreddit_prefixed)
+        sub = self.get_subreddit_without_prefix(self.item.get_subreddit_prefixed())
         username = str(self.item.author)
         current_set_prefix = self.defaults.config_prefix
         if current_set_prefix == 'username':
@@ -105,6 +105,7 @@ class FileHandler():
             self.media_url).endswith('mp4') else False
 
     def get_filename(self, url: str, index='') -> str:
+        # TODO: modify. Now all the urls are list. Figure out how to change this
         url = url[0] if isinstance(url, list) else url
         extension = str(self.get_file_extension(url))
 
@@ -129,7 +130,7 @@ class FileHandler():
 
     def _get_item_metadata(self) -> dict:
         return {'Author': self.item.author,
-                'Subreddit': self.item.subreddit_prefixed,
+                'Subreddit': self.item.get_subreddit_prefixed(),
                 'Title': self.item.title,
                 'Link': self.item.link,
                 'Upvotes': self.item.upvotes_amount,

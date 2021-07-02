@@ -1,3 +1,4 @@
+import time
 import configparser
 import console_args
 import praw
@@ -11,7 +12,10 @@ from defaults import Defaults
 class RedditClient():
 
     def __init__(self) -> None:
-        self.arg_dict = console_args.get_args()
+        # TODO: remove arg dict from here.
+        #       Almost everything could be handled by defaults
+        self.client_time = time.time()
+        self.arg_dict = console_args.get_console_args()
         self.log = utils.setup_logger(__name__, self.arg_dict['debug'])
         self.defaults = Defaults()
         self.user_instance = None

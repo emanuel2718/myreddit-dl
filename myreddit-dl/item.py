@@ -2,12 +2,25 @@ from datetime import datetime
 import requests
 import re
 from pprint import pprint
+import praw
+import utils
 
 
 class Item:
 
     def __init__(self, item):
         self.__item = item
+        self.fmt = ('{}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    '{:6} = {}\n'
+                    #'{:6} = {}\n'
+                    '{}\n')
+
         # TODO: create logger
 
 
@@ -25,16 +38,16 @@ class Item:
                                             self.get_author())
 
     def __str__(self):
-        fmt = ('{}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n'
-               '{:6} = {}\n{}\n')
-        return fmt.format('-'*50,
-                          'Id', self.get_id(),
-                          'Title', self.get_title(),
-                          'Link', self.get_reddit_link(),
-                          'Domain', self.get_domain(),
-                          'Sub', self.get_subreddit_prefixed(),
-                          'Author', self.get_author(),
-                          '-'*50)
+        return self.fmt.format('-'*50,
+                               'Id', self.get_id(),
+                               'Title', self.get_title(),
+                               'Link', self.get_reddit_link(),
+                               'Domain', self.get_domain(),
+                               'Sub', self.get_subreddit_prefixed(),
+                               'Author', self.get_author(),
+                               'Video', self.is_video(),
+                               #'Comment', self.is_comment(),
+                               '-'*50)
 
     @property
     def __dict__(self):
@@ -90,6 +103,11 @@ class Item:
     def is_nsfw(self) -> bool:
         return self.__item.over_18
 
+    def is_video(self) -> bool:
+        return self.__item.domain in utils.VIDEO_DOMAINS
+
+    def is_comment(self) -> bool:
+        return isinstance(self.__item, praw.models.reddit.comment.Comment)
 
     def get_creation_date(self) -> str:
         time_utc = self.__item.created_utc
@@ -98,7 +116,6 @@ class Item:
     def get_vreddit_url(self) -> list:
         ''' For the https://v.redd.it posts'''
         if self.__item.media is None:
-            # if self.__item.media is None:
             return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
         else:
             # TODO: fix this. Some redgifs that don't have preview are causing exceptions
@@ -158,3 +175,7 @@ class Item:
     def get_mp4_url_from_gif_url(self) -> str:
         ''' Replace .gifv and .gif extensions with .mp4 extension.'''
         return self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
+
+
+    def get_media_attr(self):
+        return self.__item.media

@@ -32,6 +32,8 @@ NSFW_DOMAINS = {'redgifs.com', 'erome.com'}
 SFW_DOMAINS = {'v.redd.it', 'i.redd.it', 'i.imgur.com',
                'gfycat.com', 'streamable.com', 'reddit.com', 'imgur.com'}
 
+VIDEO_DOMAINS = {'redgifs.com', 'gfycat.com', 'v.redd.it'}
+
 SUPPORTED_MEDIA_FORMATS = ('.jpg', '.png', '.jpeg', '.gif', '.gifv', '.mp4')
 EXTENSION_STRING = '.jpg.png.jpeg.gif.gifv.mp4'
 
@@ -76,58 +78,6 @@ def get_valid_prefix_options():
 # 'See myreddit-dl --help for more information.')
 
 
-# Helper printing functions
-def print_debug(*args) -> None:
-    print('\n' + '=' * 70)
-    for arg in args:
-        print(arg)
-    print('=' * 70 + '\n')
-
-
-def print_done(msg: str) -> None:
-    print(f'[DONE] {msg}')
-
-
-def print_error(msg: str) -> None:
-    print(f'[ERROR] {msg}')
-
-
-def print_failed(msg: str) -> None:
-    print(f'[FAILED] {msg}')
-
-
-def print_file_added_debug(filename: str, path: str) -> None:
-    print(f'[ADDED] {filename} at {path}')
-
-
-def print_file_added(filename: str) -> None:
-    print(f'[ADDED] {filename}')
-
-
-def print_already_exists(filename: str) -> None:
-    print(f'[ALREADY EXISTS] {filename}')
-
-
-def print_file_removed(filename: str) -> None:
-    print(f'[DELETE] {filename}')
-
-
-def print_skipped_image(msg: str) -> None:
-    print(f'[SKIPPED IMAGE] {msg}')
-
-
-def print_skipped_video(msg: str) -> None:
-    print(f'[SKIPPED VIDEO] {msg}')
-
-
-def print_info(msg: str) -> None:
-    print(f'[INFO] {msg}')
-
-
-def print_data(msg: str) -> None:
-    print(f'\n{msg}\n')
-
-
 def print_metadata(data: dict) -> None:
     data = data.replace("{", '').replace("}", '').replace("'", '').split(',')
     print('\n\t[METADATA FOUND]\n')
@@ -136,34 +86,19 @@ def print_metadata(data: dict) -> None:
     print('\n')
 
 
-def print_editing(msg: str) -> None:
-    print(f'[EDIT] {msg}')
-
-
-def print_ok(msg: str) -> None:
-    print(f'[OK] {msg}')
-
-
-def print_warning(msg: str) -> None:
-    print(f'[WARNING] {msg}')
-
-
-def __rm_debug():
-    return os.remove('debug_log')
-
 
 def setup_logger(module: str, debug=False):
     logger = logging.getLogger(module)
-    logger.setLevel(logging.DEBUG if debug else logging.INFO)
+    #logger.setLevel(logging.DEBUG if debug else logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     fh = logging.FileHandler('debug_log', 'a')
+    #fh = logging.FileHandler('debug_log', 'w')
     fh.setLevel(logging.DEBUG)
 
     sh = logging.StreamHandler()
     sh.setLevel(logging.INFO)
 
-    #if module == '__main__':
-        #__rm_debug()
 
     fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
     sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
@@ -173,6 +108,9 @@ def setup_logger(module: str, debug=False):
     logger.addHandler(fh)
     logger.addHandler(sh)
     logging.getLogger('praw').setLevel(logging.CRITICAL)
+
+    if module == 'reddit_client':
+        logger.debug('-'*60)
     return logger
 
 

@@ -10,19 +10,7 @@ class Item:
 
     def __init__(self, item):
         self.__item = item
-        self.fmt = ('{}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    '{:6} = {}\n'
-                    #'{:6} = {}\n'
-                    '{}\n')
-
         # TODO: create logger
-
 
     def __len__(self):
         return len(self.__item)
@@ -54,6 +42,18 @@ class Item:
         # call with vars(item) instead of pprint(vars(item))
         return pprint(vars(self.__item))
 
+    @property
+    def fmt(self):
+        return ('{}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                '{:6} = {}\n'
+                #'{:6} = {}\n'
+                '{}\n')
 
 
     def get_item(self) -> 'RedditPostItem':

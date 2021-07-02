@@ -1,7 +1,7 @@
 from datetime import datetime
 import requests
 import re
-import pprint
+from pprint import pprint
 
 
 class Item:
@@ -9,6 +9,7 @@ class Item:
     def __init__(self, item):
         self.__item = item
         # TODO: create logger
+
 
     def __len__(self):
         return len(self.__item)
@@ -24,13 +25,23 @@ class Item:
                                             self.get_author())
 
     def __str__(self):
-        #pprint.pprint(vars(self.get_item()))
-        fmt = '{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}'
-        return fmt.format('Id', self.get_id(),
+        fmt = ('{}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n{:6} = {}\n'
+               '{:6} = {}\n{}\n')
+        return fmt.format('-'*50,
+                          'Id', self.get_id(),
                           'Title', self.get_title(),
                           'Link', self.get_reddit_link(),
+                          'Domain', self.get_domain(),
                           'Sub', self.get_subreddit_prefixed(),
-                          'Author', self.get_author())
+                          'Author', self.get_author(),
+                          '-'*50)
+
+    @property
+    def __dict__(self):
+        # call with vars(item) instead of pprint(vars(item))
+        return pprint(vars(self.__item))
+
+
 
     def get_item(self) -> 'RedditPostItem':
         return self.__item
@@ -79,6 +90,7 @@ class Item:
     def is_nsfw(self) -> bool:
         return self.__item.over_18
 
+
     def get_creation_date(self) -> str:
         time_utc = self.__item.created_utc
         return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
@@ -108,7 +120,7 @@ class Item:
             return [self.__item.preview['reddit_video_preview']['fallback_url']]
         except BaseException:
             print('redgifs_url exception raised:')
-            print(self)
+            print(self.__repr__())
             pass
 
         # need to extract the video link through html requests

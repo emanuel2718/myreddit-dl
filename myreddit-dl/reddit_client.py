@@ -54,6 +54,7 @@ class RedditClient():
         try:
             if instance.user.me() is not None:
                 self.user_instance = instance.user.me()
+                self.log.debug("Client: %s seconds" % (time.time() - self.client_time))
                 return instance
                 # TODO: maybe this is not needed. Make sure the instance is correct elsewhere?
                 # if str(instance.user.me()).lower() == self.username:

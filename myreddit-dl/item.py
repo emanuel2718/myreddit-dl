@@ -60,9 +60,8 @@ class Item:
         return self.__item
 
     def get_title(self) -> str:
-        # TODO: hadle unicode here?
-        ''' Reddit post title'''
-        return str(self.__item.title)
+        ''' Reddit post title without unicode'''
+        return str(self.__item.title).encode('ascii', 'ignore').decode()
 
     def get_author(self) -> str:
         ''' Reddit post author username'''

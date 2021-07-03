@@ -14,6 +14,8 @@ class Downloader(RedditClient):
         self.log = utils.setup_logger(__name__)
         self.args = console_args.get_console_args()
         self.item = None
+        self.valid_domains = None
+        self.items_iterated = 0
         self.defaults = Defaults()
 
     @property
@@ -29,6 +31,27 @@ class Downloader(RedditClient):
                 'streamable.com': self.item.get_streamable_url,
                 'imgur.com': self.item.get_imgur_gallery_url
                 }
+
+    def get_valid_domains(self) -> set:
+        ''' Downloadable domains.
+            If the --no-nsfw flag was given the only return SFW domains
+            else return a union of both NSFW and SFW domains
+        '''
+        if self.args['no_nsfw']:
+            return self.__sfw_domains()
+        return self.__sfw_domains() | self.__nsfw_domains()
+
+    def __sfw_domains(self) -> set:
+        return {'v.redd.it',
+                'i.redd.it',
+                'i.imgur.com',
+                'gfycat.com',
+                'streamable.com',
+                'reddit.com',
+                'imgur.com'}
+
+    def __nsfw_domains(self) -> set:
+        return {'redgifs.com', 'erome.com'}
 
     def get_media_url(self) -> list:
         ''' Returns a list of media url(s) for the given post item
@@ -54,10 +77,14 @@ class Downloader(RedditClient):
     def __iterate_items(self, client_items: 'Upvoted and/or Saved posts') -> None:
         for post in client_items:
             self.item = Item(post)
-            self.log.info(self.item)
+            self.items_iterated += 1
+
+        self.log.debug(f'Items iterated: {self.items_iterated}')
         # TODO: Finish me!
 
     def start(self) -> None:
+        self.valid_domains = self.get_valid_domains()
+
         if self.args['upvote']:
             self.__iterate_items(self.client_upvotes)
         elif self.args['saved']:

@@ -176,9 +176,9 @@ def get_console_args():
         required=False)
 
     parser.add_argument(
-        '--nsfw',
+        '--no-nsfw',
         action='store_true',
-        help="enable NSFW content download",
+        help="disable NSFW content download",
         required=False)
 
     parser.add_argument(

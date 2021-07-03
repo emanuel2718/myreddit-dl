@@ -1,4 +1,5 @@
 from datetime import datetime
+from exceptions import VRedditMediaUrlNotFound, GfycatMediaUrlNotFound
 import requests
 import re
 from pprint import pprint
@@ -10,7 +11,7 @@ class Item:
 
     def __init__(self, item):
         self.__item = item
-        # TODO: create logger
+        self.log = utils.setup_logger(__name__)
 
     def __len__(self):
         return len(self.__item)
@@ -55,6 +56,16 @@ class Item:
                 #'{:6} = {}\n'
                 '{}\n')
 
+    @property
+    def __mapped_domains(self) -> dict:
+        return {'v.redd.it': self.get_vreddit_url,
+                'gfycat.com': self.get_gfycat_url,
+                'redgifs.com': self.get_redgifs_url,
+                'streamable.com': self.get_streamable_url,
+                'imgur.com': self.get_imgur_url,
+                'reddit.com': self.get_reddit_gallery_url
+
+                }
 
     def get_item(self) -> 'RedditPostItem':
         return self.__item
@@ -102,6 +113,11 @@ class Item:
     def is_nsfw(self) -> bool:
         return self.__item.over_18
 
+    def is_valid_media_post(self) -> bool:
+        if self.get_media_url():
+            return True
+        return False
+
     def is_video(self) -> bool:
         return self.__item.domain in utils.VIDEO_DOMAINS
 
@@ -112,69 +128,101 @@ class Item:
         time_utc = self.__item.created_utc
         return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
+    def get_media_url(self) -> list:
+        ''' Returns a list of media url(s) for the given post item
+
+            @params:
+                domain: media domain of current post item (self.item)
+
+                url:    link to the domain where the media is beign stored.
+                        This link can't be used for download. Must extract
+                        the media url for download.
+
+            @return: list of url(s) containing the downloable media
+        '''
+        if self.__item.domain in self.__mapped_domains.keys():
+            return self.__mapped_domains[self.__item.domain]()
+        return [self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')]
+
+
+
     def get_vreddit_url(self) -> list:
-        ''' For the https://v.redd.it posts'''
-        if self.__item.media is None:
-            return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
-        else:
-            # TODO: fix this. Some redgifs that don't have preview are causing exceptions
-            try:
-                return [self.__item.media['reddit_video']['fallback_url']]
-            except:
-                return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
-
-    def get_gyfcat_url(self) -> list:
+        ''' Extracts downloadable url for https://v.redd.it domain posts'''
         try:
-            return [self.__item.preview['reddit_video_preview']['fallback_url']]
-        except BaseException:
-            print('gyfact_url exception')
-            # self.log.exception('gyfact_url exception raised')
-            return None
+            return [self.__item.media['reddit_video']['fallback_url']]
 
-    def get_redgifs_url(self) -> list:
-        try:
-            return [self.__item.preview['reddit_video_preview']['fallback_url']]
-        except BaseException:
-            print('redgifs_url exception raised:')
-            print(self.__repr__())
+        except:
             pass
 
-        # need to extract the video link through html requests
+        try:
+            return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
+
+        except:
+            pass
+
+        try:
+            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+
+        except:
+            self.log.debug(VRedditMediaUrlNotFound('v.redd.it media url not found'))
+            return []
+
+
+    def get_gfycat_url(self) -> list:
+        ''' Extracts downloadable url for https://gfycat.com domain posts'''
+        try:
+            return [self.__item.preview['reddit_video_preview']['fallback_url']]
+
+        except:
+            self.log.debug('gfycat: item.preview not found')
+
+        try:
+            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+
+        except:
+            self.log.debug('gfycat: media url not found')
+            return []
+
+    def get_redgifs_url(self) -> list:
+        ''' Extracts downloadable url for https://redgifs.com domain posts'''
+        try:
+            return [self.__item.preview['reddit_video_preview']['fallback_url']]
+
+        except:
+            pass
+
+        try:
+            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+
+        except:
+            pass
+
+        # This is expensive. Only do it if completely neccesary
+        # Extract the video link through html requests
         response = requests.get(self.__item.url).text
         urls = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(response))
-        for url in urls:
-            if url.endswith('.mp4'):
-                return [url]
-        return None
+        return [url for url in urls if url.endswith('.mp4')][:1]
 
     def get_streamable_url(self) -> list:
+        # TODO: debug this
         try:
             html = self.__item.media['oembed']['html']
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
             return [url + '.mp4']
         except BaseException:
             print('streamable_url exception raised')
-            return None
+            return []
 
     def get_reddit_gallery_url(self) -> list:
         try:
             metadata = self.__item.media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
-        except BaseException:
-            print('reddit_gallery_url exception raised')
-            return None  # deleted post
+        except:
+            print('reddit_gallery_url exception raised. post deleted')
+            return []
 
-    def get_imgur_gallery_url(self) -> list:
-        try:
+    def get_imgur_url(self) -> list:
+        url = self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
+        if url.endswith('/'): # album
             return [self.__item.preview['images'][0]['source']['url']]
-        except BaseException:
-            print('imgur_gallery_url exception raised')
-            return None
-
-    def get_mp4_url_from_gif_url(self) -> str:
-        ''' Replace .gifv and .gif extensions with .mp4 extension.'''
-        return self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')
-
-
-    def get_media_attr(self):
-        return self.__item.media
+        return [url]

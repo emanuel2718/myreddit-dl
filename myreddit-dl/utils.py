@@ -66,17 +66,6 @@ def get_valid_prefix_options():
         'subreddit_username',
         'username_subreddit')
 
-# def print_prefix_options():
-#    print('Please chose an option: \n')
-#    print('\n Filename prefix options:\n')
-#    print('1. username_id.ext')
-#    print('2. subreddit_id.ext')
-#    print('3. username_subreddit_id.ext')
-#    print('4. subreddit_username_id.ext')
-
-# MISSING_SEARCH_SOURCE = ('Specify upvoted (-U, --upvote) or saved (-S, --saved) posts. '
-# 'See myreddit-dl --help for more information.')
-
 
 def print_metadata(data: dict) -> None:
     data = data.replace("{", '').replace("}", '').replace("'", '').split(',')
@@ -86,31 +75,30 @@ def print_metadata(data: dict) -> None:
     print('\n')
 
 
-
 def setup_logger(module: str, debug=False):
     logger = logging.getLogger(module)
-    #logger.setLevel(logging.DEBUG if debug else logging.INFO)
-    logger.setLevel(logging.DEBUG)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
 
-    fh = logging.FileHandler('debug_log', 'a')
-    #fh = logging.FileHandler('debug_log', 'w')
-    fh.setLevel(logging.DEBUG)
+        fh = logging.FileHandler('debug.log', 'a')
+        fh.setLevel(logging.DEBUG)
 
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.INFO)
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.INFO)
 
 
-    fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
-    sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
-    fh.setFormatter(fh_formatter)
-    sh.setFormatter(sh_formatter)
+        fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
+        sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
+        fh.setFormatter(fh_formatter)
+        sh.setFormatter(sh_formatter)
 
-    logger.addHandler(fh)
-    logger.addHandler(sh)
-    logging.getLogger('praw').setLevel(logging.CRITICAL)
+        logger.addHandler(fh)
+        logger.addHandler(sh)
+        logger.propagate = False
 
     if module == 'reddit_client':
         logger.debug('-'*60)
+
     return logger
 
 

@@ -10,11 +10,12 @@ from exceptions import *
 
 class Item:
     def __init__(self, item):
-        self.__item = item
         self.log = utils.setup_logger(__name__)
+        self.__item = item
+        self.__media_url = self._fetch_media_url()
 
     def __len__(self):
-        return len(self.__item)
+        return len(self.__media_url)
 
     def __getitem__(self):
         return self.__item
@@ -94,6 +95,9 @@ class Item:
         '''
         return str(self.__item.url)
 
+    def get_media_url(self) -> list:
+        return self.__media_url
+
     def get_reddit_link(self) -> str:
         ''' Link of the Reddit post'''
         return 'https://reddit.com' + str(self.__item.permalink)
@@ -128,7 +132,7 @@ class Item:
         time_utc = self.__item.created_utc
         return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
-    def get_media_url(self) -> list:
+    def _fetch_media_url(self) -> list:
         ''' Returns a list of media url(s) for the given post item
 
             @params:
@@ -151,19 +155,19 @@ class Item:
         try:
             return [self.__item.media['reddit_video']['fallback_url']]
 
-        except:
+        except Exception:
             self.log.debug("vreddit_url: media['reddit_video'] exception")
 
         try:
             return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
 
-        except:
+        except Exception:
             self.log.debug("vreddit_url: crosspost_parent_list exception")
 
         try:
             return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
 
-        except:
+        except Exception:
             self.log.debug('v.redd.it media url not found. returning []')
             return []
 
@@ -173,13 +177,13 @@ class Item:
         try:
             return [self.__item.preview['reddit_video_preview']['fallback_url']]
 
-        except:
+        except Exception:
             self.log.debug(f'Gfycat_url: item preview exception: {self.__repr__()}')
 
         try:
             return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
 
-        except:
+        except Exception:
             self.log.debug('Gfycat_url: media url not found. Returning []')
             return []
 
@@ -188,13 +192,13 @@ class Item:
         try:
             return [self.__item.preview['reddit_video_preview']['fallback_url']]
 
-        except:
+        except Exception:
             self.log.debug('Redgifs_url: item preview exception')
 
         try:
             return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
 
-        except:
+        except Exception:
             self.log.debug('Redgifs_url: item media oembed exception. Requesting data')
 
 
@@ -211,7 +215,7 @@ class Item:
             html = self.__item.media['oembed']['html']
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
             return [url + '.mp4']
-        except BaseException:
+        except Exception:
             print('streamable_url exception raised')
             return []
 
@@ -219,13 +223,13 @@ class Item:
         try:
             metadata = self.__item.media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
-        except:
+        except Exception:
             self.log.debug('reddit_gallery_url: exception raised. post deleted')
             return []
 
     def get_imgur_url(self) -> list:
         try:
             return [self.__item.preview['images'][0]['source']['url']]
-        except:
+        except Exception:
             self.log.debug('imgur_url: item preview exception.')
         return [self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')]

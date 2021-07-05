@@ -6,6 +6,8 @@ import praw
 from reddit_client import RedditClient
 from item import Item
 from defaults import Defaults
+from file_handler import FileHandler
+import requests
 
 
 class Downloader(RedditClient):
@@ -19,6 +21,7 @@ class Downloader(RedditClient):
         self.items_skipped = 0
         self.valid_domains = None
         self.defaults = Defaults()
+        self.file_handler = FileHandler()
 
     def __str__(self) -> str:
         return (
@@ -65,18 +68,50 @@ class Downloader(RedditClient):
     def is_valid_subreddit(self) -> bool:
         return self.args['sub'] is None or self.item.get_subreddit().lower() in self.args['sub']
 
+    def can_download(self) -> bool:
+        if len(self.item) == 0:
+            return False
+        if len(self.item) > 1 and self.args['no_gallery']:
+            return False
+        if self.args['only_video'] and not self.item.is_video():
+            return False
+        if self.args['no_video'] and self.item.is_video():
+            return False
+        if self.file_handler.file_exists():
+            self.log.info('Item exists')
+            return False
+        return True
 
-    def __iterate_items(
-            self,
-            client_items: 'Upvoted and/or Saved posts') -> None:
-        for post in client_items:
+    def download_item(self) -> None:
+        data = self.get_data()
+        for i in range(len(self.item)):
+            r = requests.get(data[i].get('url'))
+            with open(data[i].get('path'), 'wb') as f:
+                f.write(r.content)
+                self.log.info(f'Item added: {self.file_handler.get_filename(i)}')
+
+
+
+    def get_data(self) -> list:
+        return [{'url': self.item.get_media_url()[i],
+                 'path': self.file_handler.absolute_path[i]}
+                for i in range(len(self.item))]
+
+
+
+    def __iterate_items(self, items: 'Upvoted and/or Saved posts') -> None:
+        for post_item in items:
             if self.download_limit_reached():
                 break
-            self.item = Item(post)
+            self.item = Item(post_item)
             self.items_iterated += 1
             if self.is_valid_domain() and self.is_valid_subreddit():
-                print(self.item.get_media_url())
-                # TODO: Finish me!
+                self.file_handler.set_current_item(self.item)
+                if self.can_download():
+                    self.download_item()
+                    self.items_downloaded += 1
+            else:
+                self.items_skipped += 1
 
     def start(self) -> None:
         self.valid_domains = self.get_valid_domains()

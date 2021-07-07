@@ -1,8 +1,11 @@
 import configparser
+import os
+import utils
 
 
 class ConfigHandler:
     def __init__(self, config_path: str) -> None:
+        self.log = utils.setup_logger(__name__)
         self.config_path = config_path
         self.conf = configparser.ConfigParser()
         self.conf.read(self.config_path)
@@ -30,12 +33,22 @@ class ConfigHandler:
                 '{:8} = {}\n')
 
     @property
-    def __config_filepath(self):
-        return self.src_dir
-
-    @property
     def config(self):
         return self.conf
+
+    def write_config(self, section: str, key: str, value: str) -> None:
+        self.config.set(section, key, value)
+
+        with open(self.config_path, 'w') as configfile:
+            self.config.write(configfile)
+
+    def get_default_media_path(self) -> str:
+        pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')
+        return pictures + self.get_client_username() + '_reddit' + os.sep
+
+    def set_media_path(self, path: str) -> None:
+        self.log.info(f'Setting path: {path}')
+        self.write_config('DEFAULTS', 'path', path)
 
     def get_client_username(self) -> str:
         ''' Reddit client username'''
@@ -48,11 +61,30 @@ class ConfigHandler:
     def get_media_path(self):
         return self.config.get('DEFAULTS', 'path')
 
-    def write_config(self, section: str, key: str, value: str) -> None:
-        self.config.set(section, key, value)
+    def get_valid_prefix_options(self) -> set:
+        # NOTE: this used to return a str
+        return {'subreddit',
+                'username',
+                'subreddit_username',
+                'username_subreddit'}
 
-        with open(self.config_path, 'w') as configfile:
-            self.config.write(configfile)
+    def set_prefix_option(self, prefix: str) -> None:
+        ''' Receives a prefix option in the form of a string:
+            Example: subreddit_username
+            Example: username
+
+            Note: see @get_valid_prefix_options() for valid prefixes
+        '''
+        if prefix == self.get_prefix():
+            self.log.info(f'{prefix} is already the current prefix option')
+
+        elif prefix in self.get_valid_prefix_options():
+            self.write_config('DEFAULTS', 'prefix', prefix)
+            self.log.info(f'Prefix changed to: {prefix}')
+
+        else:
+            self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
+
 
 
 

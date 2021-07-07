@@ -10,7 +10,7 @@ class Defaults:
     def __init__(self, debug=False) -> None:
         self.log = utils.setup_logger(__name__, debug)
         self.config_handler = ConfigHandler(self.__config_filepath)
-        print(self.config_handler)
+        #self.config_handler.set_prefix_option('subreddit')
 
     @property
     def home_dir(self) -> str:
@@ -46,6 +46,7 @@ class Defaults:
     def __config_filepath(self) -> str:
         return self.src_dir + 'config.ini'
 
+    # TODO: do the path creation/validation
 
 
 
@@ -53,41 +54,6 @@ class Defaults:
 
 
 
-    #def __get_default_config_media_path(self) -> str:
-    #    return str(self.home_dir + os.sep + 'Pictures' + os.sep +
-    #               self.client_username + '_reddit' + os.sep)
-
-    #def __get_valid_config_prefix_options(self) -> str:
-    #    return (
-    #        'subreddit',
-    #        'username',
-    #        'subreddit_username',
-    #        'username_subreddit')
-
-    #def set_default_config_media_path(self) -> None:
-    #    default_path = self.__get_default_config_media_path()
-    #    self.__write_config('DEFAULTS', 'path', default_path)
-    #    self.log.info(f'Path set to default path: {default_path}')
-
-    #def set_config_prefix(self, prefix: list) -> None:
-    #    # TODO: Make this smarter to be more expansive in the future
-    #    #       __get_valid_config_prefix_options() needs to be changed
-    #    #       Example: The user want the prefix to be title_username or
-    #    #                tags_subreddit or something crazy like
-    #    #                tags_subreddit_title_username (for whatever reason...)
-    #    valid_options = self.__get_valid_config_prefix_options()
-    #    given = '_'.join(prefix).lower()
-
-    #    if given == self.config_prefix:
-    #        self.log.info(f'{given} is already the current prefix option.')
-    #        return
-
-    #    if given in valid_options:
-    #        self.__write_config('DEFAULTS', 'prefix', given)
-    #        self.log.info(f'Prefix format changed to: {given}')
-    #        return
-
-    #    self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
 
     #def set_media_path(self, path: str) -> None:
     #    sanitized_path = self.__sanitize_path(path)

@@ -5,8 +5,9 @@
 
 &nbsp; 
 
-**WARNING: This is a work in progress. If you see this message, use at your own risk**
-NOTE: When this is ready for production this message will not be here and `myreddit-dl` will be found on PyPi
+**WARNING**: This is a work in progress. If you see this message, use at your own risk**
+
+NOTE: When ready for production; this message will not be here and `myreddit-dl` will be found on PyPi
 
 # Index
 

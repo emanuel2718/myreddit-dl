@@ -5,7 +5,7 @@
 
 &nbsp; 
 
-NOTE: This is a work in progress not all features are yet implemented. If you see this message; use at your own risk.
+**WARNING: This is a work in progress. If you see this message, use at your own risk**
 NOTE: When this is ready for production this message will not be here and `myreddit-dl` will be found on PyPi
 
 # Index
@@ -239,8 +239,10 @@ $ myreddit-dl --get-metadata random_image.jpg
 - [x] `--change-user` flag to change to another profile if user has more than one account.
 - [x] refactor downloader reddit post item into a separate Item class (item.py)
 - [x] make a new module console_args.py and import it when needed. This is better than passing it everytime.
-- [ ] change `--nsfw` with `--no-nsfw`
-- [ ] _, filename = os.path.split(full_path)
+- [x] change `--nsfw` with `--no-nsfw`
+- [ ] fix the `--help` configuration section. To long and cubersome to read
+- [ ] change `None_` to `deleted_` for deleted accounts on file title
+- [x] _, filename = os.path.split(full_path)
 - [ ] entire refactorization of the project.
 - [ ] think about refactoring argparser to be able to have it globally without instantiating or passing it
 - [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).

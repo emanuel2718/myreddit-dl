@@ -25,7 +25,7 @@ class ConfigHandler:
                                'Prefix', self.get_prefix(),
                                'Path', self.get_media_path())
 
-    def __print__(self) -> None:
+    def __print__(self, request=None) -> None:
         print(self.__str__())
 
     @property

@@ -60,19 +60,16 @@ class RedditClient:
             return False
 
         try:
-            instance = praw.Reddit(
+            self.user_instance = praw.Reddit(
                 user_agent='myreddit-dl',
                 client_id=self.config[self.section_name]['client_id'],
                 client_secret=self.config[self.section_name]['client_secret'],
                 username=self.config[self.section_name]['username'],
-                password=self.config[self.section_name]['password'])
+                password=self.config[self.section_name]['password']).user.me()
 
         except Exception:
             self.logger.error('Reddit instance build: Failed!')
             return False
-
-        if instance is not None:
-            self.user_instance = instance.user.me()
 
         self.logger.debug("Client: %s seconds" % (time.time() - self.client_time))
         return True
@@ -85,13 +82,13 @@ class RedditClient:
                 client_id=instance.get('client_id'),
                 client_secret=instance.get('client_secret'),
                 username=instance.get('username'),
-                password=instance.get('password'))
+                password=instance.get('password')).user.me()
+            return True
 
         except Exception:
-            self.logger.debug('instance validator: Failed!')
-            return False
+            self.logger.info('instance validator: Failed!')
 
-        return True
+        return False
 
 
     #def build_reddit_instance(self) -> praw.Reddit or None:

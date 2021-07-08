@@ -117,7 +117,9 @@ class Downloader(RedditClient):
 
     def start(self) -> None:
         # TODO: might need to call build reddit instance here
-        self.build_reddit_instance()
+        if not self.build_reddit_instance():
+            return
+
         self.valid_domains = self.get_valid_domains()
 
         if self.args['upvote']:

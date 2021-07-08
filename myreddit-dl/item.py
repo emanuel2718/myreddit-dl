@@ -1,11 +1,9 @@
 from datetime import datetime
-#from exceptions import VRedditMediaUrlNotFound, GfycatMediaUrlNotFound
 import requests
 import re
 from pprint import pprint
 import praw
 import utils
-from exceptions import *
 
 
 class Item:

@@ -25,13 +25,14 @@ class Cli:
             '\nInput your reddit developer credentials below. Make sure they are correct.')
         print('-' * len(header))
 
-    def client_setup_prompt(self):
+    def client_setup(self):
         self.display_setup_header
 
         client_id = input('1. Client Id: ').strip(' ')
         client_secret = input('2. Client secret: ').strip(' ')
         username = input('3. Username: ').strip(' ')
         password = input('4. Password: ').strip(' ')
+        print('\n')
         section_name = username.upper()
 
         instance = {'section': section_name,
@@ -44,7 +45,7 @@ class Cli:
         if self.client.validate_instance(instance):
             self.config.add_client(instance)
         else:
-            print('Invalid reddit instance')
+            self.log.warning('Invalid reddit instance provided')
             exit(0)
 
     def change_client(self):
@@ -61,56 +62,6 @@ class Cli:
 
 
 
-
-
-
-
-
-#class Terminal:
-#    def __init__(self):
-#        self.config = configparser.ConfigParser()
-#        self.config.read(utils.CFG_FILENAME)
-#        self.log = utils.setup_logger(__name__, False)
-#
-#    def client_config_setup(self, hidden_password=False):
-#        self._config_setup_header()
-#        client_id = input('1. Client Id: ').strip(' ')
-#        client_secret = input('2. Client Secret: ').strip(' ')
-#        username = input('3. Username: ').strip(' ')
-#
-#        if hidden_password:
-#            password = getpass.getpass('4. Password (hidden): ').strip(' ')
-#        else:
-#            password = input('4. Password: ').strip(' ')
-#
-#        section_name = username.upper()
-#        if not self.config.has_section(section_name):
-#            self.config.add_section(section_name)
-#
-#        self.config.set(section_name, 'client_id', client_id)
-#        self.config.set(section_name, 'client_secret', client_secret)
-#        self.config.set(section_name, 'username', username)
-#        self.config.set(section_name, 'password', password)
-#
-#        if len(self.config['USERS']['current_user_section_name']) == 0:
-#            self.config['USERS']['current_user_section_name'] = section_name
-#            self.log.info(f'{username} added as default client.')
-#
-#        elif self.config['USERS']['current_user_section_name'] != section_name:
-#            response = self._prompt_user_change(username)
-#            if response == 'y' or response == 'yes':
-#                self.config['USERS']['current_user_section_name'] = section_name
-#                self.log.info(f'{username} set as default client.')
-#            else:
-#                self.log.info(
-#                    f"{self.config['USERS']['current_user_section_name']} "
-#                    "left as default client.")
-#
-#        with open(utils.CFG_FILENAME, 'w') as config_file:
-#            self.config.write(config_file)
-#            self.log.info('Reddit developer app updated succesfully.\n')
-#
-#        return
 #
 #    def change_client(self):
 #        invalid_sections = {'DEFAULTS', 'USERS', 'REDDIT'}

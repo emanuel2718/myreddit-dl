@@ -9,7 +9,7 @@ from config_handler import ConfigHandler
 def __mapped_config_requests():
     cli = Cli()
     # TODO: add the correct function calls
-    return {'add_client': cli.client_setup_prompt,
+    return {'add_client': cli.client_setup,
             'change_client': cli.change_client,
             'show_config': ConfigHandler().__print__,
             'path': cli.change_path,
@@ -23,6 +23,7 @@ def check_config_requests():
         if args[request]:
             func_call()
             exit(0)
+
 
 
 def get_console_args():

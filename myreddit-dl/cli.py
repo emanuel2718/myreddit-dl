@@ -10,7 +10,6 @@ class Cli:
         self.config = ConfigHandler()
         self.client = RedditClient()
 
-    @property
     def display_setup_header(self) -> None:
         instructions = utils.DEVELOPER_APP_INSTRUCTIONS
         header = '-' * 20 + ' SETUP CONFIGURATOR ' + '-' * 20
@@ -25,24 +24,31 @@ class Cli:
             '\nInput your reddit developer credentials below. Make sure they are correct.')
         print('-' * len(header))
 
-    def client_setup(self):
-        self.display_setup_header
-
+    def new_client_prompt(self) -> dict:
+        ''' Prompts the user for new client information and returns the
+            information as a dictionary.
+        '''
         client_id = input('1. Client Id: ').strip(' ')
         client_secret = input('2. Client secret: ').strip(' ')
         username = input('3. Username: ').strip(' ')
         password = input('4. Password: ').strip(' ')
         print('\n')
-        section_name = username.upper()
 
-        instance = {'section': section_name,
-                    'client_id': client_id,
-                    'client_secret': client_secret,
-                    'username': username,
-                    'password': password
-                    }
+        return {'section': username.upper(),
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'username': username,
+                'password': password}
 
-        if self.client.validate_instance(instance):
+    def client_setup(self) -> None:
+        ''' Sets up new Reddit client if the given credentials are valid
+            Reddit instances. If valid, then go ahead an add the client.
+            If invalid; exit the program.
+        '''
+        self.display_setup_header()
+        new_client_instance = self.new_client_prompt()
+
+        if self.client.validate_instance(new_client_instance):
             self.config.add_client(instance)
         else:
             self.log.warning('Invalid reddit instance provided')

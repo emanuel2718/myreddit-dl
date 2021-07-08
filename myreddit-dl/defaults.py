@@ -8,7 +8,7 @@ from config_handler import ConfigHandler
 
 class Defaults:
     def __init__(self, debug=False) -> None:
-        self.log = utils.setup_logger(__name__, debug)
+        self.log = utils.setup_logger(__name__)
         self.config_handler = ConfigHandler()
 
     @property
@@ -40,10 +40,6 @@ class Defaults:
     def metadata_file(self) -> str:
         ''' Returns the full path of the metadata file'''
         return self.media_folder + self.client_username + '_metadata.json'
-
-    @property
-    def __config_filepath(self) -> str:
-        return self.src_dir + 'config.ini'
 
     @property
     def media_path(self):

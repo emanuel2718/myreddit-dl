@@ -7,8 +7,8 @@ import utils
 import logging
 import logging.handlers
 #from terminal import Terminal
-from defaults import Defaults
 from config_handler import ConfigHandler
+from defaults import Defaults
 
 
 class RedditClient:
@@ -75,7 +75,9 @@ class RedditClient:
         return True
 
 
-    def validate_instance(self, instance: dict) -> bool:
+
+    @classmethod
+    def validate_instance(cls, instance: dict) -> bool:
         try:
             instance = praw.Reddit(
                 user_agent='myreddit-dl',
@@ -86,7 +88,7 @@ class RedditClient:
             return True
 
         except Exception:
-            self.logger.info('instance validator: Failed!')
+            print('INFO: instance validator: Failed!')
 
         return False
 

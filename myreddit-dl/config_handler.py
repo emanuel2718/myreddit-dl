@@ -39,7 +39,7 @@ class ConfigHandler:
     def get_config(self):
         return self.config
 
-    def add_client(self, client: dict = None):
+    def add_client(self, client: dict = None) -> None:
         ''' Receives a client in the form of:
 
             {section: section name,
@@ -52,7 +52,6 @@ class ConfigHandler:
         '''
         if client is None:
             self.log.warning('Invalid add_client client parameter')
-            return
 
         section = client.get('section')
         if not self.config.has_section(section):
@@ -62,17 +61,23 @@ class ConfigHandler:
             self.config.set(section, 'username', client.get('username'))
             self.config.set(section, 'password', client.get('password'))
             self.write_config()
+            self.log.info(f"{client.get('username')} sucesfully added as a client")
 
         else:
             self.log.info('That client already exists.')
 
-        #with open(self.config_path, 'w') as configfile:
-        #    self.config.write(configfile)
 
     #def write_config(self, section: str, key: str, value: str) -> None:
-    def write_config(self):
-        with open(self.config_path, 'w') as configfile:
-            self.config.write(configfile)
+    def write_config(self) -> bool:
+        try:
+            with open(self.config_path, 'w') as configfile:
+                self.config.write(configfile)
+                return True
+
+        except FileNotFoundError:
+            self.log.debug('Write config failed!')
+            return False
+
 
     def get_default_media_path(self) -> str:
         pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')

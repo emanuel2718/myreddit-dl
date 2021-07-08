@@ -9,8 +9,7 @@ from config_handler import ConfigHandler
 class Defaults:
     def __init__(self, debug=False) -> None:
         self.log = utils.setup_logger(__name__, debug)
-        self.config_handler = ConfigHandler(self.__config_filepath)
-        #self.config_handler.set_prefix_option('subreddit')
+        self.config_handler = ConfigHandler()
 
     @property
     def home_dir(self) -> str:
@@ -45,6 +44,16 @@ class Defaults:
     @property
     def __config_filepath(self) -> str:
         return self.src_dir + 'config.ini'
+
+    @property
+    def media_path(self):
+        return self.config_handler.get_media_path()
+
+    @property
+    def current_prefix(self):
+        return self.config_handler.get_prefix()
+
+
 
     # TODO: do the path creation/validation
 

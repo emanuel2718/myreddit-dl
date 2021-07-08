@@ -14,7 +14,7 @@ class FileHandler:
 
     @property
     def media_path(self) -> str:
-        return self.defaults.config_media_path
+        return self.defaults.media_path
 
     @property
     def absolute_path(self) -> list:
@@ -42,7 +42,7 @@ class FileHandler:
 
     def _filename(self, url: str, index='') -> str:
         extension = self.get_extension(url)
-        prefix = self.defaults.config_prefix
+        prefix = self.defaults.current_prefix
         index = '' if index == '0' else index
         return self.prefix_map().get(prefix) + self.item.get_id() + index + extension
 
@@ -69,19 +69,17 @@ class FileHandler:
         _, filename = os.path.split(self.absolute_path[index])
         return filename
 
+    def _get_item_metadata(self) -> dict:
+        return {'Author': self.item.get_author(),
+                'Subreddit': self.item.get_subreddit_prefixed(),
+                'Title': self.item.get_title(),
+                'Link': self.item.get_reddit_link(),
+                'Upvotes': self.item.get_upvotes_amount(),
+                'NSFW': self.item.is_nsfw(),
+                'Post creation date': self.item.get_creation_date()
+                }
 
 
-        #    @property
-        #    def remove_file(self) -> None:
-        #        if isinstance(self.absolute_path, list):
-        #            for data in self.gallery_data:
-        #                if os.path.exists(data['path']):
-        #                    os.remove(data['path'])
-        #                    self.log.debug(f"File removed: {data['path']}")
-        #        else:
-        #            if os.path.exists(self.absolute_path):
-        #                os.remove(self.absolute_path)
-        #                self.log.debug(f"File removed: {self.absolute_path}")
         #
         #    def delete_database(self) -> None:
         #        try:
@@ -95,15 +93,6 @@ class FileHandler:
         #    def get_filename_from_path(self, path: str):
         #        return path.rpartition(os.sep)[-1]
         #
-        #    def _get_item_metadata(self) -> dict:
-        #        return {'Author': self.item.author,
-        #                'Subreddit': self.item.get_subreddit_prefixed(),
-        #                'Title': self.item.title,
-        #                'Link': self.item.link,
-        #                'Upvotes': self.item.upvotes_amount,
-        #                'NSFW': self.item.is_nsfw(),
-        #                'Post creation date': self.item.get_creation_date()
-        #                }
         #
         #    def save_metadata(self, path: str, filename: str):
         #        try:

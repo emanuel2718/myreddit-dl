@@ -4,13 +4,13 @@ from pathlib import Path
 
 # TODO: refactor this entire file.
 
-# Project directory: myreddit-dl/myreddit-dl/
-PROJECT_DIR = str(Path(__file__).parent) + os.sep
+# Project source directory: myreddit-dl/myreddit-dl/
+SRC_DIR = str(Path(__file__).parent) + os.sep
 # Project parent directory: myreddit-dl/
 PROJECT_PARENT_DIR = str(Path(__file__).parent.parent) + os.sep
 
 # config file
-CFG_FILENAME = PROJECT_DIR + 'config.ini'
+CFG_FILENAME = SRC_DIR + 'config.ini'
 CFG_PREFIX_DEFAULT = 'subreddit'
 
 

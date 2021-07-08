@@ -4,14 +4,14 @@ import utils
 
 
 class ConfigHandler:
-    def __init__(self, config_path: str) -> None:
+    def __init__(self) -> None:
         self.log = utils.setup_logger(__name__)
-        self.config_path = config_path
-        self.conf = configparser.ConfigParser()
-        self.conf.read(self.config_path)
+        self.config_path = utils.CFG_FILENAME
+        self.config = configparser.ConfigParser()
+        self.config.read(self.config_path)
 
     def __getitem__(self):
-        return self.config
+        return self.conf
 
     def __repr__(self):
         return 'Config(user=%r, prefix=%r, path=%r)' % (
@@ -25,6 +25,10 @@ class ConfigHandler:
                                'Prefix', self.get_prefix(),
                                'Path', self.get_media_path())
 
+    def __print__(self) -> None:
+        print(self.__str__())
+
+
     @property
     def fmt(self):
         return ('{}\n'
@@ -32,13 +36,41 @@ class ConfigHandler:
                 '{:8} = {}\n'
                 '{:8} = {}\n')
 
-    @property
-    def config(self):
-        return self.conf
+    def get_config(self):
+        return self.config
 
-    def write_config(self, section: str, key: str, value: str) -> None:
-        self.config.set(section, key, value)
+    def add_client(self, client: dict = None):
+        ''' Receives a client in the form of:
 
+            {section: section name,
+             id: client_id,
+             secret: client_secret,
+             username: username,
+             password: password,
+            }
+
+        '''
+        if client is None:
+            self.log.warning('Invalid add_client client parameter')
+            return
+
+        section = client.get('section')
+        if not self.config.has_section(section):
+            self.config.add_section(section)
+            self.config.set(section, 'client_id', client.get('client_id'))
+            self.config.set(section, 'client_secret', client.get('client_secret'))
+            self.config.set(section, 'username', client.get('username'))
+            self.config.set(section, 'password', client.get('password'))
+            self.write_config()
+
+        else:
+            self.log.info('That client already exists.')
+
+        #with open(self.config_path, 'w') as configfile:
+        #    self.config.write(configfile)
+
+    #def write_config(self, section: str, key: str, value: str) -> None:
+    def write_config(self):
         with open(self.config_path, 'w') as configfile:
             self.config.write(configfile)
 
@@ -48,7 +80,9 @@ class ConfigHandler:
 
     def set_media_path(self, path: str) -> None:
         self.log.info(f'Setting path: {path}')
-        self.write_config('DEFAULTS', 'path', path)
+        self.config.set('DEFAULTS', 'path', path)
+        self.write_config()
+        #self.write_config('DEFAULTS', 'path', path)
 
     def get_client_username(self) -> str:
         ''' Reddit client username'''

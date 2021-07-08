@@ -1,4 +1,6 @@
 from pprint import pprint
+import cProfile
+import pstats
 import console_args
 import utils
 import time
@@ -12,6 +14,8 @@ import requests
 
 class Downloader(RedditClient):
     def __init__(self):
+        #self.defaults = Defaults()
+
         super().__init__()
         self.log = utils.setup_logger(__name__)
         self.args = console_args.get_console_args()
@@ -97,8 +101,6 @@ class Downloader(RedditClient):
                  'path': self.file_handler.absolute_path[i]}
                 for i in range(len(self.item))]
 
-
-
     def __iterate_items(self, items: 'Upvoted and/or Saved posts') -> None:
         for post_item in items:
             if self.download_limit_reached():
@@ -114,6 +116,8 @@ class Downloader(RedditClient):
                 self.items_skipped += 1
 
     def start(self) -> None:
+        # TODO: might need to call build reddit instance here
+        self.build_reddit_instance()
         self.valid_domains = self.get_valid_domains()
 
         if self.args['upvote']:
@@ -121,7 +125,12 @@ class Downloader(RedditClient):
         elif self.args['saved']:
             self.__iterate_items(self.client_saves)
         else:
-            utils.print_error(utils.MISSING_DOWNLOAD_SOURCE)
+            self.log.error(utils.MISSING_DOWNLOAD_SOURCE)
+
+
+        #stats = pstats.Stats(pr).sort_stats(pstats.SortKey.TIME)
+        #stats.print_stats()
+        #self.log.debug(stats.print_stats())
 
         self.log.debug(self)
 

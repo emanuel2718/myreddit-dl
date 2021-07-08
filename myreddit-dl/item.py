@@ -21,14 +21,14 @@ class Item:
         return self.__item
 
     def __repr__(self):
-        return 'Item(%r, %r, %r, %r %r)' % (self.get_id(),
-                                            self.get_title(),
-                                            self.get_reddit_link(),
-                                            self.get_subreddit_prefixed(),
-                                            self.get_author())
+        return 'Item(id=%r, title=%r, link=%r, sub=%r author=%r)' % (self.get_id(),
+                                                                     self.get_title(),
+                                                                     self.get_reddit_link(),
+                                                                     self.get_subreddit_prefixed(),
+                                                                     self.get_author())
 
     def __str__(self):
-        return self.fmt.format('-'*50,
+        return self.fmt.format('-' * 50,
                                'Id', self.get_id(),
                                'Title', self.get_title(),
                                'Link', self.get_reddit_link(),
@@ -37,7 +37,7 @@ class Item:
                                'Author', self.get_author(),
                                'Video', self.is_video(),
                                #'Comment', self.is_comment(),
-                               '-'*50)
+                               '-' * 50)
 
     @property
     def __dict__(self):
@@ -113,7 +113,6 @@ class Item:
     def get_upvotes_amount(self) -> str:
         return str(self.__item.ups)
 
-
     def is_nsfw(self) -> bool:
         return self.__item.over_18
 
@@ -148,8 +147,6 @@ class Item:
             return self.__mapped_domains[self.__item.domain]()
         return [self.__item.url.replace('gifv', 'mp4').replace('gif', 'mp4')]
 
-
-
     def get_vreddit_url(self) -> list:
         ''' Extracts downloadable url for https://v.redd.it domain posts'''
         try:
@@ -159,18 +156,19 @@ class Item:
             self.log.debug("vreddit_url: media['reddit_video'] exception")
 
         try:
-            return [self.__item.crosspost_parent_list[0]['media']['reddit_video']['fallback_url']]
+            return [self.__item.crosspost_parent_list[0]
+                    ['media']['reddit_video']['fallback_url']]
 
         except Exception:
             self.log.debug("vreddit_url: crosspost_parent_list exception")
 
         try:
-            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+            return [self.__item.media['oembed']
+                    ['thumbnail_url'].replace('jpg', 'mp4')]
 
         except Exception:
             self.log.debug('v.redd.it media url not found. returning []')
             return []
-
 
     def get_gfycat_url(self) -> list:
         ''' Extracts downloadable url for https://gfycat.com domain posts'''
@@ -178,10 +176,12 @@ class Item:
             return [self.__item.preview['reddit_video_preview']['fallback_url']]
 
         except Exception:
-            self.log.debug(f'Gfycat_url: item preview exception: {self.__repr__()}')
+            self.log.debug(
+                f'Gfycat_url: item preview exception: {self.__repr__()}')
 
         try:
-            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+            return [self.__item.media['oembed']
+                    ['thumbnail_url'].replace('jpg', 'mp4')]
 
         except Exception:
             self.log.debug('Gfycat_url: media url not found. Returning []')
@@ -196,12 +196,12 @@ class Item:
             self.log.debug('Redgifs_url: item preview exception')
 
         try:
-            return [self.__item.media['oembed']['thumbnail_url'].replace('jpg', 'mp4')]
+            return [self.__item.media['oembed']
+                    ['thumbnail_url'].replace('jpg', 'mp4')]
 
         except Exception:
-            self.log.debug('Redgifs_url: item media oembed exception. Requesting data')
-
-
+            self.log.debug(
+                'Redgifs_url: item media oembed exception. Requesting data')
 
         # This is expensive. Only do it if completely neccesary
         # Extract the video link through html requests
@@ -224,7 +224,8 @@ class Item:
             metadata = self.__item.media_metadata.values()
             return [i['s']['u'] for i in metadata if i['e'] == 'Image']
         except Exception:
-            self.log.debug('reddit_gallery_url: exception raised. post deleted')
+            self.log.debug(
+                'reddit_gallery_url: exception raised. post deleted')
             return []
 
     def get_imgur_url(self) -> list:

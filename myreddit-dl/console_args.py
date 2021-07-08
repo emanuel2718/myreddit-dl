@@ -2,15 +2,32 @@ import argparse
 import textwrap
 import utils
 import logging
+from cli import Cli
+from config_handler import ConfigHandler
 
 
-def get_used_flags():
-    return set(k for k, v in get_args().items() if v)
+def __mapped_config_requests():
+    cli = Cli()
+    # TODO: add the correct function calls
+    return {'add_client': cli.client_setup_prompt,
+            'change_client': cli.change_client,
+            'show_config': ConfigHandler().__print__,
+            'path': cli.change_path,
+            'prefix': cli.change_prefix}
+
+
+
+def check_config_requests():
+    args = get_console_args()
+    for request, func_call in __mapped_config_requests().items():
+        if args[request]:
+            func_call()
+            exit(0)
 
 
 def get_console_args():
-    log = utils.setup_logger(__name__, True)
-    log.debug('get_args is called')
+    #log = utils.setup_logger(__name__, True)
+    #log.debug('get_args is called')
 
     parser = argparse.ArgumentParser(
         description='Reddit upvoted & saved media downloader',
@@ -66,7 +83,7 @@ def get_console_args():
         required=False)
 
     config_group.add_argument(
-        '--config-prefix',
+        '--prefix',
         type=str,
         nargs='*',
         default=None,
@@ -75,10 +92,10 @@ def get_console_args():
 
         Options:
 
-            --config-prefix username           ---> username_id.extension
-            --config-prefix username subreddit ---> username_subreddit_id.extension
-            --config-prefix subreddit username ---> subreddit_username_id.exension
-            --config-prefix subreddit          ---> subreddit_id.exension
+            --prefix username           ---> username_id.extension
+            --prefix username subreddit ---> username_subreddit_id.extension
+            --prefix subreddit username ---> subreddit_username_id.exension
+            --prefix subreddit          ---> subreddit_id.exension
 
         Default: subreddit ---> subreddit_id.extension
 
@@ -87,7 +104,7 @@ def get_console_args():
         required=False)
 
     config_group.add_argument(
-        '--config-path',
+        '--path',
         type=str,
         default=None,
         help=textwrap.dedent('''\
@@ -96,15 +113,15 @@ def get_console_args():
         Examples:
 
         To download the media to the folder ~/Pictures/reddit_media:
-            --config-path $HOME/Pictures/reddit_media
+            --path $HOME/Pictures/reddit_media
                                 or
-            --config-path ~/Pictures/reddit_media
+            --path ~/Pictures/reddit_media
 
         To download the media to the current working directory:
-            --config-path ./
+            --path ./
 
         To download the media to a folder in the current working directory
-            --config-path ./random_folder_destination
+            --path ./random_folder_destination
 
         Default Path: $HOME/Pictures/User_myreddit/
 
@@ -113,7 +130,7 @@ def get_console_args():
         required=False)
 
     config_group.add_argument(
-        '--get-config',
+        '--show-config',
         action='store_true',
         help="prints the configuration file information to the terminal",
         required=False)

@@ -6,11 +6,13 @@ Program: myreddit-dl
 Description: Reddit upvoted & saved media downloader
 """
 import sys
+import console_args
 from downloader import Downloader
 
 
 def run():
     if len(sys.argv) > 1:
+        console_args.check_config_requests()
         Downloader().start()
 
     # GUI version of the app

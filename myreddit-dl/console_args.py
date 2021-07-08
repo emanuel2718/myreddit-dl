@@ -8,7 +8,6 @@ from config_handler import ConfigHandler
 
 def __mapped_config_requests():
     cli = Cli()
-    # TODO: add the correct function calls
     return {'add_client': cli.client_setup,
             'change_client': cli.change_client,
             'show_config': ConfigHandler().__print__,
@@ -21,7 +20,7 @@ def check_config_requests():
     args = get_console_args()
     for request, func_call in __mapped_config_requests().items():
         if args[request]:
-            func_call()
+            func_call(args[request])
             exit(0)
 
 

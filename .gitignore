@@ -1,7 +1,8 @@
 __*
-myreddit-dl/config.backup
-myreddit-dl/config.ini
-myreddit-dl/*_reddit/
+myredditdl/config.backup
+myredditdl/config.ini
+myredditdl/*_reddit/
+myredditdl/*.egg-info/
 debug_media/
 debug.log
 reddit_media/

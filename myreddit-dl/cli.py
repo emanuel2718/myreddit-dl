@@ -77,7 +77,7 @@ class Cli:
         self.change_client_prompt(options)
 
     def change_path(self, request: str):
-        pass
+        self.config.set_media_path(request)
 
     def change_prefix(self, request: list):
         self.config.set_prefix_option('_'.join(request))

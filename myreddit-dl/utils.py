@@ -25,6 +25,8 @@ INVALID_CFG_OPTION_MESSAGE = ('Invalid save option.\n\n'
                               '3. --config-prefix subreddit username\n'
                               '4. --config-prefix username subreddit\n')
 
+ERROR_INVALID_NAME = 123
+
 
 # Domains and usefuls urls
 REDDIT_GALLERY_URL = 'https://www.reddit.com/gallery/'

@@ -1,6 +1,7 @@
 import configparser
-import os
 import utils
+import sys, errno, os
+from pathlib import Path, PosixPath, PurePath, PurePosixPath
 
 
 class ConfigHandler:
@@ -59,6 +60,7 @@ class ConfigHandler:
         '''
         self.config.set('USERS', 'current_user_section_name', section_name)
         self.write_config()
+        self.log.info(f'Successfully changed to user: {section_name}')
 
     def add_client(self, client: dict) -> None:
         ''' Receives a client in the form of:
@@ -80,7 +82,7 @@ class ConfigHandler:
             self.config.set(section, 'password', client.get('password'))
             self.write_config()
             self.log.info(
-                f"{client.get('username')} sucesfully added as a client")
+                f"{client.get('username')} successfully added as a client")
 
         else:
             self.log.info('That client already exists.')
@@ -96,13 +98,12 @@ class ConfigHandler:
             return False
 
     def get_default_media_path(self) -> str:
+        ''' Returns the location of the user ~/Pictures/{reddit_username}_reddit/
+            media folder
+        '''
         pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')
         return pictures + self.get_client_username() + '_reddit' + os.sep
 
-    def set_media_path(self, path: str) -> None:
-        self.log.info(f'Setting path: {path}')
-        self.config.set('DEFAULTS', 'path', path)
-        self.write_config()
 
     def get_client_username(self) -> str:
         ''' Reddit client username'''
@@ -139,6 +140,83 @@ class ConfigHandler:
         else:
             self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
 
+    def set_media_path(self, path: str) -> None:
+        ''' Changes the destination folder for downloaded media
+            to @path
+        '''
+        if path.lower() == 'default':
+            path = self.get_default_media_path()
+
+        elif self.is_path_creatable_or_exists(path):
+            path = self.sanitize_path(path)
+        else:
+            self.log.info(f"cannot create directory '{path}': No such file or directory")
+            return
+
+        self.config.set('DEFAULTS', 'path', path)
+        self.write_config()
+        self.log.info(f'media path set to: {path}')
+
+    def sanitize_path(self, path: str) -> str:
+        ''' Cleans up given @path from --path flag
+            This function attempts to handle relative paths but definetly needs
+            further testing.
+        '''
+        root = Path.home() if path.startswith(str(Path.home())) else Path.cwd()
+        parts = PosixPath(path).parts
+        for part in parts:
+            if part == '..':
+                root = root.parent
+
+        return str(root) + ''.join([os.sep + p for p in parts
+                                    if p != '..'
+                                    and p != os.sep
+                                    and p not in str(root).split(os.sep)])
+
+
+    # Credits to: stackoverflow.com/questions/9532499
+    def is_path_creatable_or_exists(self, path: str) -> bool:
+
+        try:
+            return self.is_path_valid(path) and (
+                os.path.exists(path) or self.is_path_creatable(path))
+
+        except OSError:
+            return False
+
+    def is_path_creatable(self, path: str) -> bool:
+        dirname = os.path.dirname(path) or os.getcwd()
+        return os.access(dirname, os.W_OK)
+
+
+    def is_path_valid(self, path: str) -> bool:
+        try:
+            if not isinstance(path, str) or not path:
+                return False
+
+            _, path = os.path.splitdrive(path)
+
+            root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
+                if sys.platform == 'win32' else os.path.sep
+            assert os.path.isdir(root_dirname)
+
+            root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
+
+            for pathname_part in path.split(os.path.sep):
+                try:
+                    os.lstat(root_dirname + pathname_part)
+
+                except OSError as exc:
+                    if hasattr(exc, 'winerror'):
+                        if exc.winerror == utils.ERROR_INVALID_NAME:
+                            return False
+                    elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
+                        return False
+
+        except TypeError as exc:
+            return False
+        else:
+            return True
 
 if __name__ == '__main__':
     # TODO: change this message

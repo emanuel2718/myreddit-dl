@@ -1,7 +1,7 @@
 import configparser
 import utils
 import sys, errno, os
-from pathlib import Path, PosixPath, PurePath, PurePosixPath
+from pathlib import Path
 
 
 class ConfigHandler:
@@ -60,7 +60,7 @@ class ConfigHandler:
         '''
         self.config.set('USERS', 'current_user_section_name', section_name)
         self.write_config()
-        self.log.info(f'Successfully changed to user: {section_name}')
+        self.log.info(f'Changing {section_name} to be the Reddit client')
 
     def add_client(self, client: dict) -> None:
         ''' Receives a client in the form of:
@@ -73,13 +73,16 @@ class ConfigHandler:
             }
 
         '''
-        section = client.get('section')
-        if not self.config.has_section(section):
-            self.config.add_section(section)
-            self.config.set(section, 'client_id', client.get('client_id'))
-            self.config.set(section, 'client_secret',client.get('client_secret'))
-            self.config.set(section, 'username', client.get('username'))
-            self.config.set(section, 'password', client.get('password'))
+        section_name = client.get('section')
+        if not self.config.has_section(section_name):
+            self.config.add_section(section_name)
+            self.config.set(section_name, 'client_id', client.get('client_id'))
+            self.config.set(section_name, 'client_secret',client.get('client_secret'))
+            self.config.set(section_name, 'username', client.get('username'))
+            self.config.set(section_name, 'password', client.get('password'))
+            if self.get_client_username() == 'REDDIT':
+                self.set_new_current_user(section_name)
+
             self.write_config()
             self.log.info(
                 f"{client.get('username')} successfully added as a client")
@@ -149,6 +152,7 @@ class ConfigHandler:
 
         elif self.is_path_creatable_or_exists(path):
             path = self.sanitize_path(path)
+            path = path if path.endswith(os.sep) else path + os.sep
         else:
             self.log.info(f"cannot create directory '{path}': No such file or directory")
             return
@@ -163,18 +167,17 @@ class ConfigHandler:
             further testing.
         '''
         root = Path.home() if path.startswith(str(Path.home())) else Path.cwd()
-        parts = PosixPath(path).parts
+        parts = Path(path).parts
         for part in parts:
             if part == '..':
                 root = root.parent
 
-        return str(root) + ''.join([os.sep + p for p in parts
-                                    if p != '..'
-                                    and p != os.sep
-                                    and p not in str(root).split(os.sep)])
+        unwanted_chars = ['..', os.sep, str(root.anchor)]
+        unwanted_chars.extend(str(root).split(os.sep))
+        unwanted_chars = set(unwanted_chars)
+        return str(root) + ''.join([os.sep + p for p in parts if p not in unwanted_chars])
 
 
-    # Credits to: stackoverflow.com/questions/9532499
     def is_path_creatable_or_exists(self, path: str) -> bool:
 
         try:
@@ -189,6 +192,7 @@ class ConfigHandler:
         return os.access(dirname, os.W_OK)
 
 
+    # Credits to: stackoverflow.com/questions/9532499
     def is_path_valid(self, path: str) -> bool:
         try:
             if not isinstance(path, str) or not path:

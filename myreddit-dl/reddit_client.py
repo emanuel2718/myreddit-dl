@@ -1,7 +1,6 @@
 import time
 import configparser
 import console_args
-import asyncpraw
 import praw
 import utils
 import logging

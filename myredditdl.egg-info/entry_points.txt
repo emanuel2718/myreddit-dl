@@ -1,0 +1,3 @@
+[console_scripts]
+myredditdl = myredditdl.myredditdl:run
+

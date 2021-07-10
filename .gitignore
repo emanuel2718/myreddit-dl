@@ -2,7 +2,7 @@ __*
 myredditdl/config.backup
 myredditdl/config.ini
 myredditdl/*_reddit/
-myredditdl/*.egg-info/
+myredditdl.egg-info/*
 debug_media/
 debug.log
 reddit_media/

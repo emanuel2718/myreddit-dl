@@ -1,9 +1,10 @@
-from pprint import pprint
 import cProfile
 import pstats
 import time
 import praw
 import requests
+from pprint import pprintS
+
 import myredditdl.console_args as console_args
 import myredditdl.utils as utils
 from myredditdl.defaults import Defaults
@@ -14,8 +15,6 @@ from myredditdl.reddit_client import RedditClient
 
 class Downloader(RedditClient):
     def __init__(self):
-        #self.defaults = Defaults()
-
         super().__init__()
         self.log = utils.setup_logger(__name__)
         self.args = console_args.get_console_args()
@@ -116,7 +115,6 @@ class Downloader(RedditClient):
                 self.items_skipped += 1
 
     def start(self) -> None:
-        # TODO: might need to call build reddit instance here
         if not self.build_reddit_instance():
             return
 
@@ -129,12 +127,7 @@ class Downloader(RedditClient):
         else:
             self.log.error(utils.MISSING_DOWNLOAD_SOURCE)
 
-
-        #stats = pstats.Stats(pr).sort_stats(pstats.SortKey.TIME)
-        #stats.print_stats()
-        #self.log.debug(stats.print_stats())
-
-        self.log.debug(self)
+        self.log.info(self)
 
 
 if __name__ == '__main__':

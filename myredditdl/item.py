@@ -34,7 +34,6 @@ class Item:
                                'Sub', self.get_subreddit_prefixed(),
                                'Author', self.get_author(),
                                'Video', self.is_video(),
-                               #'Comment', self.is_comment(),
                                '-' * 50)
 
     @property
@@ -52,7 +51,6 @@ class Item:
                 '{:6} = {}\n'
                 '{:6} = {}\n'
                 '{:6} = {}\n'
-                #'{:6} = {}\n'
                 '{}\n')
 
     @property
@@ -63,7 +61,6 @@ class Item:
                 'streamable.com': self.get_streamable_url,
                 'imgur.com': self.get_imgur_url,
                 'reddit.com': self.get_reddit_gallery_url
-
                 }
 
     def get_item(self) -> 'RedditPostItem':
@@ -214,7 +211,7 @@ class Item:
             url = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', str(html))
             return [url + '.mp4']
         except Exception:
-            print('streamable_url exception raised')
+            self.log.debug('streamable_url exception raised')
             return []
 
     def get_reddit_gallery_url(self) -> list:

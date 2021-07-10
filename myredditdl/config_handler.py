@@ -8,7 +8,7 @@ class ConfigHandler:
     def __init__(self) -> None:
         self.log = utils.setup_logger(__name__)
         self.config_path = utils.CFG_FILENAME
-        self.config = configparser.ConfigParser()
+        self.config = configparser.RawConfigParser()
         self.config.read(self.config_path)
 
     def __getitem__(self):
@@ -22,9 +22,13 @@ class ConfigHandler:
 
     def __str__(self) -> str:
         return self.fmt.format('Configuration:\n',
-                               'Username', self.get_client_username(),
                                'Prefix', self.get_prefix(),
-                               'Path', self.get_media_path())
+                               'Path', self.get_media_path(),
+                               'Active Client', self.get_client_active_section(),
+                               'Client id', self.get_client_id(),
+                               'Client secret', self.get_client_secret(),
+                               'Username', self.get_client_username()
+                               )
 
     def __print__(self, request=None) -> None:
         print(self.__str__())
@@ -32,16 +36,19 @@ class ConfigHandler:
     @property
     def fmt(self):
         return ('{}\n'
-                '{:8} = {}\n'
-                '{:8} = {}\n'
-                '{:8} = {}\n')
+                '{:6} = {}\n'
+                '{:6} = {}\n\n'
+                '{:13} = {}\n'
+                '{:13} = {}\n'
+                '{:13} = {}\n'
+                '{:13} = {}\n')
 
     def get_config(self):
         return self.config
 
     def get_available_reddit_clients(self) -> list:
         return [sec for sec in self.config.sections()
-                if sec not in ('DEFAULTS', 'USERS', 'REDDIT')]
+                if sec not in ('DEFAULTS', 'USERS', 'EMPTY_CLIENT')]
 
     def set_new_current_user(self, section_name: str) -> None:
         ''' Section name is the current reddit client username in Upper case
@@ -58,6 +65,10 @@ class ConfigHandler:
 
             Now random_username will be the new active reddit client
         '''
+        if section_name == self.get_client_active_section():
+            self.log.info(f'{section_name} is the current active Reddit client')
+            return
+
         self.config.set('USERS', 'current_user_section_name', section_name)
         self.write_config()
         self.log.info(f'Changing {section_name} to be the Reddit client')
@@ -80,7 +91,7 @@ class ConfigHandler:
             self.config.set(section_name, 'client_secret',client.get('client_secret'))
             self.config.set(section_name, 'username', client.get('username'))
             self.config.set(section_name, 'password', client.get('password'))
-            if self.get_client_username() == 'REDDIT':
+            if self.get_client_active_section() == 'EMPTY_CLIENT':
                 self.set_new_current_user(section_name)
 
             self.write_config()
@@ -105,12 +116,24 @@ class ConfigHandler:
             media folder
         '''
         pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')
-        return pictures + self.get_client_username() + '_reddit' + os.sep
+        return pictures + self.get_client_active_section() + '_reddit' + os.sep
 
+
+    def get_client_active_section(self) -> str:
+        ''' Reddit client section name of the currently active reddit client'''
+        return self.config.get('USERS', 'current_user_section_name')
+
+    def get_client_id(self) -> str:
+        ''' Client id of the currently activated reddit client'''
+        return self.config.get(self.get_client_active_section(), 'client_id')
+
+    def get_client_secret(self) -> str:
+        ''' Client secret of the currently activated reddit client'''
+        return self.config.get(self.get_client_active_section(), 'client_secret')
 
     def get_client_username(self) -> str:
-        ''' Reddit client username'''
-        return self.config.get('USERS', 'current_user_section_name')
+        ''' Client username of the currently activated reddit client'''
+        return self.config.get(self.get_client_active_section(), 'username')
 
     def get_prefix(self) -> str:
         ''' Currently set prefix option'''

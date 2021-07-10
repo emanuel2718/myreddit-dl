@@ -3,7 +3,7 @@ import configparser
 import praw
 import logging
 import logging.handlers
-import myredditdl.console_args as utils
+import myredditdl.console_args as console_args
 import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
 from myredditdl.defaults import Defaults
@@ -20,7 +20,7 @@ class RedditClient:
 
     @property
     def section_name(self):
-        return self.conf.get_client_username()
+        return self.conf.get_client_active_section()
 
     @property
     def config(self):

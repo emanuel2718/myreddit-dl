@@ -126,90 +126,90 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
 
 Set the reddit client information to be able to use myreddit-dl
 ``` sh
-$ myreddit-dl --client-config
+$ myredditdl --client-config
 ```
 
 Set the path to the destination folder for the downloaded media
 ``` sh
-$ myreddit-dl --config-path ~/Path/to/destination
+$ myredditdl --config-path ~/Path/to/destination
 ```
 
 Set the filenames prefix scheme of the downloaded media
 ``` sh
 # This will save all the files with the scheme: `subredditName_uniqueId.extension`
-$ myreddit-dl --config-prefix subreddit
+$ myredditdl --config-prefix subreddit
 ```
 
 ``` sh
 # This will save all the files with the scheme: `postAuthorName_uniqueId.extension`
-$ myreddit-dl --config-prefix username
+$ myredditdl --config-prefix username
 ```
 
 ``` sh
 # This will save all the files with the scheme: `subredditName_postAuthorName_uniqueId.extension`
-$ myreddit-dl --config-prefix subreddit username
+$ myredditdl --config-prefix subreddit username
 ```
 
 Show the current configuration
 ``` sh
-$ myreddit-dl --get-config
+$ myredditdl --get-config
 ```
 
 # Example usage:
 
 Download all user upvoted media (limited to 1000 posts: Praw's API hard limit)
 ``` sh
-$ myreddit-dl -U
+$ myredditdl -U
 ```
 
 Download all user saved media and don't save metadata of posts
 ``` sh
-$ myreddit-dl -S --no-metadata
+$ myredditdl -S --no-metadata
 ```
 
 Download all user upvoted and saved media and accept NSFW posts media
 ``` sh
-$ myreddit-dl -U -S --nsfw
+$ myredditdl -U -S --nsfw
 ```
 
 Download all the user upvoted posts from the r/MechanicalKeyboards subreddit
 
 ``` sh
-$ myreddit-dl -U --sub MechanicalKeyboards
+$ myredditdl -U --sub MechanicalKeyboards
 ```
 
 Download all the user upvoted posts from the r/MechanicalKeyboards and r/Battlestations subreddits
 
 ``` sh
 # There's no limit to how many subreddits can be chained together
-$ myreddit-dl -U --sub MechanicalKeyboards Battlestations
+$ myredditdl -U --sub MechanicalKeyboards Battlestations
 ```
 
 Download only 10 posts media and only download images (don't download videos)
 
 ``` sh
-$ myreddit-dl -U --limit 10 --no-video
+$ myredditdl -U --limit 10 --no-video
 ```
 
 Get the post link of a downloaded media
 
 ``` sh
 # This will print the reddit post link of that image
-$ myreddit-dl --get-link random_image.png
+$ myredditdl --get-link random_image.png
 ```
 
 Get the post title of a downloaded media
 
 ``` sh
 # This will print the reddit post title of that video
-$ myreddit-dl --get-title random_video.mp4
+$ myredditdl --get-title random_video.mp4
 ```
 
 Get the metadata of downloaded media
 
 ``` sh
 # This will print the metadata of the image
-$ myreddit-dl --get-metadata random_image.jpg
+$ myredditdl --get-metadata random_image.jpg
 ```
 
 # TODOLIST

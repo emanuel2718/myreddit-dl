@@ -1,5 +1,5 @@
 import unittest
-from ..myreddit-dl import config_handler
+import myredditdl.config_handler as config_handler
 
 
 class TestConfigHandler(unittest.TestCase):

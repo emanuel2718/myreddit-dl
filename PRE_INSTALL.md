@@ -40,4 +40,4 @@ password=throwUpvoteDownload
 ```
 
 
-### 6. [Installation can begin](https://github.com/emanuel2718/myreddit-dl/blob/master/README.md)
+### 6. [Installation can begin](https://github.com/emanuel2718/myredditdl/blob/master/README.md)

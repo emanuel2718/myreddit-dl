@@ -31,7 +31,7 @@ def get_console_args():
 
     parser = argparse.ArgumentParser(
         description='Reddit upvoted & saved media downloader',
-        usage='myreddit-dl [-h] [REQUIRED] [OPTIONS]',
+        usage='myredditdl [-h] [REQUIRED] [OPTIONS]',
         formatter_class=argparse.RawTextHelpFormatter)
 
     required_group = parser.add_argument_group(
@@ -151,7 +151,7 @@ def get_console_args():
     parser.add_argument(
         '-v',
         '--version',
-        help='displays the current version of myreddit-dl',
+        help='displays the current version of myredditdl',
         action='store_true')
 
     parser.add_argument(

@@ -15,7 +15,7 @@ class Cli:
         print('\n' + header)
         print(
             'For information'
-            ' on how to setup your own developer credentials to use myreddit-dl,\n'
+            ' on how to setup your own developer credentials to use myredditdl,\n'
             'Please refer to',
             instructions)
 

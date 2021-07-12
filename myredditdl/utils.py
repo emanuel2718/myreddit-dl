@@ -3,6 +3,31 @@ import logging
 from pathlib import Path
 
 # TODO: refactor this entire file.
+def setup_logger(module: str, debug=False):
+    logger = logging.getLogger(module)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG if debug else logging.INFO)
+
+        fh = logging.FileHandler('debug.log', 'a')
+        fh.setLevel(logging.DEBUG)
+
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.DEBUG if debug else logging.INFO)
+
+
+        fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
+        sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
+        fh.setFormatter(fh_formatter)
+        sh.setFormatter(sh_formatter)
+
+        logger.addHandler(fh)
+        logger.addHandler(sh)
+        logger.propagate = False
+
+    if module == 'reddit_client':
+        logger.debug('-'*60)
+
+    return logger
 
 # Project source directory: myredditdl/myredditdl/
 SRC_DIR = str(Path(__file__).parent) + os.sep
@@ -77,31 +102,6 @@ def print_metadata(data: dict) -> None:
     print('\n')
 
 
-def setup_logger(module: str, debug=False):
-    logger = logging.getLogger(module)
-    if not logger.handlers:
-        logger.setLevel(logging.DEBUG)
-
-        fh = logging.FileHandler('debug.log', 'a')
-        fh.setLevel(logging.DEBUG)
-
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.INFO)
-
-
-        fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
-        sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
-        fh.setFormatter(fh_formatter)
-        sh.setFormatter(sh_formatter)
-
-        logger.addHandler(fh)
-        logger.addHandler(sh)
-        logger.propagate = False
-
-    if module == 'reddit_client':
-        logger.debug('-'*60)
-
-    return logger
 
 
 if __name__ == '__main__':

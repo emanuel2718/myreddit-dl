@@ -12,9 +12,9 @@ from myredditdl.defaults import Defaults
 class RedditClient:
     def __init__(self) -> None:
         self.client_time = time.time()
-        self.logger = utils.setup_logger(__name__)
-        self.conf = ConfigHandler()
         self.arg_dict = console_args.get_console_args()
+        self.logger = utils.setup_logger(__name__, self.arg_dict['debug'])
+        self.conf = ConfigHandler()
         self.user_instance = None
 
 

@@ -4,11 +4,12 @@ import re
 from pprint import pprint
 import praw
 import myredditdl.utils as utils
+from myredditdl.console_args import get_console_args as args
 
 
 class Item:
     def __init__(self, item):
-        self.log = utils.setup_logger(__name__)
+        self.log = utils.setup_logger(__name__, args()['debug'])
         self.__item = item
         self.__media_url = self._fetch_media_url()
 

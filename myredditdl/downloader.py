@@ -16,8 +16,8 @@ from myredditdl.reddit_client import RedditClient
 class Downloader(RedditClient):
     def __init__(self):
         super().__init__()
-        self.log = utils.setup_logger(__name__)
         self.args = console_args.get_console_args()
+        self.log = utils.setup_logger(__name__, self.args['debug'])
         self.item = None
         self.items_iterated = 0
         self.items_downloaded = 0

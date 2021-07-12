@@ -1,4 +1,5 @@
 import configparser
+import myredditdl
 import sys, errno, os
 from pathlib import Path
 import myredditdl.utils as utils

@@ -3,12 +3,13 @@ import os
 import re
 from urllib.parse import urlparse
 import myredditdl.utils as utils
+from myredditdl.console_args import get_console_args as args
 from myredditdl.defaults import Defaults
 
 
 class FileHandler:
     def __init__(self):
-        self.log = utils.setup_logger(__name__)
+        self.log = utils.setup_logger(__name__, args()['debug'])
         self.item = None
         self.defaults = Defaults()
 

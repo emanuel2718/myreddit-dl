@@ -1,8 +1,5 @@
 import pathlib
-import configparser
 import os
-from platform import system
-
 import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
 

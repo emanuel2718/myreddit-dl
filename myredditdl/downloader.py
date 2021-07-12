@@ -1,9 +1,5 @@
-import cProfile
-import pstats
 import time
-import praw
 import requests
-from pprint import pprint
 
 import myredditdl.console_args as console_args
 import myredditdl.utils as utils

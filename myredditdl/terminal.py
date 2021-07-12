@@ -1,5 +1,3 @@
-import configparser
-import getpass
 import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
 from myredditdl.reddit_client import RedditClient

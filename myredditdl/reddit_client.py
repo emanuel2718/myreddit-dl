@@ -1,12 +1,8 @@
 import time
-import configparser
 import praw
-import logging
-import logging.handlers
 import myredditdl.console_args as console_args
 import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
-from myredditdl.defaults import Defaults
 
 
 class RedditClient:

@@ -1,6 +1,5 @@
 import argparse
 import textwrap
-import logging
 import myredditdl.utils as utils
 from myredditdl.terminal import Terminal
 from myredditdl.config_handler import ConfigHandler

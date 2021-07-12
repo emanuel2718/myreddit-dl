@@ -1,6 +1,4 @@
-import json
 import os
-import re
 from urllib.parse import urlparse
 import myredditdl.utils as utils
 from myredditdl.console_args import get_console_args as args

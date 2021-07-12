@@ -1,6 +1,7 @@
 import configparser
-import myredditdl
-import sys, errno, os
+import errno
+import os
+import sys
 from pathlib import Path
 import myredditdl.utils as utils
 
@@ -22,14 +23,20 @@ class ConfigHandler:
             self.get_media_path())
 
     def __str__(self) -> str:
-        return self.fmt.format('Configuration:\n',
-                               'Prefix', self.get_prefix(),
-                               'Path', self.get_media_path(),
-                               'Active Client', self.get_client_active_section(),
-                               'Client id', self.get_client_id(),
-                               'Client secret', self.get_client_secret(),
-                               'Username', self.get_client_username()
-                               )
+        return self.fmt.format(
+            'Configuration:\n',
+            'Prefix',
+            self.get_prefix(),
+            'Path',
+            self.get_media_path(),
+            'Active Client',
+            self.get_client_active_section(),
+            'Client id',
+            self.get_client_id(),
+            'Client secret',
+            self.get_client_secret(),
+            'Username',
+            self.get_client_username())
 
     def __print__(self, request=None) -> None:
         print(self.__str__())
@@ -70,7 +77,8 @@ class ConfigHandler:
             Now random_username will be the new active reddit client
         '''
         if section_name == self.get_client_active_section():
-            self.log.info(f'{section_name} is the current active Reddit client')
+            self.log.info(
+                f'{section_name} is the current active Reddit client')
             return False
 
         self.config.set('USERS', 'current_user_section_name', section_name)
@@ -93,7 +101,10 @@ class ConfigHandler:
         if not self.config.has_section(section_name):
             self.config.add_section(section_name)
             self.config.set(section_name, 'client_id', client.get('client_id'))
-            self.config.set(section_name, 'client_secret',client.get('client_secret'))
+            self.config.set(
+                section_name,
+                'client_secret',
+                client.get('client_secret'))
             self.config.set(section_name, 'username', client.get('username'))
             self.config.set(section_name, 'password', client.get('password'))
             if self.get_client_active_section() == 'EMPTY_CLIENT':
@@ -124,7 +135,6 @@ class ConfigHandler:
         pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')
         return pictures + self.get_client_active_section() + '_reddit' + os.sep
 
-
     def get_client_active_section(self) -> str:
         ''' Reddit client section name of the currently active reddit client'''
         return self.config.get('USERS', 'current_user_section_name')
@@ -135,7 +145,9 @@ class ConfigHandler:
 
     def get_client_secret(self) -> str:
         ''' Client secret of the currently activated reddit client'''
-        return self.config.get(self.get_client_active_section(), 'client_secret')
+        return self.config.get(
+            self.get_client_active_section(),
+            'client_secret')
 
     def get_client_username(self) -> str:
         ''' Client username of the currently activated reddit client'''
@@ -186,7 +198,8 @@ class ConfigHandler:
             path = self.sanitize_path(path)
             path = path if path.endswith(os.sep) else path + os.sep
         else:
-            self.log.info(f"cannot create directory '{path}': No such file or directory")
+            self.log.info(
+                f"cannot create directory '{path}': No such file or directory")
             return
 
         self.config.set('DEFAULTS', 'path', path)
@@ -207,8 +220,8 @@ class ConfigHandler:
         unwanted_chars = ['..', os.sep, str(root.anchor)]
         unwanted_chars.extend(str(root).split(os.sep))
         unwanted_chars = set(unwanted_chars)
-        return str(root) + ''.join([os.sep + p for p in parts if p not in unwanted_chars])
-
+        return str(
+            root) + ''.join([os.sep + p for p in parts if p not in unwanted_chars])
 
     def is_path_creatable_or_exists(self, path: str) -> bool:
 
@@ -223,8 +236,8 @@ class ConfigHandler:
         dirname = os.path.dirname(path) or os.getcwd()
         return os.access(dirname, os.W_OK)
 
-
     # Credits to: stackoverflow.com/questions/9532499
+
     def is_path_valid(self, path: str) -> bool:
         try:
             if not isinstance(path, str) or not path:
@@ -253,6 +266,7 @@ class ConfigHandler:
             return False
         else:
             return True
+
 
 if __name__ == '__main__':
     # TODO: change this message

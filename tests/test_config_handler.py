@@ -5,7 +5,7 @@ from os import sep
 from os.path import expanduser
 from myredditdl.config_handler import ConfigHandler
 from unittest import mock
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 
 class TestConfigHandler(unittest.TestCase):

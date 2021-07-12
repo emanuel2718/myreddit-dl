@@ -14,8 +14,6 @@ def __mapped_config_requests():
             'path': cli.change_path,
             'prefix': cli.change_prefix}
 
-
-
 def check_config_requests():
     args = get_console_args()
     for request, func_call in __mapped_config_requests().items():
@@ -23,12 +21,7 @@ def check_config_requests():
             func_call(args[request])
             exit(0)
 
-
-
 def get_console_args():
-    #log = utils.setup_logger(__name__, True)
-    #log.debug('get_args is called')
-
     parser = argparse.ArgumentParser(
         description='Reddit upvoted & saved media downloader',
         usage='myredditdl [-h] [REQUIRED] [OPTIONS]',
@@ -65,15 +58,6 @@ def get_console_args():
         required=False)
 
     config_group.add_argument(
-        '--add-client-hidden',
-        action='store_true',
-        help=textwrap.dedent('''\
-        add new reddit account with password prompt hidden
-
-        '''),
-        required=False)
-
-    config_group.add_argument(
         '--change-client',
         action='store_true',
         help=textwrap.dedent('''\
@@ -97,7 +81,7 @@ def get_console_args():
             --prefix subreddit username ---> subreddit_username_id.exension
             --prefix subreddit          ---> subreddit_id.exension
 
-        Default: subreddit ---> subreddit_id.extension
+        Default: subreddit_username ---> subreddit_username_id.extension
 
         '''),
         metavar='OPT',
@@ -107,45 +91,21 @@ def get_console_args():
         '--path',
         type=str,
         default=None,
-        help=textwrap.dedent('''\
-        path to the folder were media will be downloaded to
-
-        Examples:
-
-        To download the media to the folder ~/Pictures/reddit_media:
-            --path $HOME/Pictures/reddit_media
-                                or
-            --path ~/Pictures/reddit_media
-
-        To download the media to the current working directory:
-            --path ./
-
-        To download the media to a folder in the current working directory
-            --path ./random_folder_destination
-
-        Default Path: $HOME/Pictures/User_myreddit/
-
-        '''),
+        help='set the path to the folder were media will be downloaded to',
         metavar='PATH',
         required=False)
 
     config_group.add_argument(
         '--show-config',
         action='store_true',
-        help="prints the configuration file information to the terminal",
-        required=False)
-
-    config_group.add_argument(
-        '--get-config-show',
-        action='store_true',
-        help="prints the configuration file information to the terminal and show password",
+        help="print current configuration to the terminal",
         required=False)
 
     parser.add_argument(
         '-debug',
         '--debug',
         action='store_true',
-        help="Debug flag",
+        help='debug flag',
         required=False)
 
     parser.add_argument(
@@ -153,13 +113,6 @@ def get_console_args():
         '--version',
         help='displays the current version of myredditdl',
         action='store_true')
-
-    parser.add_argument(
-        '-verbose',
-        '--verbose',
-        action='store_true',
-        help="print debugging information",
-        required=False)
 
     parser.add_argument(
         '--limit',

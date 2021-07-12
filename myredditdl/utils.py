@@ -106,4 +106,4 @@ def print_metadata(data: dict) -> None:
 
 
 if __name__ == '__main__':
-    print_warning(DONT_RUN_THIS_FILE)
+    print('Dont run this file')

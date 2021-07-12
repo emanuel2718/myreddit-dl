@@ -47,11 +47,14 @@ class ConfigHandler:
     def get_config(self):
         return self.config
 
+    def get_config_sections(self):
+        return self.config.sections()
+
     def get_available_reddit_clients(self) -> list:
-        return [sec for sec in self.config.sections()
+        return [sec for sec in self.get_config_sections()
                 if sec not in ('DEFAULTS', 'USERS', 'EMPTY_CLIENT')]
 
-    def set_new_current_user(self, section_name: str) -> None:
+    def set_new_current_user(self, section_name: str) -> bool:
         ''' Section name is the current reddit client username in Upper case
             which points to the current user section name in the config file.
 
@@ -68,13 +71,14 @@ class ConfigHandler:
         '''
         if section_name == self.get_client_active_section():
             self.log.info(f'{section_name} is the current active Reddit client')
-            return
+            return False
 
         self.config.set('USERS', 'current_user_section_name', section_name)
         self.write_config()
         self.log.info(f'Changing {section_name} to be the Reddit client')
+        return True
 
-    def add_client(self, client: dict) -> None:
+    def add_client(self, client: dict) -> bool:
         ''' Receives a client in the form of:
 
             {section: section name,
@@ -98,9 +102,10 @@ class ConfigHandler:
             self.write_config()
             self.log.info(
                 f"{client.get('username')} successfully added as a client")
+            return True
 
-        else:
-            self.log.info('That client already exists.')
+        self.log.info('That client already exists.')
+        return False
 
     def write_config(self) -> bool:
         try:
@@ -149,7 +154,7 @@ class ConfigHandler:
                 'subreddit_username',
                 'username_subreddit'}
 
-    def set_prefix_option(self, prefix: str) -> None:
+    def set_prefix_option(self, prefix: str) -> bool:
         ''' Receives a prefix option in the form of a string:
             Example: subreddit_username
             Example: username
@@ -158,14 +163,17 @@ class ConfigHandler:
         '''
         if prefix == self.get_prefix():
             self.log.info(f'{prefix} is already the current prefix option')
+            return False
 
         elif prefix in self.get_valid_prefix_options():
             self.config.set('DEFAULTS', 'prefix', prefix)
             self.write_config()
             self.log.info(f'Prefix changed to: {prefix}')
+            return True
 
         else:
             self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
+            return False
 
     def set_media_path(self, path: str) -> None:
         ''' Changes the destination folder for downloaded media

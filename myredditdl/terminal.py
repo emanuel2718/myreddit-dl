@@ -4,6 +4,7 @@ import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
 from myredditdl.reddit_client import RedditClient
 
+
 class Terminal:
     def __init__(self):
         self.log = utils.setup_logger(__name__)
@@ -70,7 +71,7 @@ class Terminal:
     def get_clients_options(self) -> dict:
         clients = self.config.get_available_reddit_clients()
         clients.append('Exit program')
-        return {str(index):client for index, client in enumerate(clients, 1)}
+        return {str(index): client for index, client in enumerate(clients, 1)}
 
     def change_client(self, request=None):
         options = self.get_clients_options()

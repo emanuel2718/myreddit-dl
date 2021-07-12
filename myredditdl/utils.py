@@ -3,6 +3,8 @@ import logging
 from pathlib import Path
 
 # TODO: refactor this entire file.
+
+
 def setup_logger(module: str, debug=False):
     logger = logging.getLogger(module)
     if not logger.handlers:
@@ -14,8 +16,8 @@ def setup_logger(module: str, debug=False):
         sh = logging.StreamHandler()
         sh.setLevel(logging.DEBUG if debug else logging.INFO)
 
-
-        fh_formatter = logging.Formatter('%(levelname)s: %(name)s : %(message)s')
+        fh_formatter = logging.Formatter(
+            '%(levelname)s: %(name)s : %(message)s')
         sh_formatter = logging.Formatter('%(levelname)s: %(message)s')
         fh.setFormatter(fh_formatter)
         sh.setFormatter(sh_formatter)
@@ -25,9 +27,10 @@ def setup_logger(module: str, debug=False):
         logger.propagate = False
 
     if module == 'reddit_client':
-        logger.debug('-'*60)
+        logger.debug('-' * 60)
 
     return logger
+
 
 # Project source directory: myredditdl/myredditdl/
 SRC_DIR = str(Path(__file__).parent) + os.sep
@@ -100,8 +103,6 @@ def print_metadata(data: dict) -> None:
     for i in data:
         print(i.lstrip(' '))
     print('\n')
-
-
 
 
 if __name__ == '__main__':

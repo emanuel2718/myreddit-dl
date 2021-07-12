@@ -80,7 +80,6 @@ class FileHandler:
                 'Post creation date': self.item.get_creation_date()
                 }
 
-
         #
         #    def delete_database(self) -> None:
         #        try:
@@ -144,6 +143,7 @@ class FileHandler:
         #        except:
         #            self.log.info('No debug_log file found')
         #        exit(0)
+
 
 if __name__ == '__main__':
     utils.print_warning(utils.DONT_RUN_THIS_FILE)

@@ -69,7 +69,8 @@ class Downloader(RedditClient):
         return self.item.get_domain() in self.valid_domains
 
     def is_valid_subreddit(self) -> bool:
-        return self.args['sub'] is None or self.item.get_subreddit().lower() in self.args['sub']
+        return self.args['sub'] is None or self.item.get_subreddit(
+        ).lower() in self.args['sub']
 
     def can_download(self) -> bool:
         if len(self.item) == 0:
@@ -91,9 +92,8 @@ class Downloader(RedditClient):
             r = requests.get(data[i].get('url'))
             with open(data[i].get('path'), 'wb') as f:
                 f.write(r.content)
-                self.log.info(f'Item added: {self.file_handler.get_filename(i)}')
-
-
+                self.log.info(
+                    f'Item added: {self.file_handler.get_filename(i)}')
 
     def get_data(self) -> list:
         return [{'url': self.item.get_media_url()[i],

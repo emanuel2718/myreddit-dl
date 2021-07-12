@@ -17,7 +17,6 @@ class RedditClient:
         self.conf = ConfigHandler()
         self.user_instance = None
 
-
     @property
     def section_name(self):
         return self.conf.get_client_active_section()
@@ -48,13 +47,13 @@ class RedditClient:
         return self.user_instance.saved(
             limit=self.arg_dict['max_depth']) if self.arg_dict['saved'] else None
 
-
     def build_reddit_instance(self) -> bool:
         self.logger.info('Building reddit instance...')
 
         if len(self.section_name) == 0:
-            self.logger.warning('No valid clients were found.'
-                             'Add new reddit clients with the --add-client flag')
+            self.logger.warning(
+                'No valid clients were found.'
+                'Add new reddit clients with the --add-client flag')
             return False
 
         try:
@@ -69,10 +68,10 @@ class RedditClient:
             self.logger.error('Reddit instance build: Failed!')
             return False
 
-        self.logger.debug("Client: %s seconds" % (time.time() - self.client_time))
+        self.logger.debug(
+            "Client: %s seconds" %
+            (time.time() - self.client_time))
         return True
-
-
 
     @classmethod
     def validate_instance(cls, instance: dict) -> bool:
@@ -89,6 +88,7 @@ class RedditClient:
             print('INFO: instance validator: Failed!')
 
         return False
+
 
 if __name__ == '__main__':
     utils.print_warning(utils.DONT_RUN_THIS_FILE)

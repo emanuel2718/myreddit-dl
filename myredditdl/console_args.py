@@ -14,12 +14,14 @@ def __mapped_config_requests():
             'path': terminal.change_path,
             'prefix': terminal.change_prefix}
 
+
 def check_config_requests():
     args = get_console_args()
     for request, func_call in __mapped_config_requests().items():
         if args[request]:
             func_call(args[request])
             exit(0)
+
 
 def get_console_args():
     parser = argparse.ArgumentParser(
@@ -46,7 +48,6 @@ def get_console_args():
         action='store_true',
         help="Download saved media",
         required=False)
-
 
     config_group.add_argument(
         '--add-client',
@@ -113,7 +114,6 @@ def get_console_args():
         action='store_true',
         help='debug flag',
         required=False)
-
 
     parser.add_argument(
         '--limit',
@@ -201,7 +201,6 @@ def get_console_args():
         required=False)
 
     return vars(parser.parse_args())
-
 
 
 if __name__ == '__main__':

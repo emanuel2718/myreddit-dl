@@ -4,7 +4,7 @@ import myredditdl.utils as utils
 from myredditdl.config_handler import ConfigHandler
 from myredditdl.reddit_client import RedditClient
 
-class Cli:
+class Terminal:
     def __init__(self):
         self.log = utils.setup_logger(__name__)
         self.config = ConfigHandler()

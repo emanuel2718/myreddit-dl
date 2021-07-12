@@ -2,17 +2,17 @@ import argparse
 import textwrap
 import logging
 import myredditdl.utils as utils
-from myredditdl.cli import Cli
+from myredditdl.terminal import Terminal
 from myredditdl.config_handler import ConfigHandler
 
 
 def __mapped_config_requests():
-    cli = Cli()
-    return {'add_client': cli.client_setup,
-            'change_client': cli.change_client,
+    terminal = Terminal()
+    return {'add_client': terminal.client_setup,
+            'change_client': terminal.change_client,
             'show_config': ConfigHandler().__print__,
-            'path': cli.change_path,
-            'prefix': cli.change_prefix}
+            'path': terminal.change_path,
+            'prefix': terminal.change_prefix}
 
 def check_config_requests():
     args = get_console_args()

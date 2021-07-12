@@ -13,7 +13,7 @@ NOTE: When ready for production; this message will not be here and `myreddit-dl`
 
 * [Requirements](#requirments)
 * [Pre-Installation](#pre-installation)
-* [Installation](#installation)
+* [Manual Installation](#manual-installation)
 * [How to use](#how-to-use)
 * [Advanced Configuration](#advanced-configuration)
 
@@ -26,18 +26,18 @@ NOTE: When ready for production; this message will not be here and `myreddit-dl`
 
 # Pre-Installation
 
-[Create a developer application on reddit if needed](https://github.com/emanuel2718/myreddit-dl/blob/master/PRE_INSTALL.md)
+[Create a developer application on reddit if needed](https://github.com/emanuel2718/myredditdl/blob/master/PRE_INSTALL.md)
 
 
 
-# Installation
+# Manual Installation
 
 &nbsp; 
 
 ### 1. Clone this repository
 ```sh
-$ git clone https://github.com/emanuel2718/myreddit-dl
-$ cd myreddit-dl
+$ git clone https://github.com/emanuel2718/myredditdl
+$ cd myredditdl
 ```
 
 ### 2. Install requirements
@@ -45,15 +45,21 @@ $ cd myreddit-dl
 $ pip install -r requirements.txt
 ```
 
-### 3. Fill reddit developer app information
+### 3. Install myredditdl
+```sh
+# you might need to install setuptools (pip install setuptools)
+$ python3 setup.py install
+```
+
+### 4. Fill reddit developer app information
 ``` sh
-$ myreddit-dl --add-client
+$ myredditdl --add-client
 ```
 
 
 # How to use
 ```sh
-$ myreddit-dl [REQUIRED] [OPTIONS]
+$ myredditdl [REQUIRED] [OPTIONS]
 ```
 
 ##### REQUIRED
@@ -69,7 +75,6 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
 ###### Optional arguments:
     -h, --help                show this message and exit
     -v, --version             display the current version of myreddit-dl
-    -verbose, --verbose       print extra information while downloading
 
     --sub [SUBREDDIT ...]     only download media that belongs to the given subreddit(s)
     --limit [LIMIT]           limit the amount of media to download (default: None)
@@ -77,14 +82,12 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
 
     --no-video                don't download video files (.mp4, .gif, .gifv, etc.)
     --only-video              only download video files
-    --nsfw                    enable NSFW content download (default: False)
-    --clean-debug             remove all debug files
+    --no-nsfw                 disable NSFW content download
     
 ###### Confgiguration:
     --add-client              add a new Reddit account
-    --add-client-hidden       add a new Reddit account with password prompt hidden
     --change-client           change to another valid existing reddit client (account)
-    --config-prefix OPT       set filename prefix (post author username and/or post subreddit name)
+    --prefix OPT              set filename prefix (post author username and/or post subreddit name)
                               
                               Options:
                                   '--config-prefix username'           --> username_id.ext
@@ -94,25 +97,8 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
                                   
                               Default: subreddit --> subreddit_id.ext
                               
-    --config-path PATH        path to the folder were media will be downloaded to
-                              
-                              Examples:
-                              
-                              To download the media to the folder ~/Pictures/reddit_media
-                                  --config-path $HOME/Pictures/reddit_media
-                                                    or
-                                  --config-path ~/Picutres/reddit_media
-                              
-                              To download the media to the current working directory
-                                  --config-path ./
-                                  
-                              To download the media to a folder in the current working directory
-                                  --config-path ./random_folder_destination
-                                  
-                              Default Path: $HOME/Pictures/User_myreddit/
-                                                    
+    --path PATH               path to the folder were media will be downloaded to
     --get-config              prints the configuration file information to the terminal
-    --get-config-show         prints the configuration file to the terminal and show password
     
 
 ###### Metadata:
@@ -124,35 +110,35 @@ $ myreddit-dl [REQUIRED] [OPTIONS]
 
 # Configuration
 
-Set the reddit client information to be able to use myreddit-dl
+Set the reddit client information to be able to use myredditdl
 ``` sh
-$ myredditdl --client-config
+$ myredditdl --add-client
 ```
 
 Set the path to the destination folder for the downloaded media
 ``` sh
-$ myredditdl --config-path ~/Path/to/destination
+$ myredditdl --path ~/Path/to/destination
 ```
 
 Set the filenames prefix scheme of the downloaded media
 ``` sh
-# This will save all the files with the scheme: `subredditName_uniqueId.extension`
-$ myredditdl --config-prefix subreddit
+# This will save all the files with the scheme: `postAuthorUsername_uniqueId.extension`
+$ myredditdl --prefix username
 ```
 
 ``` sh
-# This will save all the files with the scheme: `postAuthorName_uniqueId.extension`
-$ myredditdl --config-prefix username
+# This will save all the files with the scheme: `subredditName_postAuthorUsername_uniqueId.extension`
+$ myredditdl --prefix subreddit username
 ```
 
 ``` sh
-# This will save all the files with the scheme: `subredditName_postAuthorName_uniqueId.extension`
-$ myredditdl --config-prefix subreddit username
+# This will save all the files with the scheme: `postAuthorName_subredditName_uniqueId.extension`
+$ myredditdl --config-prefix username subreddit
 ```
 
 Show the current configuration
 ``` sh
-$ myredditdl --get-config
+$ myredditdl --show-config
 ```
 
 # Example usage:
@@ -167,9 +153,9 @@ Download all user saved media and don't save metadata of posts
 $ myredditdl -S --no-metadata
 ```
 
-Download all user upvoted and saved media and accept NSFW posts media
+Download all user upvoted and saved media except NSFW posts
 ``` sh
-$ myredditdl -U -S --nsfw
+$ myredditdl -U -S --no-nsfw
 ```
 
 Download all the user upvoted posts from the r/MechanicalKeyboards subreddit

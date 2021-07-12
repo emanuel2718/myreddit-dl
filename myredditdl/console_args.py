@@ -102,17 +102,18 @@ def get_console_args():
         required=False)
 
     parser.add_argument(
+        '-v',
+        '--version',
+        help='displays the current version of myredditdl',
+        action='store_true')
+
+    parser.add_argument(
         '-debug',
         '--debug',
         action='store_true',
         help='debug flag',
         required=False)
 
-    parser.add_argument(
-        '-v',
-        '--version',
-        help='displays the current version of myredditdl',
-        action='store_true')
 
     parser.add_argument(
         '--limit',

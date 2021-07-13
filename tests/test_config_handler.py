@@ -1,38 +1,21 @@
-import configparser
+import os
 import logging
 import unittest
-from os import sep
-from os.path import expanduser
-from myredditdl.config_handler import ConfigHandler
 from unittest import mock
 from unittest.mock import patch
+from unittest.mock import mock_open
+from myredditdl.config_handler import ConfigHandler
+from tests.mock_utils import get_new_client
+from tests.mock_utils import get_dir_path
+from tests.mock_utils import get_valid_options
 
 
 class TestConfigHandler(unittest.TestCase):
-    MOCK_CFG = '''
-    [DEFAULTS]
-    prefix = subreddit_username
-    path =
-
-    [USERS]
-    current_user_section_name = MOCK_CLIENT
-
-    [MOCK_CLIENT]
-    client_id = mock_id
-    client_secret = mock_secret
-    username = mock_username
-    password = mock_password
-    '''
-
-    VALID_OPTIONS = {'subreddit',
-                     'username',
-                     'subreddit_username',
-                     'username_subreddit'}
+    MOCK_FILE = get_dir_path()
+    VALID_OPTIONS = get_valid_options()
 
     def setUp(self):
         self.cfg = ConfigHandler()
-        self.config = configparser.RawConfigParser()
-        self.config.read_string(self.MOCK_CFG)
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):
@@ -45,10 +28,24 @@ class TestConfigHandler(unittest.TestCase):
                 self.cfg.get_available_reddit_clients(), [
                     'FIRST', 'SECOND'])
 
-    def test_set_new_current_user(self):
-        with patch.object(ConfigHandler, 'get_client_active_section', return_value='RANDOM_USER'):
-            self.assertFalse(self.cfg.set_new_current_user('RANDOM_USER'))
-            self.assertTrue(self.cfg.set_new_current_user('new_user'))
+    @mock.patch('builtins.open', new_callable=mock_open())
+    @mock.patch('myredditdl.config_handler.ConfigHandler.get_config_path')
+    @mock.patch('myredditdl.config_handler.ConfigHandler.get_client_active_section')
+    def test_add_client(self, client, cfg_path, mock_open):
+        client.return_value = 'EMPTY_CLIENT'
+        cfg_path.return_value = self.MOCK_FILE
+        self.assertFalse(self.cfg.add_client(get_new_client('EMPTY_CLIENT')))
+        self.assertTrue(self.cfg.add_client(get_new_client('NEW_USER')))
+
+    @mock.patch('builtins.open', new_callable=mock_open())
+    @mock.patch('myredditdl.config_handler.ConfigHandler.get_config_path')
+    @mock.patch('myredditdl.config_handler.ConfigHandler.get_client_active_section')
+    def test_set_new_current_user(self, client, cfg_path, mock_open):
+        client.return_value = 'EMPTY_CLIENT'
+        cfg_path.return_value = self.MOCK_FILE
+        self.assertFalse(self.cfg.set_new_current_user('EMPTY_CLIENT'))
+        self.assertFalse(self.cfg.set_new_current_user('EMPTY_CLIENT'))
+        self.assertTrue(self.cfg.set_new_current_user('new_user'))
 
     @mock.patch('myredditdl.config_handler.ConfigHandler.get_valid_prefix_options')
     @mock.patch('myredditdl.config_handler.ConfigHandler.get_prefix')
@@ -61,11 +58,11 @@ class TestConfigHandler(unittest.TestCase):
         self.assertFalse(self.cfg.set_prefix_option('sub_name'))
 
     def test_default_media_path(self):
-        home = expanduser('~/Pictures/')
+        home = os.path.expanduser('~/Pictures/')
         with patch.object(ConfigHandler, 'get_client_active_section', return_value='SATORU'):
             self.assertEqual(
                 self.cfg.get_default_media_path(),
-                home + 'SATORU_reddit' + sep)
+                home + 'SATORU_reddit' + os.sep)
 
 
 if __name__ == '__main__':

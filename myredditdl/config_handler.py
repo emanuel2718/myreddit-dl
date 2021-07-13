@@ -9,9 +9,8 @@ import myredditdl.utils as utils
 class ConfigHandler:
     def __init__(self) -> None:
         self.log = utils.setup_logger(__name__)
-        self.config_path = utils.CFG_FILENAME
         self.config = configparser.RawConfigParser()
-        self.config.read(self.config_path)
+        self.config.read(self.get_config_path())
 
     def __getitem__(self):
         return self.conf
@@ -50,6 +49,9 @@ class ConfigHandler:
                 '{:13} = {}\n'
                 '{:13} = {}\n'
                 '{:13} = {}\n')
+
+    def get_config_path(self):
+        return utils.CFG_FILENAME
 
     def get_config(self):
         return self.config
@@ -120,7 +122,7 @@ class ConfigHandler:
 
     def write_config(self) -> bool:
         try:
-            with open(self.config_path, 'w') as configfile:
+            with open(self.get_config_path(), 'w') as configfile:
                 self.config.write(configfile)
                 return True
 

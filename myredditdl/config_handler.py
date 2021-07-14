@@ -189,7 +189,7 @@ class ConfigHandler:
             self.log.error(utils.INVALID_CFG_OPTION_MESSAGE)
             return False
 
-    def set_media_path(self, path: str) -> None:
+    def set_media_path(self, path: str) -> bool:
         ''' Changes the destination folder for downloaded media
             to @path
         '''
@@ -202,11 +202,12 @@ class ConfigHandler:
         else:
             self.log.info(
                 f"cannot create directory '{path}': No such file or directory")
-            return
+            return False
 
         self.config.set('DEFAULTS', 'path', path)
         self.write_config()
         self.log.info(f'media path set to: {path}')
+        return True
 
     def sanitize_path(self, path: str) -> str:
         ''' Cleans up given @path from --path flag

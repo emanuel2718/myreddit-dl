@@ -49,9 +49,8 @@ class Defaults:
     @property
     def metadata_file(self) -> str:
         ''' Returns the full path of the metadata file'''
-        return str(self.metadata_folder +
-                   self.config_handler.get_client_username() +
-                   self.metadata_suffix)
+        username = self.config_handler.get_client_username()
+        return self.metadata_folder + username + self.metadata_suffix
 
     @property
     def media_path(self):

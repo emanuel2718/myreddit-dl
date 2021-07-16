@@ -31,6 +31,9 @@ class RedditClient:
             user asked for the saved files with the (-U --upvote) flag.
             Otherwise, return None
         '''
+        if self.user_instance is None:
+            self.logger.warning('User instance is None. Fix me!')
+            return ()
         return self.user_instance.upvoted(
             limit=self.arg_dict['max_depth']) if self.arg_dict['upvote'] else None
 
@@ -40,6 +43,9 @@ class RedditClient:
             user asked for the saved files with the (-S --saved) flag.
             Otherwise, return None
         '''
+        if self.user_instance is None:
+            self.logger.warning('User instance is None. Fix me!')
+            return ()
         return self.user_instance.saved(
             limit=self.arg_dict['max_depth']) if self.arg_dict['saved'] else None
 

@@ -12,8 +12,7 @@ from myredditdl.downloader import Downloader
 
 def run():
     if len(sys.argv) > 1:
-        console_args.check_config_requests()
-        console_args.check_metadata_requests()
+        console_args.check_requests()
         Downloader().start()
 
     # GUI version of the app

@@ -3,27 +3,28 @@ import textwrap
 import myredditdl.utils as utils
 from myredditdl.terminal import Terminal
 from myredditdl.config_handler import ConfigHandler
+from myredditdl.metadata_handler import Metadata
 
 
-def __mapped_config_requests():
+def __mapped_requests():
     terminal = Terminal()
+    metadata_handler = Metadata()
     return {'add_client': terminal.client_setup,
             'change_client': terminal.change_client,
             'show_config': ConfigHandler().__print__,
             'path': terminal.change_path,
-            'prefix': terminal.change_prefix}
+            'prefix': terminal.change_prefix,
+            'get_metadata': metadata_handler.show_metadata,
+            'get_link': metadata_handler.show_link}
 
 
-def check_config_requests():
+def check_requests():
+    ''' Checks if user requested configuration or metadata requests'''
     args = get_console_args()
-    for request, func_call in __mapped_config_requests().items():
+    for request, func_call in __mapped_requests().items():
         if args[request]:
             func_call(args[request])
             exit(0)
-
-
-def check_metadata_requests():
-    args = get_console_args()
 
 
 def get_console_args():

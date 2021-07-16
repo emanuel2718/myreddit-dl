@@ -91,6 +91,9 @@ class Downloader(RedditClient):
                 self.log.info(
                     f'Item added: {self.file_handler.get_filename(i)}')
 
+        if not self.args['no_metadata']:
+            self.file_handler.save_metadata()
+
     def get_data(self) -> list:
         return [{'url': self.item.get_media_url()[i],
                  'path': self.file_handler.absolute_path[i]}
@@ -122,6 +125,10 @@ class Downloader(RedditClient):
             self.__iterate_items(self.client_saves)
         else:
             self.log.error(utils.MISSING_DOWNLOAD_SOURCE)
+
+        # TODO: clean folders if --debug flag
+        if self.args['debug']:
+            self.file_handler.debug_clean()
 
         self.log.info(self)
 

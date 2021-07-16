@@ -22,6 +22,10 @@ def check_config_requests():
             exit(0)
 
 
+def check_metadata_requests():
+    args = get_console_args()
+
+
 def get_console_args():
     parser = argparse.ArgumentParser(
         description='Reddit upvoted & saved media downloader',

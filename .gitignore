@@ -6,6 +6,5 @@ myredditdl.egg-info/*
 debug_media/
 debug.log
 reddit_media/
-media/
 test_dir/
 *.json

@@ -127,6 +127,15 @@ class Item:
         time_utc = self.__item.created_utc
         return str(datetime.fromtimestamp(time_utc).strftime('%m/%d/%Y'))
 
+    def get_metadata(self) -> dict:
+        return {'Author': self.get_author(),
+                'Subreddit': self.get_subreddit_prefixed(),
+                'Title': self.get_title(),
+                'Link': self.get_reddit_link(),
+                'Upvotes': self.get_upvotes_amount(),
+                'NSFW': self.is_nsfw(),
+                'Post creation date': self.get_creation_date()}
+
     def _fetch_media_url(self) -> list:
         ''' Returns a list of media url(s) for the given post item
 

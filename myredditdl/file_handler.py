@@ -4,13 +4,14 @@ import shutil
 import myredditdl.utils as utils
 from urllib.parse import urlparse
 from myredditdl.defaults import Defaults
+from myredditdl.console_args import get_console_args
 
 
 class FileHandler:
     def __init__(self):
         self.log = utils.setup_logger(__name__, True)
         self.item = None
-        self.defaults = Defaults()
+        self.defaults = Defaults(get_console_args()['debug'])
 
     @property
     def media_path(self) -> str:

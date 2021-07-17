@@ -6,7 +6,6 @@ from myredditdl.config_handler import ConfigHandler
 from myredditdl.metadata_handler import Metadata
 
 
-
 def __mapped_requests():
     args = get_console_args()
     terminal = Terminal()

@@ -1,8 +1,8 @@
 import os
 import json
 import shutil
-from urllib.parse import urlparse
 import myredditdl.utils as utils
+from urllib.parse import urlparse
 from myredditdl.defaults import Defaults
 
 

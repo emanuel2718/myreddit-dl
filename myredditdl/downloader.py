@@ -19,7 +19,7 @@ class Downloader(RedditClient):
         self.items_downloaded = 0
         self.items_skipped = 0
         self.valid_domains = None
-        self.defaults = Defaults()
+        self.defaults = Defaults(args['debug'])
         self.file_handler = FileHandler()
 
     def __str__(self) -> str:

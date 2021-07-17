@@ -1,7 +1,6 @@
 import pathlib
 import os
 import myredditdl.utils as utils
-from myredditdl.console_args import get_console_args
 from myredditdl.config_handler import ConfigHandler
 
 
@@ -9,7 +8,7 @@ class Defaults:
     def __init__(self, debug=False) -> None:
         self.log = utils.setup_logger(__name__)
         self.config_handler = ConfigHandler()
-        self.args = get_console_args()
+        self.debug = debug
 
     @property
     def home_dir(self) -> str:
@@ -44,7 +43,7 @@ class Defaults:
 
     @property
     def metadata_suffix(self):
-        return '_debug.json' if self.args['debug'] else '_metadata.json'
+        return '_debug.json' if self.debug else '_metadata.json'
 
     @property
     def metadata_file(self) -> str:
@@ -54,10 +53,9 @@ class Defaults:
 
     @property
     def media_path(self):
-        if self.args['debug']:
+        if self.debug:
             return self.debug_media_dir
-        else:
-            return self.config_handler.get_media_path()
+        return self.config_handler.get_media_path()
 
     @property
     def current_prefix(self):

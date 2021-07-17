@@ -7,8 +7,9 @@ from myredditdl.metadata_handler import Metadata
 
 
 def __mapped_requests():
+    args = get_console_args()
     terminal = Terminal()
-    metadata_handler = Metadata()
+    metadata_handler = Metadata(args['debug'])
     return {'add_client': terminal.client_setup,
             'change_client': terminal.change_client,
             'show_config': ConfigHandler().__print__,

@@ -25,7 +25,7 @@ class Metadata:
         ''' Returns the metadata map composed of one or more
             {filename: reddit metadata}
 
-        @return: dictionary of dictinary of the following format
+        @return: dictionary of the following format
                  {filename: {metadata}, filename: {metadata}, ...}
 
         Note: filenames are the keys of the map

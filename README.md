@@ -227,21 +227,21 @@ $ myredditdl --get-metadata random_image.jpg
 - [x] refactor downloader reddit post item into a separate Item class (item.py)
 - [x] make a new module console_args.py and import it when needed. This is better than passing it everytime.
 - [x] change `--nsfw` with `--no-nsfw`
-- [ ] fix the `--help` configuration section. To long and cubersome to read
-- [ ] change `None_` to `deleted_` for deleted accounts on file title
+- [x] fix the `--help` configuration section. To long and cubersome to read
 - [x] _, filename = os.path.split(full_path)
-- [ ] entire refactorization of the project.
-- [ ] think about refactoring argparser to be able to have it globally without instantiating or passing it
-- [ ] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
-- [ ] Make test suite
-- [ ] Fix path issues with ( ./ and / ), especially on Windows
-- [ ] figure out why the stack trace log is repeating certain functions (get_base_path)...
+- [x] entire refactorization of the project.
+- [x] think about refactoring argparser to be able to have it globally without instantiating or passing it
+- [x] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
+- [x] Make test suite
+- [x] Fix path issues with ( ./ and / ), especially on Windows
+- [x] figure out why the stack trace log is repeating certain functions (get_base_path)...
+- [ ] add documentation to entire codebase
+- [ ] change `None_` to `deleted_` for deleted accounts on file title
 - [ ] Make custom exceptions `exceptions.py`
 - [ ] Optimize code!!
 - [ ] upload to PyPy and add instruction here
 - [ ] Add color to output (jupyter-notebook as an example)
 - [ ] --clean-database flag that will remove all the links entries of files not longer present
 - [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
-- [ ] Handle case of repeated media (used --by-user and the --by-subreddit (duplicates))
 - [ ] Use item.thumbnail picture for the GUI displays (maybe)
 

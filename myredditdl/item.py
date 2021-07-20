@@ -1,8 +1,8 @@
-from datetime import datetime
-import requests
-import re
-from pprint import pprint
 import praw
+import re
+import requests
+from datetime import datetime
+from pprint import pprint
 import myredditdl.utils as utils
 from myredditdl.console_args import get_console_args as args
 

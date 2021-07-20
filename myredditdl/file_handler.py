@@ -70,21 +70,26 @@ class FileHandler:
         _, filename = os.path.split(self.absolute_path[index])
         return filename
 
-    def save_metadata(self) -> None:
-        filename = self.get_filename(0)
+    def write_metadata(self, metadata_map: dict) -> bool:
+        print(metadata_map)
+        exit(0)
         try:
             with open(self.defaults.metadata_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                if filename not in data:
-                    data[filename] = self.item.get_metadata()
-                    self.log.debug(f'Metadata addition: {filename}')
-                else:
-                    self.log.debug(f'Metadata exists: {filename}')
-
         except Exception:
             self.log.debug(
                 f'Metadata file created: {self.defaults.metadata_file}')
-            data = {f'{filename}': self.item.get_metadata()}
+            if metadata_map:
+                data = {
+                    f'{list(metadata_map.keys())[0]}': f'{list(metadata_map.values())[0]}'}
+            else:
+                return
+        for filename, metadata in metadata_map.items():
+            if filename not in data:
+                data[filename] = metadata
+                self.log.debug(f'Added Metadata for: {filename}')
+            else:
+                self.log.debug(f'Metadata for {filename} is already saved.')
 
         with open(self.defaults.metadata_file, 'w') as f:
             json.dump(data, f, indent=4)

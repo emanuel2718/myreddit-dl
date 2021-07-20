@@ -7,6 +7,7 @@ from myredditdl.defaults import Defaults
 from myredditdl.file_handler import FileHandler
 from myredditdl.item import Item
 from myredditdl.reddit_client import RedditClient
+from myredditdl.metadata_handler import Metadata
 
 
 class Downloader(RedditClient):
@@ -21,6 +22,7 @@ class Downloader(RedditClient):
         self.valid_domains = None
         self.defaults = Defaults(self.args['debug'])
         self.file_handler = FileHandler()
+        self.metadata_handler = Metadata()
 
     def __str__(self) -> str:
         return (
@@ -92,7 +94,9 @@ class Downloader(RedditClient):
                     f'Item added: {self.file_handler.get_filename(i)}')
 
         if not self.args['no_metadata']:
-            self.file_handler.save_metadata()
+            filename = self.file_handler.get_filename(0)
+            self.metadata_handler.add_to_map(
+                filename, self.item.get_metadata())
 
     def get_data(self) -> list:
         return [{'url': self.item.get_media_url()[i],
@@ -126,9 +130,11 @@ class Downloader(RedditClient):
         else:
             self.log.error(utils.MISSING_DOWNLOAD_SOURCE)
 
-        # TODO: clean folders if --debug flag
         if self.args['debug']:
             self.file_handler.debug_clean()
+
+        if not self.args['no_metadata']:
+            self.file_handler.write_metadata(self.metadata_handler.get_map())
 
         self.log.info(self)
 

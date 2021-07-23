@@ -15,6 +15,7 @@ class RedditClient:
 
     @property
     def section_name(self):
+        ''' Returns the current active Reddit client username in uppercase'''
         return self.conf.get_client_active_section()
 
     @property

@@ -96,7 +96,7 @@ class Downloader(RedditClient):
 
         @return: True if can download; False otherwise
         '''
-        if len(self.item) == 0: # empty item
+        if len(self.item) == 0:  # empty item
             return False
         if len(self.item) > 1 and self.args['no_gallery']:
             return False

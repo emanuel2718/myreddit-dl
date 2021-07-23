@@ -8,6 +8,7 @@ from myredditdl.console_args import get_console_args as args
 
 
 class Item:
+    ''' This class will house the current Reddit item'''
     def __init__(self, item):
         self.log = utils.setup_logger(__name__, args()['debug'])
         self.__item = item

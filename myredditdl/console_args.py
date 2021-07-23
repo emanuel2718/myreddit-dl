@@ -7,6 +7,7 @@ from myredditdl.metadata_handler import Metadata
 
 
 def __mapped_requests():
+    ''' The request flags with the associated function calls as key/value pairs'''
     args = get_console_args()
     terminal = Terminal()
     metadata_handler = Metadata(args['debug'])

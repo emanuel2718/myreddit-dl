@@ -64,7 +64,7 @@ class ConfigHandler:
                 if sec not in ('DEFAULTS', 'USERS', 'EMPTY_CLIENT')]
 
     def set_new_current_user(self, section_name: str) -> bool:
-        ''' Section name is the current reddit client username in Upper case
+        ''' @section_name is the current reddit client username in Upper case
             which points to the current user section name in the config file.
 
             Example:
@@ -98,6 +98,9 @@ class ConfigHandler:
              password: password,
             }
 
+            and adds the client to the config file.
+
+        @return: True if the client was added; Flase otherwise
         '''
         section_name = client.get('section')
         if not self.config.has_section(section_name):
@@ -121,6 +124,12 @@ class ConfigHandler:
         return False
 
     def write_config(self) -> bool:
+        ''' Config file writer function. Only this function should be used
+            to write to the file. To avoid having different instances of configuration
+            that could lead to an overwritten config file.
+
+        @return: True if the config file was found and written.
+        '''
         try:
             with open(self.get_config_path(), 'w') as configfile:
                 self.config.write(configfile)
@@ -131,8 +140,8 @@ class ConfigHandler:
             return False
 
     def get_default_media_path(self) -> str:
-        ''' Returns the location of the user ~/Pictures/{reddit_username}_reddit/
-            media folder
+        ''' Returns the location of the user $HOME/Pictures/{reddit_username}_reddit/
+            media folder.
         '''
         pictures = os.path.expanduser(f'~{os.sep}Pictures{os.sep}')
         return pictures + self.get_client_active_section() + '_reddit' + os.sep
@@ -160,9 +169,11 @@ class ConfigHandler:
         return self.config.get('DEFAULTS', 'prefix')
 
     def get_media_path(self):
+        ''' Returns the current set path where media will be downloaded to.'''
         return self.config.get('DEFAULTS', 'path')
 
     def get_valid_prefix_options(self) -> set:
+        ''' Returns a set of valid filenames prefix configurations.'''
         return {'subreddit',
                 'username',
                 'subreddit_username',

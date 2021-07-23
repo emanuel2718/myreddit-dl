@@ -80,14 +80,3 @@ class Terminal:
 
     def change_prefix(self, request: list):
         self.config.set_prefix_option('_'.join(request))
-
-
-#    def _prompt_user_change(self, username: str) -> str:
-#        res = ''
-#        while res not in {'y', 'yes', 'n', 'no'}:
-#            res = input(
-#                f'\nINFO: {username} is not currently set as the default client.\n'
-#                f'\nWould you like to set {username} as default client?'
-#                ' (y)es, (n)o: ').lower()
-#        return res
-#

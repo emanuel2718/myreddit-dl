@@ -23,12 +23,23 @@ class FileHandler:
                 for i, url in enumerate(self.item.get_media_url())]
 
     def _filename(self, url: str, index='') -> str:
+        ''' Returns only the filename with extension of the current item.
+            The url is needed because we parse the file extension from the url.
+            The index is needed in order to differentiate the gallery items.
+
+        @params:
+            - url:   media url of the current set reddit item
+            - index: number that will be added after the id of the current item
+
+        @return: filename with extension of the current item
+        '''
         extension = self.get_extension(url)
         prefix = self.defaults.current_prefix
         index = '' if index == '0' else index
         return self.prefix_map().get(prefix) + self.item.get_id() + index + extension
 
     def set_current_item(self, item: 'Reddit post item'):
+        ''' Helper function to set the current reddit @item'''
         self.item = item
 
     def file_exists(self):
@@ -48,6 +59,13 @@ class FileHandler:
             self.log.bebug(f'invalid path: {self.media_path}')
 
     def get_extension(self, url: str) -> str:
+        ''' Parses and returns the file extension based on the url
+
+        @param:
+            - url: media url of the current set item
+
+        @return: file extension of the current set item
+        '''
         try:
             parsed = urlparse(url)
             _, ext = os.path.splitext(parsed.path)
@@ -58,6 +76,7 @@ class FileHandler:
         return ext if not ext.endswith('.gifv') else '.mp4'
 
     def prefix_map(self) -> dict:
+        ''' --prefix flags and filename prefixed as key-value pairs'''
         username = self.item.get_author()
         subreddit = self.item.get_subreddit()
         return {'username': username + '_',
@@ -71,8 +90,11 @@ class FileHandler:
         return filename
 
     def write_metadata(self, metadata_map: dict) -> bool:
-        print(metadata_map)
-        exit(0)
+        ''' Dump the @metadata_map data into the metadata file
+
+        @param:
+            - metadata_map: dictionary of {filename: metadata, filename: metadata, ...}
+        '''
         try:
             with open(self.defaults.metadata_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)

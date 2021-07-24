@@ -1,8 +1,7 @@
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <div align="center">
 <h1>My Reddit Downloader</h1>
 <h4>Download upvoted and saved media from Reddit</h4>
-<h4>[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)</h4>
 </div>
 
 &nbsp; 

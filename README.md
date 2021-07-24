@@ -1,18 +1,18 @@
+
 <div align="center">
 <h1>My Reddit Downloader</h1>
 <h4>Download upvoted and saved media from Reddit</h4>
+<h4>[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)</h4>
 </div>
 
 &nbsp; 
 
-**WARNING**: This is a work in progress. If you see this message, use at your own risk**
-
-NOTE: When ready for production; this message will not be here and `myreddit-dl` will be found on PyPi
 
 # Index
 
 * [Requirements](#requirments)
 * [Pre-Installation](#pre-installation)
+* [Installation](#installation)
 * [Manual Installation](#manual-installation)
 * [How to use](#how-to-use)
 * [Advanced Configuration](#advanced-configuration)
@@ -28,11 +28,16 @@ NOTE: When ready for production; this message will not be here and `myreddit-dl`
 
 [Create a developer application on reddit if needed](https://github.com/emanuel2718/myredditdl/blob/master/PRE_INSTALL.md)
 
+# Installation
 
+``` sh
+pip install myredditdl
+```
+
+&nbsp; 
 
 # Manual Installation
 
-&nbsp; 
 
 ### 1. Clone this repository
 ```sh
@@ -197,51 +202,3 @@ Get the metadata of downloaded media
 # This will print the metadata of the image
 $ myredditdl --get-metadata random_image.jpg
 ```
-
-# TODOLIST
-- [x] --max-depth argument for max number of posts to search
-- [x] Make a link file (.user_links.txt)
-- [x] Make a --no-video flag
-- [x] use permalink to save with post title (append reddit.com)
-- [x] refactor absolute_path + url from gallery_data posts...
-- [x] `--only-videos` flag?
-- [x] refactor entirely link saving to metadata saving for --get-metadata
-- [x] `--get-metadata` --> User, title, link, user karma, sub, amount of upvotes...
-- [x] `--get-title` flag in which the title of the given image is returned.
-- [x] Make flag to store in either: sub_user_id.ext or user_id.ext (eliminate sub folders?)
-- [x] Fix bug caused by using getcwd() in entire codebase...
-- [x] Handle case where path and username are empy in `config.ini`
-- [x] Refactor `filename_save` to `filename_prefix`
-- [x] Allow the user to `--config-save subreddit username` for subreddit_user_id.ext
-- [x] Give the user the option to insert the credentials if no credentials are found.
-- [x] If config.ini is empty run script to ask user for the information
-- [x] Sanitize metadata titles (remove unicode characters)
-- [x] Add flag --get-path that prints the current set path and --get-filesave
-- [x] Change `--save-metadata` to `--no-metadata` (Defaults to saving the metadata)
-- [x] Why is __print_counters triggering twice sometimes?
-- [x] write --debug information to debug.log file instead
-- [x] Use `logging` module to improve logging
-- [x] `--no-gallery` flag to skip gallery media
-- [x] `--add-user` flag to add another profile.
-- [x] `--change-user` flag to change to another profile if user has more than one account.
-- [x] refactor downloader reddit post item into a separate Item class (item.py)
-- [x] make a new module console_args.py and import it when needed. This is better than passing it everytime.
-- [x] change `--nsfw` with `--no-nsfw`
-- [x] fix the `--help` configuration section. To long and cubersome to read
-- [x] _, filename = os.path.split(full_path)
-- [x] entire refactorization of the project.
-- [x] think about refactoring argparser to be able to have it globally without instantiating or passing it
-- [x] In advanced configuration change configparser ['REDDIT'] to desired account (--change-user).
-- [x] Make test suite
-- [x] Fix path issues with ( ./ and / ), especially on Windows
-- [x] figure out why the stack trace log is repeating certain functions (get_base_path)...
-- [ ] add documentation to entire codebase
-- [ ] change `None_` to `deleted_` for deleted accounts on file title
-- [ ] Make custom exceptions `exceptions.py`
-- [ ] Optimize code!!
-- [ ] upload to PyPy and add instruction here
-- [ ] Add color to output (jupyter-notebook as an example)
-- [ ] --clean-database flag that will remove all the links entries of files not longer present
-- [ ] use item.link_flair_text to get tags. Some users might want items with certain tags only
-- [ ] Use item.thumbnail picture for the GUI displays (maybe)
-

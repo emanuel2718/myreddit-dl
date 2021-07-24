@@ -33,8 +33,9 @@ class RedditClient:
             Otherwise, return None
         '''
         if self.user_instance is None:
-            self.logger.warning('User instance is None. Fix me!')
-            return ()
+            self.logger.warning(
+                'No valid Reddit client found. Please use `myredditdl --add-client`')
+            exit(1)
         return self.user_instance.upvoted(
             limit=self.arg_dict['max_depth']) if self.arg_dict['upvote'] else None
 
@@ -45,8 +46,9 @@ class RedditClient:
             Otherwise, return None
         '''
         if self.user_instance is None:
-            self.logger.warning('User instance is None. Fix me!')
-            return ()
+            self.logger.warning(
+                'No valid Reddit client found. Please use `myredditdl --add-client`')
+            exit(1)
         return self.user_instance.saved(
             limit=self.arg_dict['max_depth']) if self.arg_dict['saved'] else None
 
@@ -72,7 +74,7 @@ class RedditClient:
             return False
 
         self.logger.debug(
-            "Client: %s seconds" %
+            "Client Build: %s seconds" %
             (time.time() - self.client_time))
         return True
 

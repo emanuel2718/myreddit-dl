@@ -1,2 +1,2 @@
-global-include *.ini
-include *.md
+graft myredditdl
+include myredditdl *.ini

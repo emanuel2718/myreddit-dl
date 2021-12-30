@@ -1,6 +1,5 @@
 __pycache__*
 myredditdl/config.backup
-myredditdl/config.ini
 myredditdl/*_reddit/
 myredditdl.egg-info/*
 debug_media/

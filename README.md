@@ -99,7 +99,7 @@ $ myredditdl [REQUIRED] [OPTIONS]
                                   '--config-prefix subreddit username' --> subreddit_username_id.ext
                                   '--config-prefix subreddit'          --> subreddit_id.ext
                                   
-                              Default: subreddit --> subreddit_id.ext
+                              Default: subreddit_username.ext
                               
     --path PATH               path to the folder were media will be downloaded to
     --get-config              prints the configuration file information to the terminal

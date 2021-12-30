@@ -1,0 +1,3 @@
+include *.txt
+include *.ini
+recursive-include examples *.txt *.ini *.py

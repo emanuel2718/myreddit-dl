@@ -36,6 +36,7 @@ setup(name='myredditdl',
       python_requires='>=3.6',
       license='MIT',
       packages=['myredditdl'],
+      include_package_data=True,
       zip_safe=False,
       install_requires=[
           'requests',

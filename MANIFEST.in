@@ -1,2 +1,2 @@
-include *.ini
+global-include *.ini
 include *.md

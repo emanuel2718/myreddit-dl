@@ -1,2 +1,1 @@
-graft myredditdl
-include myredditdl *.ini
+include myredditdl/*.ini
